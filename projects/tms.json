@@ -1,0 +1,26 @@
+{
+  "project": "tms",
+  "jira": { "prefix": "ITMS-", "base_url": null, "project_key": null },
+  "department": "tms",
+  "repos": [
+    { "role": "fe-web", "path": "/home/vif/tuan-vu/tms-web", "base": "dev" },
+    { "role": "test", "path": "tests/tms" }
+  ],
+  "stack": {
+    "run": [
+      "cd /home/vif/tuan-vu/tms-web && npx next dev --turbopack -p 4700"
+    ],
+    "test": [
+      "cd tests/tms && pnpm test",
+      "cd tests/tms && pnpm run test:modules",
+      "cd tests/tms && pnpm run test:auth",
+      "cd tests/tms && npx playwright test tests/tuanvu/tms/e2e/forms/<feature>/<feature>-form.spec.ts",
+      "cd tests/tms && pnpm run test:report"
+    ],
+    "env": [
+      "tests/tms/.env (copy từ .env.example, git-ignored): APP_URL, APP_USERNAME, APP_PASSWORD, APP_TENANT",
+      "tms-web: GRPC_HOST trỏ staging API (override khi boot, không sửa .env)",
+      "tenant tuanvudev: --host-resolver-rules=MAP tuanvudev.localhost 127.0.0.1"
+    ]
+  }
+}

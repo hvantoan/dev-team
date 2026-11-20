@@ -1,0 +1,8 @@
+{
+  "project": "ca-nhan",
+  "description": "Việc cá nhân, thử nghiệm, tool lẻ; key là slug YYYY-MM-DD-<ten-viec>.",
+  "jira": null,
+  "department": null,
+  "repos": [],
+  "stack": { "run": [], "test": [], "env": [] }
+}

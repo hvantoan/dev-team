@@ -1,10 +1,12 @@
 # QA Verdict — <KEY>
 
 - **Ticket/Key:** <ITMS-xxx | slug>
-- **Branch/commit BE:** <repo>@<commit>
-- **Branch/commit FE:** <repo>@<commit> (nếu có)
 - **Stack:** local — <env, DB version, service phụ thuộc>
 - **Ngày chạy:** <YYYY-MM-DD>
+
+| Repo | Branch/commit |
+|---|---|
+| <repo> | <branch>@<commit> |
 
 ## Verdict: PASS | FAIL | BLOCKED
 

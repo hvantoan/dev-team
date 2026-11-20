@@ -1,0 +1,7 @@
+{
+  "project": "fms",
+  "jira": { "prefix": "IFMS-", "base_url": null, "project_key": null, "note": "prefix dự kiến, sửa khi chốt" },
+  "department": null,
+  "repos": [],
+  "stack": { "run": [], "test": [], "env": [] }
+}

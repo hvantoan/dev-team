@@ -1,11 +1,12 @@
 # Dev Handoff — <KEY>
 
 - **Ticket/Key:** <ITMS-xxx | slug>
-- **Repo:** <tên repo code>
-- **Branch → PR:** <branch> → <PR link nếu có>
-- **Commit:** <hash>
 - **Lần bàn giao:** <1, 2 (retry sau FAIL), ...>
 - **Ngày:** <YYYY-MM-DD>
+
+| Repo | Branch → PR | Commit |
+|---|---|---|
+| <repo> | <branch> → <PR nếu có> | <hash> |
 
 ## Thay đổi
 

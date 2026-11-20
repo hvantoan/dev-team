@@ -18,3 +18,10 @@ Thumbs.db
 node_modules/
 __pycache__/
 *.log
+
+# Test harness (tests/<proj>)
+.env
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
