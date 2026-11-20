@@ -1,0 +1,40 @@
+{
+ "mode": "grant",
+ "role": "Manager",
+ "action": "Xuất Excel công nợ khách hàng",
+ "steps": [
+  {
+   "login": "admin"
+  },
+  {
+   "role_form_title": ""
+  },
+  {
+   "before": {
+    "checked": true,
+    "rowText": "Xuất Excel công nợ khách hàng",
+    "checked_rows_in_module": 3
+   }
+  },
+  {
+   "noop": "đã ở trạng thái true — không cần đổi"
+  },
+  {
+   "after_reload_persisted": {
+    "checked": true,
+    "rowText": "Xuất Excel công nợ khách hàng",
+    "checked_rows_in_module": 3
+   }
+  }
+ ],
+ "session_user": {
+  "username": "admin",
+  "isAdmin": true
+ },
+ "result": "noop",
+ "persisted": {
+  "checked": true,
+  "rowText": "Xuất Excel công nợ khách hàng",
+  "checked_rows_in_module": 3
+ }
+}

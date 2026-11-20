@@ -1,0 +1,84 @@
+diff --git a/modules/customer-debt/components/debt-detail-dialog/customer-debt-detail-dialog.tsx b/modules/customer-debt/components/debt-detail-dialog/customer-debt-detail-dialog.tsx
+index 6acea3c..3eb144d 100644
+--- a/modules/customer-debt/components/debt-detail-dialog/customer-debt-detail-dialog.tsx
++++ b/modules/customer-debt/components/debt-detail-dialog/customer-debt-detail-dialog.tsx
+@@ -11,7 +11,6 @@ import { CalculateRounded } from '@mui/icons-material';
+ import { Button, Dialog, DialogContent, Table, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+ import { ExportExcelButton } from '@shared/components/buttons';
+ import { DialogHeader } from '@shared/components/dialog';
+-import { PermissionGate } from '@shared/components/permission-gate';
+ import { usePermissionCheck } from '@shared/hooks/use-permission-check';
+ import { handleExportExcelResult } from '@shared/utilities/export-excel';
+ import { useMutation } from '@tanstack/react-query';
+@@ -98,21 +97,15 @@ const CustomerDebtDetailDialog: React.FC<CustomerDebtDetailDialogProps> = ({ ope
+         actions={
+           row && (
+             <>
+-              <PermissionGate
+-                hasPermission={hasPermission(EActionType.CustomerDebtExport)}
+-                deniedMessage='Bạn không có quyền xuất Excel công nợ khách hàng'
+-              >
+-                {({ onClick }) => (
+-                  <ExportExcelButton
+-                    isPending={isExporting}
+-                    onExport={
+-                      (onClick as (() => void) | undefined) ??
+-                      (() =>
+-                        exportDetail(debtDetailExportTRPCDto.parse({ ...filter, customerId: row.id, customerCode })))
+-                    }
+-                  />
+-                )}
+-              </PermissionGate>
++              {/* ITMS-378: không có quyền cusdeb_ex thì ẩn hẳn nút (không render vào DOM) */}
++              {hasPermission(EActionType.CustomerDebtExport) && (
++                <ExportExcelButton
++                  isPending={isExporting}
++                  onExport={() =>
++                    exportDetail(debtDetailExportTRPCDto.parse({ ...filter, customerId: row.id, customerCode }))
++                  }
++                />
++              )}
+               <Button
+                 color='primary'
+                 onClick={() => setOpenRecalculateDialog(true)}
+diff --git a/modules/customer-debt/components/debt-list/debt-list.tsx b/modules/customer-debt/components/debt-list/debt-list.tsx
+index 240dfad..e4bde6a 100644
+--- a/modules/customer-debt/components/debt-list/debt-list.tsx
++++ b/modules/customer-debt/components/debt-list/debt-list.tsx
+@@ -6,7 +6,6 @@ import { DebtFilterDto, debtFilterTRPCDto } from '@modules/customer-debt/dto/deb
+ import { EActionType } from '@modules/role/enums/action-type';
+ import { Card, Table, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+ import { ExportExcelButton } from '@shared/components/buttons';
+-import { PermissionGate } from '@shared/components/permission-gate';
+ import { usePermissionCheck } from '@shared/hooks/use-permission-check';
+ import { handleExportExcelResult } from '@shared/utilities/export-excel';
+ import { useMutation } from '@tanstack/react-query';
+@@ -49,20 +48,15 @@ const DebtList: React.FC<DebtListProps> = ({ initFilter }) => {
+       <div className='flex flex-wrap items-center gap-x-2 gap-y-4'>
+         <DebtListFilter
+           form={form}
++          // ITMS-378: không có quyền cusdeb_ex thì ẩn hẳn nút (không render vào DOM)
++          // thay vì hiện nút rồi chặn click bằng toast.
+           endAction={
+-            <PermissionGate
+-              hasPermission={hasPermission(EActionType.CustomerDebtExport)}
+-              deniedMessage='Bạn không có quyền xuất Excel công nợ khách hàng'
+-            >
+-              {({ onClick }) => (
+-                <ExportExcelButton
+-                  isPending={isExporting}
+-                  onExport={
+-                    (onClick as (() => void) | undefined) ?? (() => exportExcel(debtFilterTRPCDto.parse(filterValues)))
+-                  }
+-                />
+-              )}
+-            </PermissionGate>
++            hasPermission(EActionType.CustomerDebtExport) ? (
++              <ExportExcelButton
++                isPending={isExporting}
++                onExport={() => exportExcel(debtFilterTRPCDto.parse(filterValues))}
++              />
++            ) : undefined
+           }
+         />
+         <div className='flex items-center justify-end p-4 md:w-auto'>

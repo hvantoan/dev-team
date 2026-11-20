@@ -1,0 +1,152 @@
+[
+ {
+  "check": "login",
+  "value": {
+   "user": {
+    "tenantCode": "tuanvudev",
+    "username": "admin",
+    "tenantName": "tuanvudev",
+    "isAdmin": true
+   }
+  }
+ },
+ {
+  "check": "filter_dates",
+  "value": [
+   "15/10/2026",
+   "20/11/2026"
+  ]
+ },
+ {
+  "check": "AC-01 vt1_export_buttons_in_dom",
+  "value": 1
+ },
+ {
+  "check": "AC-01 rows",
+  "value": 2
+ },
+ {
+  "check": "AC-01 main_buttons",
+  "value": [
+   "Chọn ngày, ngày đã chọn là 15 Th10 2026",
+   "Chọn ngày, ngày đã chọn là 20 Th11 2026",
+   "Open",
+   "Xuất Excel",
+   "Hiển thị/Ẩn cột",
+   "Thay đổi kích thước bảng",
+   "Go to previous page",
+   "page 1",
+   "Go to next page"
+  ]
+ },
+ {
+  "check": "AC-04 tab_focus_export_hits",
+  "value": [
+   "Xuất Excel",
+   "Xuất Excel"
+  ]
+ },
+ {
+  "check": "AC-07 rows_when_empty_filter",
+  "value": 1
+ },
+ {
+  "check": "AC-07 vt1_export_buttons_when_empty",
+  "value": 1
+ },
+ {
+  "check": "AC-02 kh05_row_present",
+  "value": true
+ },
+ {
+  "check": "AC-02 dialog_title",
+  "value": "Lịch sử giao dịch 15/10/2026 - 20/11/2026 (KH-05 - Kiwi) Ngày chứng từ Số chứng "
+ },
+ {
+  "check": "AC-02 vt2_export_buttons_in_dom",
+  "value": 1
+ },
+ {
+  "check": "AC-02 vt2_dialog_buttons",
+  "value": [
+   "Xuất Excel",
+   "Go to previous page",
+   "page 1",
+   "Go to next page"
+  ]
+ },
+ {
+  "check": "AC-06 vt2_download",
+  "value": {
+   "name": "CongNoKhachHangChiTiet_KH-05_20261118140928.xlsx",
+   "bytes": 8054
+  }
+ },
+ {
+  "check": "AC-05 vt1_download",
+  "value": {
+   "name": "CongNoVanChuyen_20261118140949.xlsx",
+   "bytes": 6953
+  }
+ },
+ {
+  "check": "AC-03 direct_customerDebt.exportExcel",
+  "value": {
+   "status": 400,
+   "body": "[{\"error\":\"[{\\\"code\\\":1,\\\"message\\\":2,\\\"data\\\":3},\\\"BAD_REQUEST\\\",\\\"\\\\\\\"[object Object]\\\\\\\" is not valid JSON\\\",{\\\"httpStatus\\\":4},400]\"}]"
+  }
+ },
+ {
+  "check": "AC-03 direct_customerDebt.exportDetail",
+  "value": {
+   "status": 400,
+   "body": "[{\"error\":\"[{\\\"code\\\":1,\\\"message\\\":2,\\\"data\\\":3},\\\"BAD_REQUEST\\\",\\\"\\\\\\\"[object Object]\\\\\\\" is not valid JSON\\\",{\\\"httpStatus\\\":4},400]\"}]"
+  }
+ },
+ {
+  "check": "failed_trpc_calls",
+  "value": [
+   {
+    "proc": "customerDebt.list",
+    "status": 400
+   },
+   {
+    "proc": "customerDebt.list",
+    "status": 400
+   },
+   {
+    "proc": "customerDebt.exportExcel",
+    "status": 400
+   },
+   {
+    "proc": "customerDebt.exportDetail",
+    "status": 400
+   }
+  ]
+ },
+ {
+  "check": "export_calls",
+  "value": [
+   {
+    "proc": "customerDebt.exportDetail",
+    "status": 200,
+    "payload": "\"[{\\\"startDate\\\":1,\\\"endDate\\\":4,\\\"isCount\\\":7,\\\"isAll\\\":8,\\\"searchText\\\":9,\\\"sort\\\":10,\\\"pageIndex\\\":3,\\\"pageSize\\\":11,\\\"customerId\\\":12,\\\"type\\\":13,\\\"customerCode\\\":14},{\\\"seconds\\\":2,\\\"nanos\\\":3},1791997200,0,{\\\"seconds\\\":5,\\\"nanos\\\":6},1795193999,999000000,true,false,\\\"\\\",{\\\"sortDirection\\\":3,\\\"sortPropertyName\\\":9},20,\\\"01KWR3AKDK44Y42WBS1PW8TRB1\\\",\\\"in_period\\\",\\\"KH-05\\\"]\""
+   },
+   {
+    "proc": "customerDebt.exportExcel",
+    "status": 200,
+    "payload": "\"[{\\\"startDate\\\":1,\\\"endDate\\\":4,\\\"isCount\\\":7,\\\"isAll\\\":8,\\\"searchText\\\":9,\\\"sort\\\":10,\\\"pageIndex\\\":3,\\\"pageSize\\\":11,\\\"customerId\\\":9,\\\"type\\\":12},{\\\"seconds\\\":2,\\\"nanos\\\":3},1791997200,0,{\\\"seconds\\\":5,\\\"nanos\\\":6},1795193999,999000000,true,false,\\\"\\\",{\\\"sortDirection\\\":3,\\\"sortPropertyName\\\":9},20,\\\"in_period\\\"]\""
+   },
+   {
+    "proc": "customerDebt.exportExcel?batch=1",
+    "status": 400,
+    "payload": "{\"0\":{\"json\":{\"startDate\":\"2026-10-15T00:00:00+07:00\",\"endDate\":\"2026-11-20T23:59:59+07:00\",\"customerId\":\"\",\"customerCode\":\"KH-05\",\"type\":\"in_period\",\"isAll\":true}}}"
+   },
+   {
+    "proc": "customerDebt.exportDetail?batch=1",
+    "status": 400,
+    "payload": "{\"0\":{\"json\":{\"startDate\":\"2026-10-15T00:00:00+07:00\",\"endDate\":\"2026-11-20T23:59:59+07:00\",\"customerId\":\"\",\"customerCode\":\"KH-05\",\"type\":\"in_period\",\"isAll\":true}}}"
+   }
+  ]
+ }
+]

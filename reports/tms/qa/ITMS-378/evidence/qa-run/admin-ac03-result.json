@@ -1,0 +1,14 @@
+[
+ {
+  "proc": "customerDebt.exportDetail",
+  "status": 200,
+  "len": 10996,
+  "head": "{\"result\":{\"data\":\"[{\\\"success\\\":1,\\\"message\\\":2,\\\"data\\\":3,\\\"fileName\\\":4,\\\"contentType\\\":5},true,\\\"Xuất Excel thành công\\\",\\\"UEsDBBQACAAIAAAAAAAAAAAAAAAAAAAAAAAYAAAAeGwvd29ya3NoZWV0cy9zaGVldDEueG1slJlfk6I8Fsbv91NQ3G9LAjSYUqdUBBGktnZm971mNN1NjYoF9HTX++nfkn9CeNowNzPOj+c5OTknCRmdffs8n5TfPMuT9DJXyZOmK"
+ },
+ {
+  "proc": "customerDebt.exportExcel",
+  "status": 200,
+  "len": 9515,
+  "head": "{\"result\":{\"data\":\"[{\\\"success\\\":1,\\\"message\\\":2,\\\"data\\\":3,\\\"fileName\\\":4,\\\"contentType\\\":5},true,\\\"Xuất Excel thành công\\\",\\\"UEsDBBQACAAIAAAAAAAAAAAAAAAAAAAAAAAYAAAAeGwvd29ya3NoZWV0cy9zaGVldDEueG1sjJZdj6o8EMfvn09Ber9SKgIaYLOrIs/dyXm9ZqEqWaCmrasf/4TyYksbjje7zX9+M8z8O0HC13tdWV+YspI0EXAWEFi4yUlRNqcI/"
+ }
+]

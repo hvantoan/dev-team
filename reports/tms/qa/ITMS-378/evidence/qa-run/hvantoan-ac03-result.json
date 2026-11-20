@@ -1,0 +1,14 @@
+[
+ {
+  "proc": "customerDebt.exportDetail",
+  "status": 200,
+  "len": 114,
+  "head": "{\"result\":{\"data\":\"[{\\\"data\\\":-1,\\\"success\\\":1,\\\"message\\\":2,\\\"code\\\":2},false,\\\"Bạn không có quyền truy cập\\\"]\"}}"
+ },
+ {
+  "proc": "customerDebt.exportExcel",
+  "status": 200,
+  "len": 114,
+  "head": "{\"result\":{\"data\":\"[{\\\"data\\\":-1,\\\"success\\\":1,\\\"message\\\":2,\\\"code\\\":2},false,\\\"Bạn không có quyền truy cập\\\"]\"}}"
+ }
+]

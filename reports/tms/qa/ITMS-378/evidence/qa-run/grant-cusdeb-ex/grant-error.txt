@@ -1,0 +1,5 @@
+locator.click: Timeout 30000ms exceeded.
+Call log:
+  - waiting for locator('#mui-tree-view-1-child-20300')
+
+    at /home/vif/tuanvu/tms-team/reports/qa/ITMS-378/qa-toggle-cusdeb-ex.cjs:118:44

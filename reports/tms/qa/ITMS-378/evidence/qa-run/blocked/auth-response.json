@@ -1,0 +1,9 @@
+{
+ "url": "http://tuanvudev.localhost:4700/tms/login",
+ "auth": [
+  {
+   "status": 401,
+   "body": "{\"url\":\"http://localhost:4700/api/auth/error?error=%5Bunavailable%5D%20connect%20ECONNREFUSED%20127.0.0.1%3A50051\"}"
+  }
+ ]
+}

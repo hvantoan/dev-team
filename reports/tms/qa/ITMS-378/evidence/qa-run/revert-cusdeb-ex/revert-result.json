@@ -1,0 +1,47 @@
+{
+ "mode": "revert",
+ "role": "Manager",
+ "action": "Xuất Excel công nợ khách hàng",
+ "steps": [
+  {
+   "login": "admin"
+  },
+  {
+   "role_form_title": ""
+  },
+  {
+   "before": {
+    "checked": true,
+    "rowText": "Xuất Excel công nợ khách hàng",
+    "checked_rows_in_module": 3
+   }
+  },
+  {
+   "after_toggle_before_save": {
+    "checked": false,
+    "rowText": "Xuất Excel công nợ khách hàng",
+    "checked_rows_in_module": 1
+   }
+  },
+  {
+   "save_toast": "Đang lưu..."
+  },
+  {
+   "after_reload_persisted": {
+    "checked": false,
+    "rowText": "Xuất Excel công nợ khách hàng",
+    "checked_rows_in_module": 1
+   }
+  }
+ ],
+ "session_user": {
+  "username": "admin",
+  "isAdmin": true
+ },
+ "result": "saved",
+ "persisted": {
+  "checked": false,
+  "rowText": "Xuất Excel công nợ khách hàng",
+  "checked_rows_in_module": 1
+ }
+}

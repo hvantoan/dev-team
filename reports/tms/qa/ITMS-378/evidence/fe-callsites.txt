@@ -1,0 +1,14 @@
+modules/customer-debt/components/debt-list/debt-list.tsx:53:          endAction={
+modules/customer-debt/components/debt-list/debt-list.tsx:54:            hasPermission(EActionType.CustomerDebtExport) ? (
+modules/customer-debt/components/debt-detail-dialog/customer-debt-detail-dialog.tsx:101:              {hasPermission(EActionType.CustomerDebtExport) && (
+modules/customer-debt/components/debt-list/debt-list-filter.tsx:13:  endAction?: React.ReactNode;
+modules/customer-debt/components/debt-list/debt-list-filter.tsx:19:  render: ({ form, endAction }) => {
+modules/customer-debt/components/debt-list/debt-list-filter.tsx:74:        {endAction}
+9:  const { data: permissions = [] } = useQuery(
+13:  const hasAdminPermission = permissions.includes(EActionType.Admin);
+16:    return hasAdminPermission || permissions.includes(permission);
+20:    if (hasAdminPermission) {
+24:    return requiredPermissions.some((permission) => permissions.includes(permission));
+29:    hasAdminPermission,
+8:const PERMISSION_CACHE_REVALIDATE_SECONDS = 120;
+28:      revalidate: PERMISSION_CACHE_REVALIDATE_SECONDS,

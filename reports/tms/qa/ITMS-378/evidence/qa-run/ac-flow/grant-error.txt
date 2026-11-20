@@ -1,0 +1,5 @@
+locator.click: Timeout 30000ms exceeded.
+Call log:
+  - waiting for getByRole('treeitem', { name: /Công nợ khách hàng/i }).first()
+
+    at /home/vif/tuanvu/tms-team/reports/qa/ITMS-378/qa-toggle-cusdeb-ex.cjs:59:20

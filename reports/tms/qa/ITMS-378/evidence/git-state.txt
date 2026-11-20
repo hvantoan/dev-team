@@ -1,0 +1,4 @@
+# git state (clean clone from origin, single-branch)
+commit: 055e4fb6608de5e99c2800e6de25a1e70821c541
+dirty_files_in_clone: 0
+dev_base: 4713efbdeaa40dd55c2424d163a45cb6e74c2da7

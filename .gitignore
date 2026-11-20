@@ -1,0 +1,20 @@
+# Evidence nhị phân nặng — giữ ngoài git, report ghi đường dẫn tuyệt đối/link ngoài
+*.webm
+*.mp4
+*.xlsx
+*.xls
+*.zip
+*.pdf
+*/video/
+videos/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# Runtime
+node_modules/
+__pycache__/
+*.log

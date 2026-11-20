@@ -1,0 +1,123 @@
+[
+ {
+  "check": "login",
+  "value": {
+   "user": {
+    "tenantCode": "tuanvudev",
+    "username": "hvantoan",
+    "tenantName": "tuanvudev",
+    "isAdmin": false
+   }
+  }
+ },
+ {
+  "check": "filter_dates",
+  "value": [
+   "15/10/2026",
+   "20/11/2026"
+  ]
+ },
+ {
+  "check": "AC-01 vt1_export_buttons_in_dom",
+  "value": 0
+ },
+ {
+  "check": "AC-01 rows",
+  "value": 2
+ },
+ {
+  "check": "AC-01 main_buttons",
+  "value": [
+   "Chọn ngày, ngày đã chọn là 15 Th10 2026",
+   "Chọn ngày, ngày đã chọn là 20 Th11 2026",
+   "Open",
+   "Hiển thị/Ẩn cột",
+   "Thay đổi kích thước bảng",
+   "Go to previous page",
+   "page 1",
+   "Go to next page"
+  ]
+ },
+ {
+  "check": "AC-04 tab_focus_export_hits",
+  "value": []
+ },
+ {
+  "check": "AC-07 rows_when_empty_filter",
+  "value": 1
+ },
+ {
+  "check": "AC-07 vt1_export_buttons_when_empty",
+  "value": 0
+ },
+ {
+  "check": "AC-02 kh05_row_present",
+  "value": true
+ },
+ {
+  "check": "AC-02 dialog_title",
+  "value": "Lịch sử giao dịch 15/10/2026 - 20/11/2026 (KH-05 - Kiwi) Ngày chứng từ Số chứng "
+ },
+ {
+  "check": "AC-02 vt2_export_buttons_in_dom",
+  "value": 0
+ },
+ {
+  "check": "AC-02 vt2_dialog_buttons",
+  "value": [
+   "Go to previous page",
+   "page 1",
+   "Go to next page"
+  ]
+ },
+ {
+  "check": "AC-03 direct_customerDebt.exportExcel",
+  "value": {
+   "status": 400,
+   "body": "[{\"error\":\"[{\\\"code\\\":1,\\\"message\\\":2,\\\"data\\\":3},\\\"BAD_REQUEST\\\",\\\"\\\\\\\"[object Object]\\\\\\\" is not valid JSON\\\",{\\\"httpStatus\\\":4},400]\"}]"
+  }
+ },
+ {
+  "check": "AC-03 direct_customerDebt.exportDetail",
+  "value": {
+   "status": 400,
+   "body": "[{\"error\":\"[{\\\"code\\\":1,\\\"message\\\":2,\\\"data\\\":3},\\\"BAD_REQUEST\\\",\\\"\\\\\\\"[object Object]\\\\\\\" is not valid JSON\\\",{\\\"httpStatus\\\":4},400]\"}]"
+  }
+ },
+ {
+  "check": "failed_trpc_calls",
+  "value": [
+   {
+    "proc": "customerDebt.list",
+    "status": 400
+   },
+   {
+    "proc": "customerDebt.list",
+    "status": 400
+   },
+   {
+    "proc": "customerDebt.exportExcel",
+    "status": 400
+   },
+   {
+    "proc": "customerDebt.exportDetail",
+    "status": 400
+   }
+  ]
+ },
+ {
+  "check": "export_calls",
+  "value": [
+   {
+    "proc": "customerDebt.exportExcel?batch=1",
+    "status": 400,
+    "payload": "{\"0\":{\"json\":{\"startDate\":\"2026-10-15T00:00:00+07:00\",\"endDate\":\"2026-11-20T23:59:59+07:00\",\"customerId\":\"\",\"customerCode\":\"KH-05\",\"type\":\"in_period\",\"isAll\":true}}}"
+   },
+   {
+    "proc": "customerDebt.exportDetail?batch=1",
+    "status": 400,
+    "payload": "{\"0\":{\"json\":{\"startDate\":\"2026-10-15T00:00:00+07:00\",\"endDate\":\"2026-11-20T23:59:59+07:00\",\"customerId\":\"\",\"customerCode\":\"KH-05\",\"type\":\"in_period\",\"isAll\":true}}}"
+   }
+  ]
+ }
+]

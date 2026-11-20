@@ -1,0 +1,3 @@
+57:	proto.CustomerDebtService_Export_FullMethodName:                   "cusdeb_ex",
+58:	proto.CustomerDebtService_ExportCustomerDebtDetail_FullMethodName: "cusdeb_ex",
+19:		if curUser.IsAdmin {
