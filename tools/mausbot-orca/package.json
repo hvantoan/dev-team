@@ -1,0 +1,23 @@
+{
+  "name": "mausbot-orca",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Watcher-first bridge from mausbot chat to Orca orchestration",
+  "type": "module",
+  "bin": {
+    "mausbot-orca": "dist/cli.js"
+  },
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

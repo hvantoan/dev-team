@@ -92,6 +92,7 @@ dev-team/
 ├── projects/            # <proj>.json: jira, department, repos, stack
 ├── reports/<proj>/<bot>/<KEY|RUN>/   # artifacts của từng lần chạy
 ├── docs/<proj>/srs|adr|research/     # tài liệu chính thức
+├── tools/mausbot-orca/  # vendored watcher-first bridge → Orca (src+tests+dist)
 └── tests/<proj>/        # test code (vd playwright)
 ```
 
@@ -103,10 +104,13 @@ dev-team/
 | `team-config/` | `team.md` + `skills/` của department | code, docs dự án |
 | `templates/` | mẫu gốc, copy-điền | file đã điền |
 | `projects/` | con trỏ project (repo, env, prefix) | repo checkout |
+| `tools/mausbot-orca/` | CLI `mausbot-orca` vendored (intec-kit@29a60c9), systemd watcher | task code, spec |
 
 Trạng thái hiện tại (2026-11-20): chỉ `reports/tms/qa/ITMS-378/` có artifact; các folder khác là `.gitkeep`. SRS TMS đang nằm ở đường dẫn lặp `docs/tms/srs/srs/*.md` (đã commit) — sửa tại chỗ, không tạo bản thứ hai; đường dẫn chuẩn trong tài liệu là `docs/<proj>/srs/`.
 
 `team-config/` là **source of truth** của department. Sửa souls/skills/flow ở đây thì bots đang chạy trong MausBot chỉ nhận bản mới sau khi **re-import** department. Mọi đường dẫn hardcode trong `team.md`/`skills/` phải trỏ `/home/vif/tuanvu/dev-team/` và layout theo project; tên skill trong `agents[].skills` phải khớp tên folder trong `skills/`.
+
+`tools/mausbot-orca/` là **vendored bridge** bot → Orca worker: `submit`/`answer` qua Unix socket tới watcher systemd (`mausbot-orca.service`, config `~/.config/mausbot-orca/config.json`). Bots `dev-tms`/`qa-tms` giao việc bằng skill `orca-dispatch`; **không gọi `orca orchestration` trực tiếp** (watcher sở hữu consumer binding). Rebuild: `cd tools/mausbot-orca && npm run build`; test: `npm test`. Commit cả `dist/` vì repo không có toolchain build ở CI.
 
 ## 4. Development Commands
 

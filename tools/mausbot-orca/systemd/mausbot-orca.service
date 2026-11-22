@@ -1,0 +1,14 @@
+[Unit]
+Description=MausBot Orca watcher
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+Environment=PATH=%h/.local/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=/usr/bin/env node /home/vif/tuanvu/dev-team/packages/mausbot-orca/dist/cli.js watch
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

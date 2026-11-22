@@ -59,6 +59,7 @@ agents:
     appearance:
       color: coral
     skills:
+      - orca-dispatch
       - qa-verify-export-local
   - key: dev-tms
     name: Dev TMS
@@ -68,6 +69,7 @@ agents:
     appearance:
       color: teal
     skills:
+      - orca-dispatch
       - tms-excel-export-verify
   - key: ieu-phoi-tms
     name: Điều phối TMS
@@ -83,6 +85,7 @@ skills:
   - ba-ticket-to-srs-br
   - qa-verify-export-local
   - tms-excel-export-verify
+  - orca-dispatch
   - tms-delivery-coordination
 ---
 
