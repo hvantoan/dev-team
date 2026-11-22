@@ -2,7 +2,7 @@
 
 - Tên dự án: TMS – Transportation Management System
 - Module: **Phân quyền & Kiểm soát truy cập (Permission / Authorization)**
-- Phiên bản: v0.1-draft (khung — chờ bằng chứng reproduce của QA để chốt rule)
+- Phiên bản: v0.4-draft (khung — chờ bằng chứng reproduce của QA để chốt rule)
 - Ngày tạo: 19/11/2026
 - Người soạn: BA TMS
 - Người phê duyệt: Văn Toàn (PO) — *chưa duyệt*
@@ -11,9 +11,10 @@
 
 | Phiên bản | Ngày | Người | Nội dung |
 |---|---|---|---|
-| v0.1-draft | 19/11/2026 | BA TMS | Khởi tạo khung tài liệu cho nhóm bug phân quyền ITMS-382, 384–388 (+378, 383) |
+| v0.4-draft | 22/11/2026 | BA TMS | ITMS-383: thêm `rec_debt_balance` nhóm Phiếu thu; rule OR `cusdeb_hx`/`rec_debt_balance` cho endpoint số dư công nợ (BR-PQ-007); backfill cho role có `rec_r`/`rec_cu` |
 | v0.3-draft | 19/11/2026 | BA TMS | Bổ sung dep same-module cho `diso_cu` (ITMS-384): tick phải kéo `diso_r` + `do_r` + `do_di`; làm rõ BR-PQ-003 dep cross-module là BỔ SUNG, không thay thế dep same-module |
 | v0.2-draft | 19/11/2026 | BA TMS | Chốt expected + rule cho ITMS-384, 385 theo bằng chứng reproduce của QA; bổ sung permission key Nhóm A; đề xuất scope fix Nhóm A |
+| v0.1-draft | 19/11/2026 | BA TMS | Khởi tạo khung tài liệu cho nhóm bug phân quyền ITMS-382, 384–388 (+378, 383) |
 
 ---
 
@@ -51,7 +52,7 @@ Tài liệu này chuẩn hóa **rule phân quyền xuyên suốt các module TMS
 ### 2.1. Mô hình phân quyền hiện tại (theo phân tích code của Dev TMS, 19/11/2026)
 
 - **BE (`tms_application`, Go/ent)** có 2 cơ chế tập trung:
-  1. `internal/interceptor/method_permissions.go` — map RPC method → permission key bắt buộc. Method thiếu trong map = mọi user đăng nhập đều gọi được.
+  1. `internal/interceptor/method_permissions.go` — map RPC method → permission key bắt buộc. Method thiếu trong map = mọi user đăng nhập đều gọi được. Method nhận nhiều quyền thay thế khai báo ở `methodAnyPermissions` (user cần ít nhất một key trong tập).
   2. `internal/application/permission/registry.go` — cây quyền: một quyền `.WithCheck(...)` quyền khác → cấp quyền A tự động kèm B.
 - **FE (`tms-web`, Next.js/tRPC)**: `ProtectedViewServer` chặn trang khi thiếu quyền View; `EActionType` + `usePermissionCheck` ẩn/disable nút. Nhiều màn đã có cơ chế nhưng chưa áp.
 - **Nguyên tắc chung đang áp:** quyền Add/Edit/Delete phải kèm quyền View tương ứng của cùng module; user không có quyền View → báo từ chối truy cập (403), KHÔNG hiển thị bảng trống; user không được phép leo quyền/tự tác động lên chính mình ngoài quyền được cấp.
@@ -84,6 +85,7 @@ Tài liệu này chuẩn hóa **rule phân quyền xuyên suốt các module TMS
 | Fuel | `fissue_d` | Xuất nhiên liệu (Fuel issue) - Xóa | ITMS-385 |
 | Customer Debt | `cusdeb_hx` | Customer debt - View/Balance | ITMS-383 |
 | Customer Debt | *(chưa rõ key)* | Customer debt - Export Excel | ITMS-378 |
+| Customer Receipt | `rec_debt_balance` | Xem số dư công nợ khách hàng (auto-check `rec_r`) | ITMS-383 |
 | User | `usr_cu` | User - Create/Update | ITMS-382 |
 | User | *(chưa rõ key)* | User - Delete | ITMS-388 |
 | User/Role | *(chưa rõ key)* | Role - Edit (đổi role user) | ITMS-382 |
@@ -105,6 +107,7 @@ Tài liệu này chuẩn hóa **rule phân quyền xuyên suốt các module TMS
 | BR-PQ-004 | Mọi RPC method nhạy cảm phải có mapping trong `method_permissions.go`; method thiếu mapping = lỗi bảo mật. | Draft — căn cứ ITMS-383 |
 | BR-PQ-005 | User **không được phép tự thay đổi role/quyền của chính mình** khi không có quyền quản trị role tương ứng. | Draft — căn cứ ITMS-382 |
 | BR-PQ-006 | User **không được phép xoá chính tài khoản mình**, kể cả khi có quyền "User - Delete". | Draft — căn cứ ITMS-388 |
+| BR-PQ-007 | Endpoint số dư công nợ khách hàng `GET /api/v1/customer-debts/{customerId}` (`CustomerDebtService/Get`, FE gọi qua `customerDebt.balance`) **CHẤP NHẬN `cusdeb_hx` HOẶC `rec_debt_balance`**; chỉ có `rec_r`/`rec_cu` hoặc thiếu cả hai → **403**. Không tái dùng `rec_r`/`rec_cu` cho quyền đọc số dư; dùng tập quyền OR (`methodAnyPermissions`). `List`/`History` vẫn chỉ `cusdeb_hx`. | Draft — căn cứ ITMS-383, quyết định anh Toàn 22/11/2026 |
 
 ### 4.2. Rule theo ticket — chờ bằng chứng reproduce của QA để chốt expected
 
@@ -113,7 +116,7 @@ Tài liệu này chuẩn hóa **rule phân quyền xuyên suốt các module TMS
 | ITMS-384 | Dispatch/DI | **BR-PQ-003a**: Cấp `diso_cu` (Dispatch log - Thêm/Sửa) phải tự kèm **`diso_r`** (View chính module) **+ `do_r` + `do_di`** — user sửa điều xe phải xem được Delivery Instructions (danh sách + chi tiết). Thiếu `do_di` → `deliveryInstruction.list` trả 403, màn `/delivery-instructions` 404. | ☑ REPRODUCED 19/11/2026 — user `qadispatch` (`diso_r`+`diso_cu`+`do_r`, không `do_di`). Bug phụ phát hiện 19/11: tick `diso_cu` chưa auto-ON `diso_r` (thiếu dep same-module). Triệu chứng đã reproduce: trang DI → 404, `deliveryInstruction.list` → 403 ở cả màn DI lẫn form `/dispatch-orders`; `dispatchOrder.list` vẫn 200. Bằng chứng: `qa-261119-1025-itms-384-385-reproduce.md` + `evidence-384-385/` | ☑ đã duyệt hướng (19/11/2026) |
 | ITMS-385 | Fuel | **BR-PQ-003b**: `fadj_cu` và `fadj_d` (Kiểm kê - Thêm/Sửa, Xóa) phải `.WithCheck(fadj_r)` — auto-tick **"Kiểm kê - Xem"**, TUYỆT ĐỐI không cấp `fissue_d` (Xuất nhiên liệu - Xóa) hay bất kỳ quyền module khác. | ☑ REPRODUCED 19/11/2026 — admin tick `fadj_cu` → `fissue_d` tự ON trong khi `fadj_r` vẫn OFF. Cùng root cause ở `fadj_d` (chưa verify riêng, gộp chung fix). Bằng chứng: cùng report + `385-before.png`, `385-after-tick.png` | ☐ chờ anh Toàn duyệt |
 | ITMS-382 | Users | User không có quyền sửa role → không tự đổi được role của mình (BE chặn + FE disable RoleSelect trên chính mình). | ☐ chờ | ☐ |
-| ITMS-383 | Customer Debt | API số dư công nợ (`CustomerDebtService_Get`) yêu cầu `cusdeb_hx`; user thiếu quyền → 403/lỗi phân quyền. | ☐ chờ | ☐ |
+| ITMS-383 | Customer Debt / Phiếu thu | **BR-PQ-007**: `CustomerDebtService/Get` chấp nhận **`cusdeb_hx` HOẶC `rec_debt_balance`**; `rec_r`/`rec_cu` một mình hoặc thiếu cả hai → 403. Quyền mới hiển thị là checkbox **"Xem số dư công nợ khách hàng"** trong nhóm Phiếu thu (action `20104`). | ☑ Dev verified 22/11/2026 (PR #136, commit `88d4ce0`), HTTP thật trên stack local: `cusdeb_hx` 200, chỉ `rec_debt_balance` 200, chỉ `rec_r` 403, chỉ `rec_cu` 403, `prd_r` 403, admin 200; `GET /api/v1/roles/modules` trả action `20104` trong nhóm Phiếu thu (4 action), `rec_r` uncheck `[20102, 20103, 20104]`; migration `000023` backfill 7 role ở bản clone + 2 role active ở staging (Bán hàng, Manager), chạy lại `UPDATE 0`; `go build ./...` + `go test` pass | ☐ chờ anh Toàn duyệt |
 | ITMS-386 | Nhiều màn | 5 màn (payment-vouchers, receipt-payments, customer-debt, payment-methods, dispatch-orders) thiếu quyền View → 403 thay vì bảng trống. | ☐ chờ | ☐ |
 | ITMS-387 | Payment/Receipt | Nút Cancel/Create trên Payment Voucher & Receipt chỉ hiện khi có quyền tương ứng. | ☐ chờ | ☐ |
 | ITMS-388 | Users | Nút Delete ẩn trên row của chính mình + BE từ chối `Delete(id == self)`. | ☐ chờ | ☐ |
@@ -130,6 +133,16 @@ Cùng file `internal/application/permission/registry.go` (BE `tms_application`):
 
 - FE: không cần sửa (auto-check chạy từ cây quyền BE).
 - Test: với 384, user `diso_cu` phải gọi được `deliveryInstruction.list` và mở được `/delivery-instructions`; với 385, tick `fadj_cu`/`fadj_d` chỉ kéo `fadj_r`, không đụng nhóm Xuất nhiên liệu.
+
+### 4.4. Migrate / backfill dữ liệu — ITMS-383
+
+Migration `000023_itms383_backfill_receipt_debt_balance_permission` (repo `tms_application`, PR #136):
+
+- **Up**: cấp `rec_debt_balance` cho **mọi role đang có `rec_r` hoặc `rec_cu`**; idempotent (chạy lại = `UPDATE 0`).
+- **Down**: gỡ `rec_debt_balance` khỏi mọi role.
+- **Vì sao bắt buộc**: không backfill thì role thu ngân/kế toán đang có `rec_r`/`rec_cu` bị 403 ở form phiếu thu sau deploy; FE fallback `totalDue = debtBalance?.closingDebt ?? outstanding ?? 0` nên ô tổng nợ hiển thị **0** mà không báo lỗi.
+- **Phạm vi đã verify**: bản clone local 7 role khớp rule; staging lúc review 2 role active — **Bán hàng**, **Manager**. Production áp cùng rule khi deploy.
+- **Hiệu lực quyền**: BE đọc quyền từ session snapshot (Redis) → user được backfill thấy key từ **lần đăng nhập kế tiếp** hoặc sau khi refresh session của role, không tức thời ngay sau `migrate up`.
 
 ## 5. LIÊN HỆ SRS KHÁC
 
