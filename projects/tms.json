@@ -1,6 +1,6 @@
 {
   "project": "tms",
-  "jira": { "prefix": "ITMS-", "base_url": null, "project_key": null },
+  "jira": { "prefix": "ITMS-", "base_url": "https://fumysolution.atlassian.net", "project_key": "ITMS" },
   "department": "tms",
   "repos": [
     { "role": "fe-web", "path": "/home/vif/tuan-vu/tms-web", "base": "dev" },

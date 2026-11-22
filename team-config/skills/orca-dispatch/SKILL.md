@@ -1,85 +1,80 @@
 ---
 name: orca-dispatch
-description: "Giao việc code/test cho Orca worker qua `mausbot-orca` bridge (vendored tại /home/vif/tuanvu/dev-team/tools/mausbot-orca). Dùng khi dev-tms hoặc qa-tms cần dispatch một task ra worker riêng: submit non-blocking, watcher lo Run/Task/Dispatch/wait/gate/retry, milestone card về room. Không gọi `orca orchestration` trực tiếp, không tự poll."
+description: "Giao việc code/test cho Orca worker qua `orca orchestration worker-start` (bot chạy native trên Orca). Dùng khi dev-tms hoặc qa-tms cần dispatch một task ra worker riêng: khởi động worker trong worktree mới, không chờ kết quả trong cùng lượt — kết quả về qua worker mail."
 ---
 
 # orca-dispatch
 
-Bot gọi `mausbot-orca submit` để giao việc cho một Orca worker, rồi tiếp tục việc khác — watcher (systemd `mausbot-orca.service`) tự dispatch, chờ, gate, retry và gửi milestone card (`✅/⚠️/❓/🔒`) vào `--thread` đã chọn. Không chờ kết quả trong cùng lượt.
+Bot gọi `orca orchestration worker-start` để giao việc cho một Orca worker trong worktree riêng, rồi tiếp tục việc khác — kết quả của worker về qua mail và đánh thức bot. Không poll, không chờ trong cùng lượt.
 
-## Project registry
+## Project mapping
 
-```bash
-mausbot-orca projects    # name  agent  repo  check
-```
-
-Hiện có:
-
-| Project | Bot dùng | Repo Orca | Check (gate) |
+| Việc | Bot dùng | `--repo` | Base |
 |---|---|---|---|
-| `tms-dev` | dev-tms | `path:/home/vif/tuan-vu/tms-web` (base `dev`) | `pnpm run build` |
-| `tms-qa` | qa-tms | `path:/home/vif/tuanvu/dev-team` (base `main`), scope `tests/tms/**` | `cd tests/tms && pnpm install --prefer-offline && pnpm test` |
-| `dev-team` | mọi bot, việc workspace | `path:/home/vif/tuanvu/dev-team` (base `main`) | `test -f AGENTS.md` |
+| Code FE/BE TMS | dev-tms | `name:tms-web` (FE) hoặc `name:tms_application` (BE) | `dev` / `main` |
+| Suite test tự động | qa-tms | `name:dev-team`, scope `tests/tms/**` | `main` |
+| Việc workspace dev-team | mọi bot | `name:dev-team` | `main` |
 
-Không đoán project ngoài registry; mơ hồ thì hỏi Điều phối.
+Không đoán repo ngoài mapping; mơ hồ thì hỏi Điều phối. Repo không đổi mà không qua anh Toàn.
 
 ## Submit
 
 ```bash
-mausbot-orca submit \
-  --thread channel:e59a7168-fda8-42a4-98e4-815924de3d3c \
-  --project <tms-dev|tms-qa|dev-team> \
-  --spec-file - <<'JSON'
-{
-  "objective": "<một câu mô tả kết quả, tham chiếu KEY>",
-  "context": ["reports/tms/ba/<KEY>/spec.md", "reports/tms/dev/<KEY>/handoff.md"],
-  "scope": {"allow": ["<glob>"], "deny": ["<glob>"]},
-  "non_goals": ["<điều không được làm>"],
-  "done_when": ["<lệnh kiểm chứng>"],
-  "max_attempts": 2
-}
-JSON
+orca orchestration worker-start \
+  --repo name:<tms-web|tms_application|dev-team> \
+  --worktree new-child \
+  --agent pi \
+  --task-title "<KEY> — <ngắn>" \
+  --spec-file - <<'EOF'
+<objective: một câu mô tả kết quả, tham chiếu KEY>
+
+Context đọc từ file artifact (đường dẫn tuyệt đối):
+- /home/vif/tuanvu/dev-team/reports/tms/ba/<KEY>/spec.md
+- /home/vif/tuanvu/dev-team/reports/tms/dev/<KEY>/handoff.md (nếu có)
+
+Scope:
+- allow: <glob>
+- deny: <glob> (deny luôn thắng; dev-tms luôn deny **/*.env*, **/migrations/**)
+
+Non-goals: <điều không được làm>
+Done when: <lệnh kiểm chứng, vd pnpm run build>
+
+Bạn sở hữu pull request mình mở cho tới khi sẵn sàng merge: theo dõi checks/reviews, sửa cái hỏng hoặc được yêu cầu, rồi báo cáo.
+EOF
 ```
 
-- `--thread`: `channel:e59a7168-fda8-42a4-98e4-815924de3d3c` = room `TMS — Delivery` — milestone cards đi vào room để cả team + PO thấy. Prefix `channel:` bắt buộc cho room id; `thread:<id>` hoặc bare id dùng cho conversation thường.
-- `context` trỏ **file artifact** trong workspace (`reports/tms/<bot>/<KEY>/`, `docs/tms/...`) — worker đọc file, không nhét prose vào `objective`.
-- `scope`: tms-qa giới hạn `tests/tms/**`; deny luôn thắng. dev-tms deny `**/*.env*`, `**/migrations/**` mặc định.
-- **Quyền giữ stack:** Orca worker chỉ build và chạy unit/static check trong worktree của nó — **không gọi `scripts/stack.sh`** và không tự bật server. Chỉ bot `dev-tms` / `qa-tms` được gọi `scripts/stack.sh up|down`.
-- Không đưa secret/token vào spec. Không tự đặt `--request-id` (CLI derive ổn định).
-- Exit codes: `0` đã tạo; `2` project/spec sai (báo Điều phối, không tự sửa rồi retry); `3` request đã có (trả task cũ); `4` watcher chưa chạy (báo "hệ thống chưa sẵn sàng").
+- `context` trỏ **file artifact** trong workspace — worker đọc file, không nhét prose vào spec.
+- Kết quả in ra dispatch id (`dispatch:<id>`) — ghi vào `handoff.md` (dev-tms) hoặc `verdict.md` (qa-tms) để truy vết.
+- Sau khi start, kết thúc lượt: kết quả worker về bằng mail, bot xử lý khi mail đánh thức — không `bg_status`/`sleep` để chờ.
 
-Trả JSON:
+## Quyền giữ stack
 
-```json
-{"ok":true,"duplicate":false,"requestId":"…","taskId":"task_…","runId":"run_…"}
-```
-
-Ghi `taskId`/`runId`/`requestId` vào `handoff.md` (dev-tms) hoặc `verdict.md` (qa-tms) để truy vết.
+- Orca worker chỉ build và chạy unit/static check trong worktree của nó — **không gọi `scripts/stack.sh`**, không tự bật server, không đổi port. Ghi rõ điều này trong mọi spec.
+- Chỉ bot `dev-tms` / `qa-tms` được gọi `scripts/stack.sh up|down`.
 
 ## Precondition tms-qa
 
-- Trước khi submit `tms-qa`, `qa-tms` phải dựng stack đúng commit từ `handoff.md` bằng `./scripts/stack.sh up qa-tms <KEY> <commit>` và kiểm `./scripts/stack.sh status` khớp commit FE/BE cần test (tránh trường hợp stack đang chạy sai commit hoặc thuộc bot khác).
-- Worker chạy trong worktree mới của dev-team: `pnpm install` tự lo qua check, nhưng `tests/tms/.env` là git-ignored và `.env.example` không chứa credential thật — bot phải đảm bảo `.env` thật đã được copy vào worktree (từ `tests/tms/.env` gốc hoặc nguồn ngoài git) trước khi submit, nếu không check `pnpm test` sẽ fail.
-- Sau khi `tms-qa` xong (dù PASS hay FAIL), `qa-tms` phải chạy `./scripts/stack.sh down` để nhả lock.
+- Trước khi dispatch suite test, `qa-tms` phải dựng stack đúng commit từ `handoff.md`: `./scripts/stack.sh up qa-tms <KEY> <commit>`, kiểm `./scripts/stack.sh status` khớp commit FE/BE (tránh stack sai commit hoặc thuộc bot khác).
+- `tests/tms/.env` là git-ignored nên worktree mới không có — bot phải copy `.env` thật vào worktree của worker trước khi dispatch, nếu không `pnpm test` fail.
+- Sau khi suite xong (dù PASS hay FAIL), `qa-tms` phải `./scripts/stack.sh down` để nhả lock.
 
-## Khi có câu hỏi/escalation về card `❓`/`⚠️`
+## Khi cần sửa / trả lời worker
 
 ```bash
-mausbot-orca answer --thread channel:e59a7168-fda8-42a4-98e4-815924de3d3c --text "<câu trả lời nguyên văn>"
+orca orchestration send --to dispatch:<id> --type question --subject "..." --body "..."
 ```
 
-- Escalation `1) retry  2) dừng`: trả `1` hoặc `2`.
-- Exit `2`: không có câu hỏi chờ — đây là input mới, không phải answer.
+Gửi follow-up cho worker đang chạy. Kết quả cuối cùng của nó vẫn về qua mail.
 
-## Sau milestone card
+## Sau khi worker xong
 
-- `✅ done`: bot đọc worktree path trên card, kiểm tra bằng chứng rồi ghi artifact (`handoff.md`/`verdict.md`) theo FLOW.md. Không merge/push thay worker.
-- `⚠️/escalated`: quyết định retry hay stop bằng `answer`, hoặc để Điều phối/PO chọn.
+- Đọc worktree path/kết quả trong mail, kiểm chứng bằng chứng rồi ghi artifact (`handoff.md`/`verdict.md`) theo FLOW.md. Không merge/push thay worker trừ khi spec giao.
+- FAIL: dispatch lại với spec sửa trên cùng folder KEY, tăng "Lần bàn giao"/attempt trong artifact.
 
 ## Không làm
 
-- Không gọi `orca orchestration ...` trực tiếp — watcher sở hữu consumer binding; gọi tay gây `consumer_fenced`.
-- Không để Orca worker gọi `scripts/stack.sh` hoặc tự bật server trong worktree.
-- Không `mausbot-orca status` để poll trong cùng lượt; watcher tự gửi mốc.
-- Không tạo assignment thứ hai cho cùng việc khi exit `3`.
-- Không sửa `tools/mausbot-orca/` khi đang làm task khác — đó là infra, không phải scope task.
+- Không gọi `mausbot-orca` — team đã chạy native Orca, bridge chỉ còn phục vụ bot trong MausBot.
+- Không để worker gọi `scripts/stack.sh` hoặc tự bật server trong worktree.
+- Không poll trạng thái worker trong cùng lượt.
+- Không tạo worker thứ hai cho cùng một việc khi worker cũ còn chạy.
+- Không đưa secret/token vào spec.

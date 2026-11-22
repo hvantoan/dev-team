@@ -110,7 +110,7 @@ Trạng thái hiện tại (2026-11-20): chỉ `reports/tms/qa/ITMS-378/` có ar
 
 `team-config/` là **source of truth** của department. Sửa souls/skills/flow ở đây thì bots đang chạy trong MausBot chỉ nhận bản mới sau khi **re-import** department. Mọi đường dẫn hardcode trong `team.md`/`skills/` phải trỏ `/home/vif/tuanvu/dev-team/` và layout theo project; tên skill trong `agents[].skills` phải khớp tên folder trong `skills/`.
 
-`tools/mausbot-orca/` là **vendored bridge** bot → Orca worker: `submit`/`answer` qua Unix socket tới watcher systemd (`mausbot-orca.service`, config `~/.config/mausbot-orca/config.json`). Bots `dev-tms`/`qa-tms` giao việc bằng skill `orca-dispatch`; **không gọi `orca orchestration` trực tiếp** (watcher sở hữu consumer binding). Rebuild: `cd tools/mausbot-orca && npm run build`; test: `npm test`. Commit cả `dist/` vì repo không có toolchain build ở CI.
+Team chạy **native trên Orca** (4 bot: Orchestrator, ba-tms, dev-tms, qa-tms). `dev-tms`/`qa-tms` giao việc code/test cho Orca worker bằng `orca orchestration worker-start` qua skill `orca-dispatch` — repo Orca `name:tms-web` / `name:tms_application` (code) và `name:dev-team` (test + việc workspace). `tools/mausbot-orca/` là bridge legacy chỉ còn phục vụ bot trong MausBot; bot Orca **không gọi `mausbot-orca`**. Rebuild bridge (chỉ khi còn dùng MausBot): `cd tools/mausbot-orca && npm run build`; test: `npm test`.
 
 ## 4. Development Commands
 
