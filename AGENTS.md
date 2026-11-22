@@ -165,16 +165,18 @@ Repo không có runtime code: async patterns, dependency injection, state manage
 | `templates/ba-spec.md` | Mẫu `spec.md` — AC, scope, rule nghiệp vụ |
 | `templates/orchestrator-run.md` | Mẫu `plan.md` + `status.md` — task briefs, trạng thái |
 | `team-config/team.md` | Department `tms`: room, 4 bot, soul, skills |
-| `team-config/skills/*/SKILL.md` | 5 skill: `tms-delivery-coordination`, `ba-ticket-to-srs-br`, `ba-srs-docx-env-check`, `qa-verify-export-local`, `tms-excel-export-verify` |
+| `team-config/skills/*/SKILL.md` | 6 skill: `tms-delivery-coordination`, `ba-ticket-to-srs-br`, `ba-srs-docx-env-check`, `qa-verify-export-local`, `tms-excel-export-verify`, `orca-dispatch` |
 | `projects/{tms,fms,ca-nhan}.json` | Registry project: Jira, department, repos, stack; `null` = chưa biết |
 | `scripts/init-project.sh` | Tạo registry + cây `reports/docs/tests` cho project mới |
+| `scripts/stack.sh` | Quản lý stack local duy nhất (`up`/`down`/`status`/`reset-db`) với lock ở `~/.local/state/tms-stack/lock.json` |
+| `tests/tms/seed/001-tenant-and-users.sql` | Seed cố định tenant `tuanvudev` + tài khoản QA (lấy credential từ `tests/tms/.env`) |
 | `.gitignore` | Chặn evidence nặng, `node_modules/`, `__pycache__/`, `*.log` |
 | `reports/tms/qa/ITMS-378/ITMS-378-qa-report.md` | Ví dụ QA đã chạy: PASS AC-01→07, AC-08 known limitation |
 
 ## 7. Runtime/Tooling Preferences
 
 - Workspace: không cần runtime/package manager; git + Markdown/JSON là đủ.
-- TMS FE: Node + pnpm/`npx`; Next.js dev server port `4700`.
+- TMS FE: Node + pnpm/`npx`; Next.js server port `4700` (luôn khởi động qua `scripts/stack.sh`, không chạy `next`/`go`/`nohup` trực tiếp).
 - Test harness `tests/tms`: Node 22 + pnpm, Playwright Chromium. Python poller/dashboard không thuộc test path — còn ở `/home/vif/tuan-vu/tms-test` nếu cần.
 - QA probe: plain Node CommonJS, mượn `@playwright/test` từ `tests/tms/node_modules`; không tạo dependency riêng trong `reports/`.
 - Secrets: `.env` (trong `tests/tms` hoặc `/home/vif/tuan-vu/tms-test`) chứa credential — đã git-ignore, không commit/copy giá trị; dùng `.env.example`.

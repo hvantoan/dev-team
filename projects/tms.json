@@ -4,11 +4,22 @@
   "department": "tms",
   "repos": [
     { "role": "fe-web", "path": "/home/vif/tuan-vu/tms-web", "base": "dev" },
+    { "role": "be", "path": "/home/vif/tuan-vu/tms_application", "base": "main" },
     { "role": "test", "path": "tests/tms" }
   ],
   "stack": {
+    "ports": {
+      "fe": 4700,
+      "be": 50051,
+      "be_http": 8081,
+      "postgres": 5436,
+      "redis": 6380
+    },
     "run": [
-      "cd /home/vif/tuan-vu/tms-web && npx next dev --turbopack -p 4700"
+      "./scripts/stack.sh up <bot> <KEY> <commit|worktree> [--dev]",
+      "./scripts/stack.sh status",
+      "./scripts/stack.sh down",
+      "./scripts/stack.sh reset-db"
     ],
     "test": [
       "cd tests/tms && pnpm test",
@@ -18,8 +29,9 @@
       "cd tests/tms && pnpm run test:report"
     ],
     "env": [
-      "tests/tms/.env (copy từ .env.example, git-ignored): APP_URL, APP_USERNAME, APP_PASSWORD, APP_TENANT",
-      "tms-web: GRPC_HOST trỏ staging API (override khi boot, không sửa .env)",
+      "tests/tms/.env (copy từ .env.example, git-ignored): APP_URL, APP_USERNAME, APP_PASSWORD, APP_TENANT (dùng cho Playwright và tests/tms/seed/)",
+      "tms_application/.env (git-ignored): POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB, REDIS_PASSWORD (dùng cho docker compose postgres/redis local qua scripts/stack.sh)",
+      "tms-web: GRPC_HOST=http://localhost:50051 (trỏ BE local do scripts/stack.sh dựng, không trỏ staging)",
       "tenant tuanvudev: --host-resolver-rules=MAP tuanvudev.localhost 127.0.0.1"
     ]
   }
