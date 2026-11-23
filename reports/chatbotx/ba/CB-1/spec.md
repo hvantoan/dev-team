@@ -2,10 +2,11 @@
 
 - **Ticket:** CB-1 — https://vtxsolution.atlassian.net/browse/CB-1
 - **Project:** `chatbotx` (`/home/vif/workspace/ChatbotX`)
-- **Trạng thái:** DRAFT — chờ PO (anh Văn Toàn) clear `spec.md` (Jira đang `In Progress`, assignee Hồ Văn Toàn; **không tự clear**)
-- **Ngày viết:** 2026-11-23
+- **Trạng thái:** DRAFT — đồng bộ theo QA Verdict PR 1 (`reports/chatbotx/qa/CB-1/verdict.md`, head `2782fe418`); chờ PO (anh Văn Toàn) clear & PR 2 (`encryptedAuth` + backfill) (**không tự clear**)
+- **Ngày cập nhật:** 2026-11-23
 - **Nguồn:**
   - `reports/chatbotx/orchestrator/2026-11-23-cb2-refine-cb1/jira-context.md` (description + comment PO `2026-11-23T00:45:40.018+0700` — **comment ưu tiên hơn description khi mâu thuẫn**)
+  - `reports/chatbotx/qa/CB-1/verdict.md` (kết quả verify PR #6 / PR 1 ngày 2026-11-23)
   - Kiểm tra code trực tiếp tại `/home/vif/workspace/ChatbotX`
 
 ---
@@ -15,8 +16,8 @@
 Hoàn thiện tích hợp **OpenAI-compatible** và bảo mật khoá API cho toàn bộ AI provider trong ChatbotX theo 2 PR nối tiếp:
 1. **PR 1 — Public API, Satellite ID & SSRF guard:**
    - Dùng lại `connections.create` / `connections.delete` cho connect/disconnect (không tạo procedure connect/disconnect riêng), và mở rộng `/v1/integrations/ai` (`getAiProvider`, `updateAiProvider`) cho `openaiCompatible` (scope token `"integrations"`).
-   - Sửa lỗi âm thầm ở `ai_agents_create`: `integrations.list` trả parent `Integration.id`, còn worker tìm theo **satellite ID** `IntegrationOpenaiCompatible.id` (`apps/worker/src/lib/ai/reply-model.ts:42`).
-   - Bật SSRF guard (`assertPublicUrl`) mặc định trên mọi edition, kèm env opt-out cho self-hosted (`ALLOW_PRIVATE_AI_BASE_URLS`, bị bỏ qua khi `isCloud()`) để phục vụ preset `lmstudio` mặc định `http://127.0.0.1:1234/v1` khi self-hosted chủ động cho phép.
+   - Sửa lỗi âm thầm ở `ai_agents_create`: `integrations.list` trả parent `Integration.id`, còn worker tìm theo **satellite ID** `IntegrationOpenaiCompatible.id` (`apps/worker/src/lib/ai/reply-model.ts:43`).
+   - Bật SSRF guard (`assertPublicUrl`) mặc định trên mọi edition, kèm env opt-out cho self-hosted (`OPENAI_COMPATIBLE_ALLOW_PRIVATE_URLS`, bị bỏ qua khi `isCloud()`) để phục vụ preset `lmstudio` mặc định `http://127.0.0.1:1234/v1` khi self-hosted chủ động cho phép.
 2. **PR 2 — Mã hoá `auth` mọi AI provider & Backfill:**
    - Mã hoá `auth` cho **mọi AI provider** (`openai`, `claude`, `gemini`, `deepseek`, `muse`, `openrouter`, `openaiCompatible`) tại tầng store binding chung theo convention cột `encryptedAuth`, reader đọc được cả ciphertext lẫn plaintext trong giai đoạn chuyển tiếp, kèm script backfill TypeScript có `--dry-run` (chờ PO duyệt SQL migration và dry-run trước khi apply).
 
@@ -28,12 +29,12 @@ Hoàn thiện tích hợp **OpenAI-compatible** và bảo mật khoá API cho to
 
 **PR 1 — Public API, Satellite ID & SSRF guard:**
 - `/home/vif/workspace/ChatbotX/apps/builder/src/features/integrations/schema/ai-provider.ts` — mở rộng `aiProviderPathParam` thêm `"openaiCompatible"`; `getAiProviderRequest` thêm optional `integrationId`; `updateAiProviderRequest` thêm `integrationId` (bắt buộc khi `provider === "openaiCompatible"`), `autoReply`, `enabled`, `name`, `preset` (`openaiCompatibleProviderPresets` ∪ `"custom"`), `defaultModel`, `baseURL`, `apiKey`.
-- `/home/vif/workspace/ChatbotX/apps/builder/src/features/integrations/api/public/ai.ts` — route dùng `workspaceTokenAuthAPI` scope `"integrations"`, từ chối token read-only, giữ guard `_confirm` cho thao tác mutating theo convention; `getAiProvider(openaiCompatible)` không truyền `integrationId` trả danh sách instance, có `integrationId` trả 1 instance; `updateAiProvider(openaiCompatible)` bắt buộc `integrationId` và gọi chung service method với UI; response trả satellite `id` (`IntegrationOpenaiCompatible.id`), `integrationId` và `hasApiKey: boolean`, tuyệt đối không trả `apiKey` hay ciphertext.
+- `/home/vif/workspace/ChatbotX/apps/builder/src/features/integrations/api/public/ai.ts` — route dùng `workspaceTokenAuthAPI` scope `"integrations"`, bảo vệ các route mutating bằng method guard từ chối token `read_only` (không có convention `_confirm`); `getAiProvider(openaiCompatible)` trả `{ data: [...] }` với `id` = satellite `IntegrationOpenaiCompatible.id`, `integrationId` = parent `Integration.id`, và `hasApiKey: boolean` (tuyệt đối không trả `apiKey` hay ciphertext); `get`/`update` nhận cả satellite `id` lẫn parent `integrationId` (qua `findByWorkspaceIdAndAnyId` lọc `workspaceId`), `updateAiProvider(openaiCompatible)` bắt buộc truyền `integrationId` và gọi chung service `updateWithVerification` với UI.
 - `/home/vif/workspace/ChatbotX/apps/builder/src/features/integration-openai-compatible/actions/update.action.ts` & `/home/vif/workspace/ChatbotX/packages/business/src/integration-openai-compatible/service.ts` — đồng nhất service method dùng chung giữa UI action và Public API.
-- `/home/vif/workspace/ChatbotX/apps/builder/src/features/ai-agents/schema/action.ts` — sửa description trường `integrationId` (dòng 129) sang lấy **satellite ID** từ `integrations.getAiProvider(provider="openaiCompatible")` (không dùng `integrations.list` vốn trả `Integration.id`).
-- `/home/vif/workspace/ChatbotX/packages/business/src/integration-openai-compatible/validate-base-url.ts` & `/home/vif/workspace/ChatbotX/.env.example` — bật `assertPublicUrl` trên mọi edition; chỉ opt-out khi `!isCloud()` và bật `ALLOW_PRIVATE_AI_BASE_URLS` (luôn bỏ qua env này khi `isCloud()`).
-- `/home/vif/workspace/ChatbotX/apps/builder/__tests__/api-parity-manifest.json` — chuyển 4 entry `integration-openai-compatible/*` (dòng 261–264) từ `private:` sang `covered:...`.
-- `/home/vif/workspace/ChatbotX/apps/builder/__tests__/integrations-public-api.test.ts`, snapshot OpenAPI/spec, `/home/vif/workspace/ChatbotX/apps/cli/`, `/home/vif/workspace/ChatbotX/apps/mcp-server/`, docs (`cli-mcp-docs`, ghi chú `ALLOW_PRIVATE_AI_BASE_URLS` và rủi ro disconnect).
+- `/home/vif/workspace/ChatbotX/apps/builder/src/features/ai-agents/schema/action.ts` — sửa description trường `integrationId` (dòng 129) sang lấy **satellite ID** từ `integrations.getAiProvider(provider="openaiCompatible")` (trường `data[].id`, không dùng `integrations.list` vốn trả parent `Integration.id`).
+- `/home/vif/workspace/ChatbotX/packages/business/src/integration-openai-compatible/validate-base-url.ts` & `/home/vif/workspace/ChatbotX/.env.example` — bật `assertPublicUrl` trên mọi edition; chỉ opt-out khi `!isCloud()` và bật `OPENAI_COMPATIBLE_ALLOW_PRIVATE_URLS` (luôn bỏ qua env này khi `isCloud()`).
+- `/home/vif/workspace/ChatbotX/apps/builder/__tests__/api-parity-manifest.json` — chuyển 4 entry `integration-openai-compatible/*` (dòng 261–264) từ `private:` sang `covered:connections` / `covered:integrations`.
+- `/home/vif/workspace/ChatbotX/apps/builder/__tests__/integrations-public-api.test.ts`, snapshot OpenAPI/spec, `/home/vif/workspace/ChatbotX/apps/cli/README.md`, `/home/vif/workspace/ChatbotX/apps/mcp-server/`, `/home/vif/workspace/ChatbotX/docs/openai-compatible.md`.
 
 **PR 2 — Mã hoá `auth` mọi AI provider & Backfill:**
 - `/home/vif/workspace/ChatbotX/packages/database/src/schema/integration-{openai,claude,gemini,deepseek,muse,openrouter,openai-compatible}.ts` & `/home/vif/workspace/ChatbotX/packages/database/drizzle/` — thêm cột `encryptedAuth` (theo convention `woocommerce`/`shopify`/`meta-catalog`); **chỉ generate & inspect SQL migration, chờ PO duyệt trước khi apply**.
@@ -64,29 +65,31 @@ Hoàn thiện tích hợp **OpenAI-compatible** và bảo mật khoá API cho to
 
 | # | AC | Vai trò/user | Cách kiểm |
 |---|---|---|---|
-| AC1 | Chạy được qua MCP/Public API end-to-end đủ 6 bước với token scope `"integrations"`: `connections_create(openaiCompatible)` → `integrations_get_ai_provider(provider="openaiCompatible")` trả về **satellite ID** (`IntegrationOpenaiCompatible.id`; không `integrationId` trả danh sách, có `integrationId` trả 1 instance) → `integrations_update_ai_provider(provider="openaiCompatible", integrationId=<satelliteId>, autoReply=true)` → `ai_agents_create` (`kind: "openaiCompatible"`, `integrationId: <satelliteId>`) → agent trả lời tin nhắn thử → `connections_delete`. Description của `ai_agents_create` trỏ đúng `integrations.getAiProvider` (satellite ID), không trỏ `integrations.list` | Agent / API client | MCP/API E2E test 6 bước; kiểm tra schema `ai_agents_create` |
-| AC2 | Token read-only bị từ chối ở mọi procedure mutating (các thao tác mutating giữ guard `_confirm` theo convention); response của `getAiProvider` / `updateAiProvider` / `connections` không bao giờ chứa `apiKey` hay ciphertext, chỉ trả `hasApiKey: boolean` | Security / API client | Test token read-only bị reject; assert payload response chỉ có `hasApiKey`, không có `auth`/`apiKey` |
-| AC3 | `updateAiProvider` với `provider="openaiCompatible"` thiếu `integrationId` trả lỗi validation; có `integrationId` cập nhật đúng instance (`autoReply`, `enabled`, `name`, `preset` validate theo `openaiCompatibleProviderPresets` ∪ `"custom"`, `defaultModel`, `baseURL` chạy lại SSRF, `apiKey`) qua cùng service với UI action | Agent / API client | Test trong `integrations-public-api.test.ts` với case thiếu/có `integrationId` |
+| AC1 | Chạy được qua MCP/Public API end-to-end đủ 6 bước với token scope `"integrations"`: `connections_create(openaiCompatible)` → `integrations_get_ai_provider(provider="openaiCompatible")` trả về **satellite ID** (`data[].id` = `IntegrationOpenaiCompatible.id`, kèm `integrationId` = parent) → `integrations_update_ai_provider(provider="openaiCompatible", integrationId=<satelliteId>, autoReply=true)` → `ai_agents_create` (`kind: "openaiCompatible"`, `integrationId: <satelliteId>`) → agent trả lời tin nhắn thử → `connections_delete`. Description của `ai_agents_create` trỏ đúng `integrations.getAiProvider` (satellite ID), không trỏ `integrations.list` | Agent / API client | MCP/API E2E test 6 bước; kiểm tra schema `ai_agents_create` |
+| AC2 | Token `read_only` bị từ chối ở mọi procedure mutating qua HTTP method guard (`GET`/`HEAD` only trong `workspaceTokenAuthMidddleware` — không dùng `_confirm`); response của `getAiProvider` / `updateAiProvider` / `connections` không bao giờ chứa `apiKey` hay ciphertext, chỉ trả `hasApiKey: boolean` | Security / API client | Test token `read_only` bị `403 FORBIDDEN` (kể cả `POST`, `PATCH`, `DELETE`); assert payload response chỉ có `hasApiKey`, không có `auth`/`apiKey` |
+| AC3 | `updateAiProvider` với `provider="openaiCompatible"` thiếu `integrationId` trả lỗi validation; có `integrationId` (satellite hoặc parent) cập nhật đúng instance (`autoReply`, `enabled`, `name`, `preset` validate theo `openaiCompatibleProviderPresets` ∪ `"custom"`, `defaultModel`, `baseURL` chạy lại SSRF, `apiKey`) qua cùng service `updateWithVerification` với UI action | Agent / API client | Test trong `integrations-public-api.test.ts` với case thiếu/có `integrationId` |
 | AC4 | Sau migration `encryptedAuth` và backfill (được PO duyệt), mọi row ở cả 7 bảng AI provider (`openai`, `claude`, `gemini`, `deepseek`, `muse`, `openrouter`, `openaiCompatible`) không còn `auth` plaintext (`secretTextAuthSchema.safeParse` trên giá trị thô thất bại); trong giai đoạn chuyển tiếp trước backfill, reader đọc được cả ciphertext lẫn plaintext và luồng AI vẫn gọi được provider | Security / Runtime | Kiểm tra SQL migration + dry-run backfill + query DB sau apply + test dual-format reader & AI runtime |
-| AC5 | SSRF guard (`assertPublicUrl`) bật mặc định trên mọi edition: `http://127.0.0.1:11434/v1` và `http://127.0.0.1:1234/v1` (preset `lmstudio`) trả `400 ssrfBlocked` cả trên self-hosted lẫn cloud khi chưa opt-out; đặt `ALLOW_PRIVATE_AI_BASE_URLS` cho phép trên self-hosted nhưng bị bỏ qua khi `isCloud()` | Security / Self-hosted ops | Unit/API test cho cả 3 case (cloud, self-hosted mặc định, self-hosted có env); `.env.example` đã thêm biến |
+| AC5 | SSRF guard (`assertPublicUrl`) bật mặc định trên mọi edition: chặn `http://127.0.0.1:11434/v1` và `http://127.0.0.1:1234/v1` (preset `lmstudio`) cả trên self-hosted lẫn cloud khi chưa opt-out (`POST /v1/connections` trả `400 connectionCredentialsRejected` do connection engine bọc lỗi provider; `PATCH /v1/integrations/ai/openaiCompatible` trả `400 ssrfBlocked`); đặt `OPENAI_COMPATIBLE_ALLOW_PRIVATE_URLS` cho phép trên self-hosted nhưng bị bỏ qua khi `isCloud()` | Security / Self-hosted ops | Unit/API test cho cả 3 case (cloud, self-hosted mặc định, self-hosted có env); `.env.example` và docs khớp tên env và mã lỗi thực tế |
 | AC6 | `api-parity-manifest.json` không còn entry `private:` cho `integration-openai-compatible/*`; `pnpm lint`, `pnpm check-types` (hoặc `check-types:cold`), test builder (gồm `integrations-public-api.test.ts`), snapshot spec đã regenerate và `cli-mcp-docs` pass | Developer / QA | Chạy lệnh kiểm tra tại `/home/vif/workspace/ChatbotX` và kiểm tra diff manifest/snapshot |
 
 ---
 
 ## Rule nghiệp vụ
 
-1. **Scope & Auth:**
-   - Public API `/v1/integrations/ai` dùng `workspaceTokenAuthAPI` với scope `"integrations"`, từ chối token read-only; thao tác mutating giữ guard `_confirm` theo convention hiện có.
+1. **Scope & Auth (không có `_confirm`):**
+   - Public API `/v1/integrations/ai` dùng `workspaceTokenAuthAPI` với scope `"integrations"`.
+   - Bảo vệ mutating route bằng HTTP method guard của token `read_only` (`READ_ONLY_TOKEN_ALLOWED_METHODS = { GET, HEAD }` tại `authorize-workspace-access.ts:38`); **không có convention `_confirm` trong repo**.
    - Response không bao giờ trả `apiKey` hoặc ciphertext — chỉ trả `hasApiKey: boolean`.
-2. **Satellite ID & `autoReply`:**
-   - `integrations.list` trả `Integration.id` (bảng cha), còn worker (`apps/worker/src/lib/ai/reply-model.ts:42`) tìm theo `IntegrationOpenaiCompatible.id` (satellite ID).
-   - `getAiProvider` / `updateAiProvider` cho `openaiCompatible` dùng satellite `id` (`IntegrationOpenaiCompatible.id`) và trả kèm `integrationId` (bảng cha để đối chiếu `connections.delete`).
+2. **Parent `Integration.id` vs Satellite `IntegrationOpenaiCompatible.id`:**
+   - `integrations.list` trả `Integration.id` (bảng cha), còn worker (`apps/worker/src/lib/ai/reply-model.ts:43`) tìm **bắt buộc theo satellite ID** (`IntegrationOpenaiCompatible.id`).
+   - `getAiProvider` / `updateAiProvider` chấp nhận cả satellite `id` lẫn parent `integrationId` (superset qua `findByWorkspaceIdAndAnyId`, lọc `workspaceId`), nhưng trả về rõ `id` = satellite `IntegrationOpenaiCompatible.id` và `integrationId` = parent `Integration.id`. Client/agent **bắt buộc dùng `data[].id` (satellite ID)** khi gọi `aiAgents.create`.
    - `connections.create` tạo instance với `autoReply = false`; agent chỉ trả lời khi `enabled && autoReply`, nên cần `updateAiProvider(..., autoReply: true)`.
 3. **Validation & Preset:**
    - `preset` validate theo `openaiCompatibleProviderPresets` ∪ `"custom"`; với `preset !== "custom"`, giữ partial unique index `IntegrationOpenaiCompatible_workspaceId_preset_key`.
-   - `updateAiProvider` khi đổi `baseURL` phải chạy lại SSRF guard; khi không truyền `apiKey`, giữ nguyên key hiện có.
-4. **SSRF & Opt-out:**
-   - Bỏ gate `isCloud()` ở `validateOpenaiCompatibleBaseUrlForEnvironment`; chỉ cho phép bỏ qua `assertPublicUrl` khi `!isCloud()` và `ALLOW_PRIVATE_AI_BASE_URLS` được bật.
+   - `updateAiProvider` khi đổi `baseURL` phải chạy lại SSRF guard; khi đổi `baseURL` sang origin khác phải gửi `apiKey` mới; khi không truyền `apiKey` (cùng origin), giữ nguyên key hiện có.
+4. **SSRF, Opt-out & Mã lỗi thực tế:**
+   - Bỏ gate `isCloud()` ở `validateOpenaiCompatibleBaseUrlForEnvironment`; chỉ cho phép bỏ qua `assertPublicUrl` khi `!isCloud()` và `OPENAI_COMPATIBLE_ALLOW_PRIVATE_URLS` được bật.
+   - **Contract mã lỗi thực tế:** trên `POST /v1/connections`, `packages/connections/src/credentials.ts:114-127` bọc mọi lỗi của credential provider thành `400 connectionCredentialsRejected` (guard vẫn chặn và không probe host nội bộ); trên `PATCH /v1/integrations/ai/openaiCompatible`, lỗi SSRF trả trực tiếp `400 ssrfBlocked`. Đề xuất giữ nguyên hành vi & docs mô tả đúng contract này (chỉ map riêng `ssrfBlocked` cho `connections.create` nếu PO yêu cầu thêm).
 5. **Migration & Rollout PR 2:**
    - Thêm cột `encryptedAuth` thay vì ghi ciphertext vào cột `auth` jsonb; reader hỗ trợ đọc dual-format trong giai đoạn chuyển tiếp.
    - SQL migration và script backfill TypeScript (`--dry-run`) phải trình PO duyệt trước khi apply.
@@ -95,10 +98,10 @@ Hoàn thiện tích hợp **OpenAI-compatible** và bảo mật khoá API cho to
 
 ## Steps / luồng chính
 
-1. **PR 1 — Public API + SSRF:**
-   - Cập nhật `validate-base-url.ts` bật `assertPublicUrl` mọi edition + thêm opt-out `ALLOW_PRIVATE_AI_BASE_URLS` (chỉ `!isCloud()`), thêm vào `.env.example`.
-   - Chuẩn hoá method trong `packages/business/src/integration-openai-compatible/service.ts` để UI `update.action.ts` và Public API dùng chung.
-   - Mở rộng `aiProviderPathParam`, `getAiProvider` (list/single), `updateAiProvider` (bắt buộc `integrationId`) tại `/v1/integrations/ai`.
+1. **PR 1 — Public API + SSRF (đã code xong tại PR #6, đang bổ sung test gap + E2E):**
+   - Bật `assertPublicUrl` mọi edition + opt-out `OPENAI_COMPATIBLE_ALLOW_PRIVATE_URLS` (chỉ `!isCloud()`), cập nhật `.env.example` & `docs/openai-compatible.md`.
+   - Dùng chung `integrationOpenaiCompatibleService.updateWithVerification` giữa UI `update.action.ts` và Public API `updateAiProvider`.
+   - Mở rộng `aiProviderPathParam`, `getAiProvider` (`{ data: [...] }`), `updateAiProvider` (bắt buộc `integrationId`) tại `/v1/integrations/ai`.
    - Sửa description `integrationId` của `ai_agents_create`.
    - Cập nhật `api-parity-manifest.json`, regenerate snapshot spec, chạy `cli-mcp-docs`, bổ sung test `integrations-public-api.test.ts` + test SSRF.
 2. **PR 2 — Mã hoá mọi AI provider + Backfill:**
@@ -108,11 +111,21 @@ Hoàn thiện tích hợp **OpenAI-compatible** và bảo mật khoá API cho to
 
 ---
 
+## Gap test cần bổ sung & Phát hiện QA (PR 1 @ `2782fe418`)
+
+1. **Gap bằng chứng — Test `PATCH /v1/integrations/ai/{provider}` với token `read_only`:** Test hiện có mới phủ `POST` và `DELETE` (`/v1/connections`); dù hành vi middleware đúng theo allow-list `GET|HEAD`, cần bổ sung test trực tiếp trong `integrations-public-api.test.ts` (hoặc `integrations-public-scope.test.ts`) cho `PATCH /v1/integrations/ai/openaiCompatible` với token `read_only` trả `403 FORBIDDEN`.
+2. **AC1 E2E 6 bước đang BLOCKED môi trường:** Chưa chạy được E2E thực trên stack riêng vì stack `main` của owner đang chiếm cổng cố định (`3123`, `25432`, `26379`, `8025`, `29000`).
+3. **PR 2 (AC4) chưa triển khai:** 0/7 bảng AI provider có `encryptedAuth`, chưa có backfill script — **CB-1 chưa thể đóng/DONE cho tới khi PR 2 xong và PO duyệt SQL/backfill**.
+4. **Thay đổi UX trên UI connect (ngoài AC, cần PO ghi nhận):** `connect.action.ts` chuyển sang fail-closed khi endpoint không truy cập được và trả thông điệp `invalidBaseURL` (không phân biệt URL bị chặn với server đang tắt); ngoài ra connect qua UI hiện probe `/models` hai lần (`verifyOpenaiCompatibleProvider` rồi `fromCredentials`).
+
+---
+
 ## Trường hợp biên & ngoại lệ
 
-- `PATCH /v1/integrations/ai/openaiCompatible` thiếu `integrationId` → lỗi validation; truyền nhầm `Integration.id` (parent) thay vì satellite `IntegrationOpenaiCompatible.id` → `404`.
-- Update `baseURL` không gửi kèm `apiKey` mới → giải mã key đang lưu để chạy `verifyOpenaiCompatibleProvider`, không gửi ciphertext/object làm Bearer token.
-- Disconnect integration đang gắn với AI agent → cho phép xoá, agent fail lúc runtime (ghi rõ trong docs).
+- `PATCH /v1/integrations/ai/openaiCompatible` thiếu `integrationId` → lỗi validation; truyền ID của workspace khác → `404` (`findByWorkspaceIdAndAnyId` lọc `workspaceId`).
+- Client dùng nhầm parent `Integration.id` cho `aiAgents.create` (dù `get`/`update` vẫn nhận) → worker không tìm thấy satellite `IntegrationOpenaiCompatible.id` và im lặng không trả lời.
+- Update `baseURL` không gửi kèm `apiKey` mới → cùng origin thì giải mã key đang lưu để verify; khác origin bắt buộc gửi `apiKey` mới.
+- Disconnect integration đang gắn với AI agent → cho phép xoá, agent fail lúc runtime (ghi rõ trong `docs/openai-compatible.md`).
 - Deploy code PR 2 trước khi chạy xong backfill → reader đọc dual-format đảm bảo mọi AI provider không bị gián đoạn.
 
 ---
@@ -122,15 +135,15 @@ Hoàn thiện tích hợp **OpenAI-compatible** và bảo mật khoá API cho to
 - **Migration SQL & Backfill (chặn cứng):** Chạm 7 bảng AI provider (`openai`, `claude`, `gemini`, `deepseek`, `muse`, `openrouter`, `openaiCompatible`); bắt buộc chờ PO duyệt SQL migration và log `--dry-run` backfill.
 - **Sót reader `secretTextAuthSchema`:** Đã xác định thêm `embedding-model.ts`, `muse-transcribe.ts`, `segment-image.ts` ngoài `factory.ts` và `openai-compatible.ts` — cần đảm bảo sửa đủ khi chuyển sang `encryptedAuth`.
 - **Public manifest & snapshot:** Mở 4 entry `integration-openai-compatible/*` sang `covered:` yêu cầu regenerate snapshot OpenAPI/MCP đồng bộ.
-- **SSRF & `lmstudio`:** Preset `lmstudio` mặc định `http://127.0.0.1:1234/v1` sẽ bị chặn trên self-hosted nếu không bật `ALLOW_PRIVATE_AI_BASE_URLS` — cần ghi rõ trong docs.
-- **Satellite ID mismatch:** Mọi test và tài liệu agent phải kiểm tra đúng `IntegrationOpenaiCompatible.id` thay vì `Integration.id`.
+- **SSRF & `lmstudio`:** Preset `lmstudio` mặc định `http://127.0.0.1:1234/v1` sẽ bị chặn trên self-hosted nếu không bật `OPENAI_COMPATIBLE_ALLOW_PRIVATE_URLS`.
+- **Satellite ID mismatch:** `get`/`update` nhận cả parent `Integration.id` có thể làm client tưởng parent ID dùng được ở mọi nơi rồi truyền nhầm vào `aiAgents.create`.
 
 ---
 
 ## Done when (Điều kiện hoàn thành)
 
-- PR 1 & PR 2 pass `pnpm lint`, `pnpm check-types` (hoặc `check-types:cold`), `integrations-public-api.test.ts` và bộ test liên quan.
-- Kịch bản MCP E2E 6 bước chạy pass.
+- PR 1 & PR 2 pass `pnpm lint`, `pnpm check-types` (hoặc `check-types:cold`), `integrations-public-api.test.ts` (đã bổ sung test `PATCH` với `read_only` token) và bộ test liên quan.
+- Kịch bản MCP E2E 6 bước (AC1) chạy pass trên stack kiểm thử từ worktree PR.
 - `api-parity-manifest.json` không còn `private:` cho `integration-openai-compatible/*`; snapshot spec & `cli-mcp-docs` đã cập nhật.
 - SQL migration `encryptedAuth` + backfill `--dry-run` được PO duyệt, apply xong và kiểm tra 0 row AI provider còn `auth` plaintext.
 - QA `reports/chatbotx/qa/CB-1/verdict.md` đạt **PASS**.
@@ -139,13 +152,13 @@ Hoàn thiện tích hợp **OpenAI-compatible** và bảo mật khoá API cho to
 
 ## Cập nhật docs sau khi DONE
 
-- [ ] SRS: `docs/chatbotx/srs/integration-openai-compatible.md` — API `/v1/integrations/ai` (satellite ID), SSRF guard + `ALLOW_PRIVATE_AI_BASE_URLS`, lưu ý disconnect, và mã hoá `encryptedAuth`.
+- [ ] SRS: `docs/chatbotx/srs/integration-openai-compatible.md` — ghi nhận API `/v1/integrations/ai` (satellite ID vs parent ID), SSRF guard + `OPENAI_COMPATIBLE_ALLOW_PRIVATE_URLS` + contract lỗi `connectionCredentialsRejected` vs `ssrfBlocked`, lưu ý disconnect, và mã hoá `encryptedAuth`.
 - [ ] ADR: quyết định dùng `encryptedAuth` tại `store-bindings.ts` cho toàn bộ AI providers.
 
 ---
 
 ## Open Questions (chỉ giữ điểm thật sự chưa chốt)
 
-1. **Shape output `getAiProvider(openaiCompatible)`:** PO chốt dùng union (1 object khi có `integrationId`, mảng khi không có) hay wrapper `{ data: [...] }` để schema OpenAPI/MCP dễ đọc hơn?
-2. **Convention `_confirm` trên `PATCH updateAiProvider`:** Kiểm tra `integrations-public-api.test.ts` để chốt `PATCH updateAiProvider` có cần `_confirm` hay giữ chữ ký hiện tại (grep `apps/builder/src/features/integrations/` hiện chưa thấy `_confirm`).
-3. **Env mã hoá ở self-hosted:** Ngoài `ENCRYPTION_KEY` (`.env.example:87`), `@chatbotx.io/encryption` có yêu cầu biến môi trường nào khác trên bản self-hosted cần ghi vào `.env.example` không?
+1. **Mã lỗi SSRF trên `POST /v1/connections`:** PO chốt giữ contract thực tế (`400 connectionCredentialsRejected` ở `POST /v1/connections`, `400 ssrfBlocked` ở `PATCH /v1/integrations/ai/openaiCompatible` — đã khớp docs hiện tại) hay yêu cầu map riêng `ssrfBlocked` cho `connections.create`?
+2. **UX connect fail-closed khi endpoint tắt (phát hiện #7 của QA):** PO giữ thông điệp `invalidBaseURL` hay tách lỗi riêng `providerUnreachable` khi endpoint không truy cập được?
+3. **Env mã hoá ở self-hosted (PR 2):** Ngoài `ENCRYPTION_KEY` (`.env.example:87`), `@chatbotx.io/encryption` có yêu cầu biến môi trường nào khác trên bản self-hosted cần ghi vào `.env.example` không?
