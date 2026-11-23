@@ -1,17 +1,19 @@
 ---
 name: ba-ticket-to-srs-br
-description: Đúc kết ticket Jira TMS thành rule nghiệp vụ (BR) và section SRS trình PO duyệt. Dùng khi BA TMS nhận ticket cần viết lại AC/BR — đặc biệt ticket có file mẫu đính kèm (Excel/ẩn thị output) hoặc yêu cầu export Excel có merge cell. Bao gồm cách phát hiện và flag mâu thuẫn giữa file mẫu và text ticket.
+description: Đúc kết ticket Jira (tms, chatbotx) thành rule nghiệp vụ (BR) và section SRS trình PO duyệt. Dùng khi BA nhận ticket cần viết lại AC/BR — đặc biệt ticket có file mẫu đính kèm (Excel/ẩn thị output) hoặc yêu cầu export Excel có merge cell. Bao gồm cách phát hiện và flag mâu thuẫn giữa file mẫu và text ticket.
 ---
 
 # BA: từ ticket Jira → BR/SRS trình PO
 
-Quy trình chuẩn của BA TMS để biến mô tả ticket Jira thành tài liệu nghiệp vụ
+Quy trình chuẩn của BA để biến mô tả ticket Jira thành tài liệu nghiệp vụ
 anh Văn Toàn duyệt trước khi Dev implement. BA không có quyền Jira — đầu vào
-là text/đính kèm Điều phối TMS chuyển.
+là text/đính kèm Điều phối chuyển. Project suy từ ticket key: `ITMS-` → `tms`,
+`CB-` → `chatbotx`; SRS/ADR ở `docs/<proj>/srs|adr/` (ChatbotX đọc thêm
+`AGENTS.md` + `docs/` của repo `/home/vif/workspace/ChatbotX`).
 
 ## Bước 1 — Đọc SRS module liên quan TRƯỚC
 
-- Mỗi module có một SRS trong `/home/vif/tuanvu/dev-team/docs/tms/srs/`
+- Mỗi module có một SRS trong `/home/vif/tuanvu/dev-team/docs/<proj>/srs/`
   (nhiều file là docx → convert sang text bằng pandoc, xem skill
   `ba-srs-docx-env-check`).
 - Trích ra: vai trò/quyền của module, các BR đã đánh số (xác định prefix và

@@ -34,6 +34,7 @@ Project nhiều repo: brief ghi scope allow/deny **theo từng repo**; `handoff.
 Ràng buộc:
 
 - FMS chưa có department — tạo department riêng khi FMS vận hành; không gộp vào team TMS.
+- ChatbotX (Jira `CB`, vtxsolution) dùng chung dàn bot TMS qua `projects/chatbotx.json`; project suy từ ticket key (`ITMS-` → `tms`, `CB-` → `chatbotx`). Jira CB đọc/ghi qua MCP `jira-vtx` (`mcp__jira_vtx_jira_*`) vì `orca jira` chưa lưu site vtxsolution.
 - Không checkout repo dự án vào `projects/` hay bất kỳ đâu trong `dev-team/`.
 - Repo thật đang dùng cho TMS (theo evidence `ITMS-378`, đã ghi vào `projects/tms.json`): FE `/home/vif/tuan-vu/tms-web`, test harness `tests/tms`.
 - Test code luôn nằm trong `tests/<proj>/` (path relative trong registry) — không trỏ ra ngoài workspace.
@@ -106,7 +107,7 @@ dev-team/
 | `projects/` | con trỏ project (repo, env, prefix) | repo checkout |
 | `tools/mausbot-orca/` | CLI `mausbot-orca` vendored (intec-kit@29a60c9), systemd watcher | task code, spec |
 
-Trạng thái hiện tại (2026-11-20): chỉ `reports/tms/qa/ITMS-378/` có artifact; các folder khác là `.gitkeep`. SRS TMS đang nằm ở đường dẫn lặp `docs/tms/srs/srs/*.md` (đã commit) — sửa tại chỗ, không tạo bản thứ hai; đường dẫn chuẩn trong tài liệu là `docs/<proj>/srs/`.
+Trạng thái hiện tại (2026-11-23): TMS có artifact ở `reports/tms/{orchestrator,ba,dev,qa}/`; `chatbotx` đã có registry + cây `reports|docs|tests/chatbotx` nhưng chưa có run (chờ PO triage CB). SRS TMS đang nằm ở đường dẫn lặp `docs/tms/srs/srs/*.md` (đã commit) — sửa tại chỗ, không tạo bản thứ hai; đường dẫn chuẩn trong tài liệu là `docs/<proj>/srs/`.
 
 `team-config/` là **source of truth** của department. Sửa souls/skills/flow ở đây thì bots đang chạy trong MausBot chỉ nhận bản mới sau khi **re-import** department. Mọi đường dẫn hardcode trong `team.md`/`skills/` phải trỏ `/home/vif/tuanvu/dev-team/` và layout theo project; tên skill trong `agents[].skills` phải khớp tên folder trong `skills/`.
 
@@ -166,7 +167,7 @@ Repo không có runtime code: async patterns, dependency injection, state manage
 | `templates/orchestrator-run.md` | Mẫu `plan.md` + `status.md` — task briefs, trạng thái |
 | `team-config/team.md` | Department `tms`: room, 4 bot, soul, skills |
 | `team-config/skills/*/SKILL.md` | 6 skill: `tms-delivery-coordination`, `ba-ticket-to-srs-br`, `ba-srs-docx-env-check`, `qa-verify-export-local`, `tms-excel-export-verify`, `orca-dispatch` |
-| `projects/{tms,fms,ca-nhan}.json` | Registry project: Jira, department, repos, stack; `null` = chưa biết |
+| `projects/{tms,fms,ca-nhan,chatbotx}.json` | Registry project: Jira, department, repos, stack; `null` = chưa biết |
 | `scripts/init-project.sh` | Tạo registry + cây `reports/docs/tests` cho project mới |
 | `scripts/stack.sh` | Quản lý stack local duy nhất (`up`/`down`/`status`/`reset-db`) với lock ở `~/.local/state/tms-stack/lock.json` |
 | `tests/tms/seed/001-tenant-and-users.sql` | Seed cố định tenant `tuanvudev` + tài khoản QA (lấy credential từ `tests/tms/.env`) |
@@ -177,6 +178,7 @@ Repo không có runtime code: async patterns, dependency injection, state manage
 
 - Workspace: không cần runtime/package manager; git + Markdown/JSON là đủ.
 - TMS FE: Node + pnpm/`npx`; Next.js server port `4700` (luôn khởi động qua `scripts/stack.sh`, không chạy `next`/`go`/`nohup` trực tiếp).
+- ChatbotX: Node 24 + pnpm 10 + Turborepo; stack local `cd /home/vif/workspace/ChatbotX && ./scripts/dev-up.sh` (builder `:3123`, postgres `:25432`, redis `:26379`, demo `demo@example.com / Demo@1234`); gate `pnpm lint` / `pnpm check-types` / `pnpm test`; không commit thẳng `main`, không chạy `db:migrate` lên DB dùng chung khi chưa có PO duyệt SQL.
 - Test harness `tests/tms`: Node 22 + pnpm, Playwright Chromium. Python poller/dashboard không thuộc test path — còn ở `/home/vif/tuan-vu/tms-test` nếu cần.
 - QA probe: plain Node CommonJS, mượn `@playwright/test` từ `tests/tms/node_modules`; không tạo dependency riêng trong `reports/`.
 - Secrets: `.env` (trong `tests/tms` hoặc `/home/vif/tuan-vu/tms-test`) chứa credential — đã git-ignore, không commit/copy giá trị; dùng `.env.example`.
@@ -189,4 +191,4 @@ Repo không có runtime code: async patterns, dependency injection, state manage
 - **Phạm vi mỗi ticket:** map đủ AC → evidence; kiểm cả ca âm và ca dương (không quyền / có quyền), regression 401/403 và endpoint liền kề; với export, đối chiếu output ↔ mẫu ticket ↔ DB, kiểm merge cell.
 - **Evidence:** theo policy ở §2 — file nhẹ commit, file nặng để ngoài git và ghi đường dẫn tuyệt đối trong `verdict.md`.
 - **Đặt tên:** `qa-verify-<key>.cjs` cho luồng đầy đủ, `qa-probe-<topic>.cjs` cho probe, output `*-result.json` + ảnh/video trong `evidence/`.
-- **Không có coverage số** cho repo docs; tiêu chuẩn là 100% done-condition có evidence tái tạo được. Gap hiện tại: `tests/tms/.env` chưa tạo (copy từ `.env.example`) và `projects/tms.json` thiếu `jira.base_url`/`project_key`.
+- **Không có coverage số** cho repo docs; tiêu chuẩn là 100% done-condition có evidence tái tạo được. Gap hiện tại: `tests/tms/.env` chưa tạo (copy từ `.env.example`); `tests/chatbotx` chưa có harness Playwright; ChatbotX chưa có stack lock dùng chung cho Dev/QA.

@@ -1,6 +1,6 @@
 # ChatbotX — onboarding vào pipeline team
 
-**Trạng thái:** ⏳ chờ PO chốt D1/D2 · **Ngày:** 2026-11-23 · **Project:** `chatbotx` · **Jira:** CB
+**Trạng thái:** ⏳ chờ PO triage CB (D1/D2 đã chốt) · **Ngày:** 2026-11-23 · **Project:** `chatbotx` · **Jira:** CB
 
 ## Mục tiêu
 
@@ -26,8 +26,8 @@
 
 | # | Quyết định | Chọn | Trạng thái |
 |---|---|---|---|
-| D1 | Dàn bot | **Dùng chung** Orchestrator/ba-tms/dev-tms/qa-tms, generalize SOUL thành đa project | chờ PO |
-| D2 | Pilot | **CB-1** (đang In Progress, scope rõ, có sẵn phân tích) | chờ PO |
+| D1 | Dàn bot | **Dùng chung** Orchestrator/ba-tms/dev-tms/qa-tms, generalize SOUL thành đa project | ✅ PO chốt 2026-11-23 |
+| D2 | Pilot | **Chưa chạy** — chờ PO triage CB-1..CB-9 | ✅ PO chốt 2026-11-23 |
 | D3 | Jira | MCP `jira-vtx`; không chặn vì `orca jira` thiếu site | đã chốt |
 | D4 | Nơi lưu | Code ở repo ChatbotX; artifact ở `dev-team/reports/chatbotx/...` | đã chốt |
 
@@ -53,15 +53,15 @@
 - [ ] `stack-chatbotx.sh down` dọn process tree + nhả lock; kiểm không còn orphan `next dev`/`turbo dev`.
 - **Done:** `up` → builder 200 + login OK → `status` ghi đúng bot giữ lock → `down` sạch; chạy lại lần 2 không kẹt port.
 
-### Phase 3 — Bot adaptation (cần PO duyệt sửa SOUL)
+### Phase 3 — Bot adaptation ✅ (D1: dùng chung 4 bot)
 
-- [ ] Generalize SOUL 4 bot: `reports/tms/...` → `reports/<proj>/...` lấy từ brief/registry; TMS chỉ là default khi brief không nêu project.
-- [ ] Skill `orca-dispatch`: thêm repo `ChatbotX` cho worker; nhánh `feat|fix/CB-<n>-<slug>`; gate `pnpm lint && pnpm check-types && pnpm test`; PR chỉ sau verdict PASS.
-- [ ] Skill QA: đường verify ChatbotX (builder UI + API + DB local), evidence path, login demo.
-- [ ] `team-config/team.md`: bulletin mô tả 2 project (`tms`, `chatbotx`) nếu còn dùng department này.
+- [x] Generalize SOUL 4 bot: `reports/tms/...` → `reports/<proj>/...` lấy từ ticket key/brief; TMS chỉ là một project.
+- [x] Skill `orca-dispatch`: thêm repo `ChatbotX` cho worker; nhánh `feat|fix/CB-<n>-<slug>`; gate `pnpm lint && pnpm check-types && pnpm test`; PR chỉ sau verdict PASS.
+- [x] Skill QA: đường verify ChatbotX (builder UI + API + DB local), evidence path, login demo.
+- [x] `team-config/team.md`: souls + bulletin mô tả 2 project (`tms`, `chatbotx`); copy skill/SOUL sang bot home.
 - **Done:** brief ChatbotX → bot ghi đúng `reports/chatbotx/...`, không tạo file trong `reports/tms/...`.
 
-### Phase 4 — Pilot CB-1
+### Phase 4 — Pilot (chờ PO triage)
 
 - [ ] Mở run `reports/chatbotx/orchestrator/2026-11-23-cb1/plan.md`; BA viết `reports/chatbotx/ba/CB-1/spec.md`; PO clear.
 - [ ] Dev worker trên repo `ChatbotX`, nhánh `feat/CB-1-openai-compatible-public-api`; `handoff.md` ghi branch/commit/lệnh test.
