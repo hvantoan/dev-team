@@ -34,8 +34,8 @@ SM **không** quyết định làm gì (PO) và **không** quyết định làm 
 |---|---|
 | Product Backlog | ticket Jira READY TO DEVELOP / IN DEVELOP assign Văn Toàn + item `orca bot item` chưa đóng. Thứ tự do PO; SM chỉ phản ánh. |
 | Sprint Backlog | `goal.md` (Sprint Goal + KEY) + `board.md` (backlog → refining → spec → clear → dev → qa → pr → staging) |
-| Increment | task đạt DoD: code + gate local của project (`projects/<proj>.json` → `stack.gate.local`) + CI green + `verdict.md` PASS (+ PR merge khi PO duyệt) |
-| Definition of Done | cổng `spec clear → handoff.md → verdict PASS` + gate local + CI green; không đạt thì không trình Review |
+| Increment | task đạt DoD: code + gate local của project (`projects/<proj>.json` → `stack.gate.local`) + test case chức năng PASS + CI green + `verdict.md` PASS (+ PR merge khi PO duyệt) |
+| Definition of Done | cổng `spec clear → handoff.md → verdict PASS` + gate local + test case chức năng + CI green; không đạt thì không trình Review |
 | Outcome Done | PO xác nhận sau release — SM không tự tuyên bố |
 
 ## 5. PO ↔ team: 5 điểm chạm

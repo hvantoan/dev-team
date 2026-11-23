@@ -179,7 +179,7 @@ Repo không có runtime code: async patterns, dependency injection, state manage
 
 - Workspace: không cần runtime/package manager; git + Markdown/JSON là đủ.
 - TMS FE: Node + pnpm/`npx`; Next.js server port `4700` (luôn khởi động qua `scripts/stack.sh`, không chạy `next`/`go`/`nohup` trực tiếp).
-- ChatbotX: Node 24 + pnpm 10 + Turborepo; stack local `cd /home/vif/workspace/ChatbotX && ./scripts/dev-up.sh` (builder `:3123`, postgres `:25432`, redis `:26379`, demo `demo@example.com / Demo@1234`); gate **local** = `pnpm lint` + `pnpm check-types`; **test chỉ chạy ở CI** (`.github/workflows/ci.yml`, mọi PR) — không chạy test suite local; không commit thẳng `main`, không chạy `db:migrate` lên DB dùng chung khi chưa có PO duyệt SQL.
+- ChatbotX: Node 24 + pnpm 10 + Turborepo; stack local `cd /home/vif/workspace/ChatbotX && ./scripts/dev-up.sh` (builder `:3123`, postgres `:25432`, redis `:26379`, demo `demo@example.com / Demo@1234`); gate **local** = `pnpm lint` + `pnpm check-types`; **test suite (`pnpm test`) chỉ chạy ở CI** (`.github/workflows/ci.yml`, mọi PR) — không chạy local; **test case chức năng vẫn bắt buộc** (Dev chạy theo AC trước handoff, QA chạy độc lập theo spec); không commit thẳng `main`, không chạy `db:migrate` lên DB dùng chung khi chưa có PO duyệt SQL.
 - Test harness `tests/tms`: Node 22 + pnpm, Playwright Chromium. Python poller/dashboard không thuộc test path — còn ở `/home/vif/tuan-vu/tms-test` nếu cần.
 - QA probe: plain Node CommonJS, mượn `@playwright/test` từ `tests/tms/node_modules`; không tạo dependency riêng trong `reports/`.
 - Secrets: `.env` (trong `tests/tms` hoặc `/home/vif/tuan-vu/tms-test`) chứa credential — đã git-ignore, không commit/copy giá trị; dùng `.env.example`.
