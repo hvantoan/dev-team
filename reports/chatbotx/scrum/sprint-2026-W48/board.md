@@ -15,7 +15,7 @@ Stage: backlog → refining → spec → clear → dev → qa → pr → staging
 
 - **Đang làm:** CB-1 PR2 xong (PR #7) + contract-fix xong (PR #8), cả hai CI green; chờ merge thứ tự #8 → #7 → #6.
 - **Chờ:** PO quyết PR reverse-script trước --apply (item 4 needs-you); PO merge theo thứ tự #8→#7→#6 sau khi QA verify PR8; CB-3 chờ stack/nick/nhóm test.
-- **Chặn:** MCP `jira-vtx` lỗi certifi ở phiên SM (đã workaround qua Chef).
+- **Chặn:** MCP `jira-vtx` lỗi certifi ở phiên SM (đã workaround qua Chef). Server vif chưa sign-in Orca Cloud → không watch được GitHub PR #8 merge; SM check thủ công bằng `gh` mỗi daily, đã offer connect card.
 
 ## Log
 
@@ -31,3 +31,4 @@ Stage: backlog → refining → spec → clear → dev → qa → pr → staging
 - 18:2x PO chốt merge order **#8 → #7 → #6** theo đề xuất Dev (item 4); Dev đã apply migration DB dev `localhost:25432`, backfill dry-run 0 row (probe chứng minh script đúng); chờ QA verify PR #8 trước merge.
 - 18:3x PO chỉnh rule test: vẫn bắt buộc **test case chức năng** — Dev chạy theo AC trước handoff (evidence trong `handoff.md`), QA chạy độc lập + ghi link CI run; `pnpm test` vẫn chỉ trên CI (commit `fc749e7500`); cập nhật `scrum/config.md`.
 - 18:5x Dev apply migration DB dev `localhost:25432` + backfill dry-run xong: log `reports/chatbotx/dev/CB-1/backfill-dryrun-2026-11-23.log` — 0 row (DB dev rỗng), probe row chứng minh script + idempotent; Dev đề xuất PR nhỏ script reverse (decrypt→auth) trước `--apply`, chờ PO; PR #7 sẵn sàng rebase sau #8 merge.
+- 19:0x Dev ack: giữ chờ reverse-script (PO) + sẵn sàng dispatch rebase PR #7 khi #8 vào base (Dev không có GitHub event). SM không tạo được watch vì server chưa sign-in Orca Cloud → đã offer GitHub connect card; check `gh` thủ công.
