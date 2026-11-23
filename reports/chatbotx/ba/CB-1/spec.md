@@ -2,7 +2,7 @@
 
 - **Ticket:** CB-1 — https://vtxsolution.atlassian.net/browse/CB-1
 - **Project:** `chatbotx` (`/home/vif/workspace/ChatbotX`)
-- **Trạng thái:** DRAFT — đồng bộ theo QA Verdict PR 1 (`reports/chatbotx/qa/CB-1/verdict.md`, head `2782fe418`); chờ PO (anh Văn Toàn) clear & PR 2 (`encryptedAuth` + backfill) (**không tự clear**)
+- **Trạng thái:** DRAFT (PR 1 đã **QA PASS** tại head `2782fe418`, `reports/chatbotx/qa/CB-1/verdict.md`; CB-1 tổng thể chờ PR 2 `encryptedAuth` + backfill & PO clear)
 - **Ngày cập nhật:** 2026-11-23
 - **Nguồn:**
   - `reports/chatbotx/orchestrator/2026-11-23-cb2-refine-cb1/jira-context.md` (description + comment PO `2026-11-23T00:45:40.018+0700` — **comment ưu tiên hơn description khi mâu thuẫn**)
@@ -65,7 +65,7 @@ Hoàn thiện tích hợp **OpenAI-compatible** và bảo mật khoá API cho to
 
 | # | AC | Vai trò/user | Cách kiểm |
 |---|---|---|---|
-| AC1 | Chạy được qua MCP/Public API end-to-end đủ 6 bước với token scope `"integrations"`: `connections_create(openaiCompatible)` → `integrations_get_ai_provider(provider="openaiCompatible")` trả về **satellite ID** (`data[].id` = `IntegrationOpenaiCompatible.id`, kèm `integrationId` = parent) → `integrations_update_ai_provider(provider="openaiCompatible", integrationId=<satelliteId>, autoReply=true)` → `ai_agents_create` (`kind: "openaiCompatible"`, `integrationId: <satelliteId>`) → agent trả lời tin nhắn thử → `connections_delete`. Description của `ai_agents_create` trỏ đúng `integrations.getAiProvider` (satellite ID), không trỏ `integrations.list` | Agent / API client | MCP/API E2E test 6 bước; kiểm tra schema `ai_agents_create` |
+| AC1 | Chạy được qua MCP/Public API end-to-end đủ 6 bước với đúng token scope từng nhóm endpoint (`connections.*` và `integrations.*` dùng scope `"integrations"`; `/api/v1/ai-agents` dùng scope `"automation"`; `/api/v1/webchats` dùng scope `"channels"` — luồng E2E đầy đủ dùng token unrestricted hoặc đủ 3 scope; lưu ý path thực tế trên Next là `/api/v1/...`, gọi thẳng `/v1/...` không qua caddy rewrite sẽ bị `307` về `/auth/sign-in`): `connections_create(openaiCompatible)` → `integrations_get_ai_provider(provider="openaiCompatible")` trả về **satellite ID** (`data[].id` = `IntegrationOpenaiCompatible.id`, kèm `integrationId` = parent) → `integrations_update_ai_provider(provider="openaiCompatible", integrationId=<satelliteId>, autoReply=true)` → `ai_agents_create` (`kind: "openaiCompatible"`, `integrationId: <satelliteId>`) → agent trả lời tin nhắn thử → `connections_delete`. Description của `ai_agents_create` trỏ đúng `integrations.getAiProvider` (satellite ID), không trỏ `integrations.list` | Agent / API client | MCP/API E2E test 6 bước qua `/api/v1/...` (token đủ scope); kiểm tra token chỉ có `{integrations}` bị 403 ở `/api/v1/ai-agents`; kiểm tra schema `ai_agents_create` |
 | AC2 | Token `read_only` bị từ chối ở mọi procedure mutating qua HTTP method guard (`GET`/`HEAD` only trong `workspaceTokenAuthMidddleware` — không dùng `_confirm`); response của `getAiProvider` / `updateAiProvider` / `connections` không bao giờ chứa `apiKey` hay ciphertext, chỉ trả `hasApiKey: boolean` | Security / API client | Test token `read_only` bị `403 FORBIDDEN` (kể cả `POST`, `PATCH`, `DELETE`); assert payload response chỉ có `hasApiKey`, không có `auth`/`apiKey` |
 | AC3 | `updateAiProvider` với `provider="openaiCompatible"` thiếu `integrationId` trả lỗi validation; có `integrationId` (satellite hoặc parent) cập nhật đúng instance (`autoReply`, `enabled`, `name`, `preset` validate theo `openaiCompatibleProviderPresets` ∪ `"custom"`, `defaultModel`, `baseURL` chạy lại SSRF, `apiKey`) qua cùng service `updateWithVerification` với UI action | Agent / API client | Test trong `integrations-public-api.test.ts` với case thiếu/có `integrationId` |
 | AC4 | Sau migration `encryptedAuth` và backfill (được PO duyệt), mọi row ở cả 7 bảng AI provider (`openai`, `claude`, `gemini`, `deepseek`, `muse`, `openrouter`, `openaiCompatible`) không còn `auth` plaintext (`secretTextAuthSchema.safeParse` trên giá trị thô thất bại); trong giai đoạn chuyển tiếp trước backfill, reader đọc được cả ciphertext lẫn plaintext và luồng AI vẫn gọi được provider | Security / Runtime | Kiểm tra SQL migration + dry-run backfill + query DB sau apply + test dual-format reader & AI runtime |
@@ -77,7 +77,7 @@ Hoàn thiện tích hợp **OpenAI-compatible** và bảo mật khoá API cho to
 ## Rule nghiệp vụ
 
 1. **Scope & Auth (không có `_confirm`):**
-   - Public API `/v1/integrations/ai` dùng `workspaceTokenAuthAPI` với scope `"integrations"`.
+   - Public API `/api/v1/integrations/ai` và `/api/v1/connections` dùng `workspaceTokenAuthAPI` với scope `"integrations"`; các nhóm endpoint khác trong luồng E2E giữ đúng scope của mình (`/api/v1/ai-agents` dùng `"automation"`, `/api/v1/webchats` dùng `"channels"`). Lưu ý prefix công khai thực tế của app Next là `/api/v1/...` (prod có caddy rewrite `/v1/...` → `/api/v1/...`; gọi thẳng `/v1/...` vào Next bị `307` về `/auth/sign-in`).
    - Bảo vệ mutating route bằng HTTP method guard của token `read_only` (`READ_ONLY_TOKEN_ALLOWED_METHODS = { GET, HEAD }` tại `authorize-workspace-access.ts:38`); **không có convention `_confirm` trong repo**.
    - Response không bao giờ trả `apiKey` hoặc ciphertext — chỉ trả `hasApiKey: boolean`.
 2. **Parent `Integration.id` vs Satellite `IntegrationOpenaiCompatible.id`:**
@@ -111,11 +111,11 @@ Hoàn thiện tích hợp **OpenAI-compatible** và bảo mật khoá API cho to
 
 ---
 
-## Gap test cần bổ sung & Phát hiện QA (PR 1 @ `2782fe418`)
+## Gap test cần bổ sung & Phát hiện QA (PR 1 @ `2782fe418` — Verdict PASS PR 1)
 
-1. **Gap bằng chứng — Test `PATCH /v1/integrations/ai/{provider}` với token `read_only`:** Test hiện có mới phủ `POST` và `DELETE` (`/v1/connections`); dù hành vi middleware đúng theo allow-list `GET|HEAD`, cần bổ sung test trực tiếp trong `integrations-public-api.test.ts` (hoặc `integrations-public-scope.test.ts`) cho `PATCH /v1/integrations/ai/openaiCompatible` với token `read_only` trả `403 FORBIDDEN`.
-2. **AC1 E2E 6 bước đang BLOCKED môi trường:** Chưa chạy được E2E thực trên stack riêng vì stack `main` của owner đang chiếm cổng cố định (`3123`, `25432`, `26379`, `8025`, `29000`).
-3. **PR 2 (AC4) chưa triển khai:** 0/7 bảng AI provider có `encryptedAuth`, chưa có backfill script — **CB-1 chưa thể đóng/DONE cho tới khi PR 2 xong và PO duyệt SQL/backfill**.
+1. **Gap bằng chứng — Test tự động `PATCH /v1/integrations/ai/{provider}` với token `read_only`:** Đã kiểm chứng chạy thật trong E2E (trả `403` trước handler theo allow-list `GET|HEAD`), nhưng test tự động hiện có mới phủ `POST` và `DELETE` (`/v1/connections`) — cần bổ sung test cho `PATCH /v1/integrations/ai/openaiCompatible` với token `read_only`.
+2. **Follow-up lọc message lỗi connect private:** Trên `POST /api/v1/connections`, response công khai khi bị SSRF/provider reject hiện còn lộ mã nội bộ `"(code connectionProviderRejected)"` trong message (`"OpenAI-compatible base URL is not allowed. (code connectionProviderRejected)"`) — ghi nhận làm follow-up lọc message (chưa sửa PR 1 sau khi đã PASS).
+3. **PR 2 (AC4) chưa triển khai:** 0/7 bảng AI provider có `encryptedAuth`, chưa có backfill script — **CB-1 tổng thể chưa thể đóng/DONE cho tới khi PR 2 xong và PO duyệt SQL/backfill**.
 4. **Thay đổi UX trên UI connect (ngoài AC, cần PO ghi nhận):** `connect.action.ts` chuyển sang fail-closed khi endpoint không truy cập được và trả thông điệp `invalidBaseURL` (không phân biệt URL bị chặn với server đang tắt); ngoài ra connect qua UI hiện probe `/models` hai lần (`verifyOpenaiCompatibleProvider` rồi `fromCredentials`).
 
 ---
