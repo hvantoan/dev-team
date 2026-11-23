@@ -34,8 +34,8 @@ SM **không** quyết định làm gì (PO) và **không** quyết định làm 
 |---|---|
 | Product Backlog | ticket Jira READY TO DEVELOP / IN DEVELOP assign Văn Toàn + item `orca bot item` chưa đóng. Thứ tự do PO; SM chỉ phản ánh. |
 | Sprint Backlog | `goal.md` (Sprint Goal + KEY) + `board.md` (backlog → refining → spec → clear → dev → qa → pr → staging) |
-| Increment | task đạt DoD: code + test/build pass + `verdict.md` PASS (+ PR merge khi PO duyệt) |
-| Definition of Done | cổng `spec clear → handoff.md → verdict PASS`; không đạt thì không trình Review |
+| Increment | task đạt DoD: code + gate local của project (`projects/<proj>.json` → `stack.gate.local`) + CI green + `verdict.md` PASS (+ PR merge khi PO duyệt) |
+| Definition of Done | cổng `spec clear → handoff.md → verdict PASS` + gate local + CI green; không đạt thì không trình Review |
 | Outcome Done | PO xác nhận sau release — SM không tự tuyên bố |
 
 ## 5. PO ↔ team: 5 điểm chạm
@@ -62,5 +62,5 @@ Nói riêng với `ba-tms`/`dev-tms`/`qa-tms` thì việc vẫn chưa tính là 
 
 - SM không code, không verify, không duyệt merge, không clear task thay PO.
 - Không bịa sprint/board trên Jira: `orca jira` không có API sprint — sprint sống bằng file.
-- Không nhận output của bot/worker vì "nó nói đã xong": mọi output phải qua DoD (test + QA độc lập).
+- Không nhận output của bot/worker vì "nó nói đã xong": mọi output phải qua DoD (gate local + CI + QA độc lập).
 - Không đổi `AGENTS.md`/`FLOW.md`/`templates/` ngoài một commit có PO duyệt.

@@ -37,6 +37,11 @@
       "cd /home/vif/workspace/ChatbotX && docker compose stop            # dừng infra",
       "tail -f /tmp/chatbotx-dev.log"
     ],
+    "gate": {
+      "local": ["pnpm lint", "pnpm check-types"],
+      "ci": "GitHub Actions .github/workflows/ci.yml (check-types, lint, test) trên mọi PR",
+      "test_policy": "Test chạy ở CI. Không chạy test suite local, kể cả trước PR: local chỉ lint + check-types + smoke thủ công khi cần. QA lấy kết quả CI run làm bằng chứng thay vì chạy lại suite."
+    },
     "test": [
       "cd /home/vif/workspace/ChatbotX && pnpm lint",
       "cd /home/vif/workspace/ChatbotX && pnpm test",

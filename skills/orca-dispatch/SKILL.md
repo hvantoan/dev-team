@@ -52,7 +52,7 @@ EOF
 ## Gate theo project
 
 - **TMS:** `pnpm run build` / test harness trong `tests/tms` theo `projects/tms.json`.
-- **ChatbotX:** `pnpm lint`, `pnpm check-types` (không dùng bare `turbo check-types`), `pnpm test`; targeted: `pnpm --filter <workspace> test`. `next build` bỏ qua lỗi TS nên `check-types` là cổng type duy nhất.
+- **ChatbotX:** `pnpm lint`, `pnpm check-types` (không dùng bare `turbo check-types`) — **không chạy `pnpm test` local**: test do CI `.github/workflows/ci.yml` chạy trên mọi PR. Targeted test chỉ khi PO/QA yêu cầu rõ. `next build` bỏ qua lỗi TS nên `check-types` là cổng type duy nhất.
 
 ## Quyền giữ stack
 
