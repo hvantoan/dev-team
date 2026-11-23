@@ -15,7 +15,7 @@
 
 ## Không cam kết
 
-- CB-3 → CB-17: còn `To Do` + label `idea`, chưa qua gate READY TO DEVELOP / IN DEVELOP. Chỉ vào sprint sau khi PO đổi trạng thái/bỏ label.
+- CB-3 → CB-17: còn `To Do` + label `idea`, chưa được PO clear. Gate của board CB = assignee PO + chuyển `In Progress` (board không có status `READY TO DEVELOP`). Chỉ vào sprint sau khi PO clear.
 
 ## Rủi ro sprint
 

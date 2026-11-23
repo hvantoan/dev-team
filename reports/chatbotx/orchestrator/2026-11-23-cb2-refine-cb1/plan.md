@@ -23,7 +23,7 @@ Trạng thái: ⏳ chờ clear → 📋 BA spec → 💻 Dev → 🔍 QA → ✅
 
 - `reports/chatbotx/scrum/sprint-2026-W48/goal.md`
 - `/home/vif/workspace/ChatbotX/plans/tasks/cb-2-he-thong-chat-zalo-personal-tu-van-ai.md` — phân tích 9 ticket từ Jira (2026-11-22)
-- Jira context: chờ Chef xuất text CB-1/CB-2 (MCP `jira-vtx` phiên SM lỗi certifi 2026-11-23)
+- `reports/chatbotx/orchestrator/2026-11-23-cb2-refine-cb1/jira-context.md` — toàn văn description + comment CB-1/CB-2, lấy qua Chef 2026-11-23 (MCP `jira-vtx` phiên SM lỗi certifi)
 - `templates/ba-spec.md`
 
 ## Quy tắc điều phối

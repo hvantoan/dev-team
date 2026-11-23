@@ -12,4 +12,4 @@ Stage: backlog → refining → spec → clear → dev → qa → pr → staging
 
 ## Daily
 
-- 2026-11-23: mở sprint; BA nhận refinement CB-2 + spec CB-1. Chờ: PO clear spec. Chặn: MCP jira-vtx lỗi certifi (Chef đọc hộ).
+- 2026-11-23: mở sprint; BA nhận refinement CB-2 + spec CB-1. 13:50 — toàn văn Jira từ Chef đã vào `orchestrator/2026-11-23-cb2-refine-cb1/jira-context.md`; BA bắt đầu từ toàn văn. Chờ: PO clear spec. Chặn: MCP jira-vtx lỗi certifi ở phiên SM (đã workaround).
