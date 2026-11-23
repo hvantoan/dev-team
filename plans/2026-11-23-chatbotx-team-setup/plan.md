@@ -31,12 +31,13 @@
 | D3 | Jira | MCP `jira-vtx`; không chặn vì `orca jira` thiếu site | đã chốt |
 | D4 | Nơi lưu | Code ở repo ChatbotX; artifact ở `dev-team/reports/chatbotx/...` | đã chốt |
 
-## Scrum (vai trò Scrum Master từ 2026-11-23)
+## Scrum
 
-- Nhịp mặc định 1 tuần — **chờ PO chốt ngày bắt đầu** (ghi `reports/chatbotx/scrum/config.md`); artifact `reports/chatbotx/scrum/sprint-<YYYY-Www>/{goal,board,review,retro}.md`, chặn `reports/chatbotx/scrum/impediments.md`.
-- Backlog = ticket CB READY TO DEVELOP / IN DEVELOP assign Văn Toàn + item `orca bot item` chưa đóng. Triage xong → planning chốt goal + KEY cam kết vào `goal.md`, trình PO clear.
-- WIP = 1 task/bot; task chờ quá 1 ngày → item `needs-you` cho PO.
-- Review/retro cuối sprint ghi metric: cycle time, throughput, carry-over %, số lần FAIL/BLOCKED.
+Mô hình chung: `SCRUM.md`. Với chatbotx:
+
+- Sprint đầu mở sau khi PO triage CB và chốt ngày bắt đầu; artifact ở `reports/chatbotx/scrum/` (`config.md`, `impediments.md`, `sprint-<YYYY-Www>/{goal,board,review,retro}.md`).
+- Planning chốt Sprint Goal + KEY cam kết vào `goal.md` rồi xin PO clear; WIP 1 task/bot; chặn quá 1 ngày → item `needs-you`.
+- Review/retro ghi metric flow (throughput, cycle time, carry-over, FAIL/BLOCKED) theo `SCRUM.md`.
 
 ## Phases
 
