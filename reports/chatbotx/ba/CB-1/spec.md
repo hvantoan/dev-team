@@ -2,7 +2,7 @@
 
 - **Ticket:** CB-1 — https://vtxsolution.atlassian.net/browse/CB-1
 - **Project:** `chatbotx` (`/home/vif/workspace/ChatbotX`)
-- **Trạng thái:** DRAFT (PR 1 đã **QA PASS** tại head `2782fe418`, `reports/chatbotx/qa/CB-1/verdict.md`; CB-1 tổng thể chờ PR 2 `encryptedAuth` + backfill & PO clear)
+- **Trạng thái:** PR 1 đã **QA PASS** tại head `2782fe418` (`reports/chatbotx/qa/CB-1/verdict.md`), **merge PR 1 chờ PR 2 (quyết định PO)**; đã cập nhật 2 quyết định PO chốt (`ssrfBlocked` không lộ `(code ...)` khi connect + tách `providerUnreachable` khỏi `invalidBaseURL`); CB-1 tổng thể chờ PR 2 (`encryptedAuth` + backfill) & nghiệm thu bổ sung 2 điểm PO chốt.
 - **Ngày cập nhật:** 2026-11-23
 - **Nguồn:**
   - `reports/chatbotx/orchestrator/2026-11-23-cb2-refine-cb1/jira-context.md` (description + comment PO `2026-11-23T00:45:40.018+0700` — **comment ưu tiên hơn description khi mâu thuẫn**)
@@ -33,6 +33,7 @@ Hoàn thiện tích hợp **OpenAI-compatible** và bảo mật khoá API cho to
 - `/home/vif/workspace/ChatbotX/apps/builder/src/features/integration-openai-compatible/actions/update.action.ts` & `/home/vif/workspace/ChatbotX/packages/business/src/integration-openai-compatible/service.ts` — đồng nhất service method dùng chung giữa UI action và Public API.
 - `/home/vif/workspace/ChatbotX/apps/builder/src/features/ai-agents/schema/action.ts` — sửa description trường `integrationId` (dòng 129) sang lấy **satellite ID** từ `integrations.getAiProvider(provider="openaiCompatible")` (trường `data[].id`, không dùng `integrations.list` vốn trả parent `Integration.id`).
 - `/home/vif/workspace/ChatbotX/packages/business/src/integration-openai-compatible/validate-base-url.ts` & `/home/vif/workspace/ChatbotX/.env.example` — bật `assertPublicUrl` trên mọi edition; chỉ opt-out khi `!isCloud()` và bật `OPENAI_COMPATIBLE_ALLOW_PRIVATE_URLS` (luôn bỏ qua env này khi `isCloud()`).
+- `/home/vif/workspace/ChatbotX/packages/connections/src/credentials.ts` & `/home/vif/workspace/ChatbotX/apps/builder/src/features/integration-openai-compatible/actions/connect.action.ts` (kèm i18n messages) — map `400 ssrfBlocked` khi connect URL private qua `POST /api/v1/connections` (không trả `connectionCredentialsRejected`, message không lộ `(code ...)`), và tách lỗi/thông điệp `providerUnreachable` khỏi `invalidBaseURL` khi UI connect không liên lạc được endpoint.
 - `/home/vif/workspace/ChatbotX/apps/builder/__tests__/api-parity-manifest.json` — chuyển 4 entry `integration-openai-compatible/*` (dòng 261–264) từ `private:` sang `covered:connections` / `covered:integrations`.
 - `/home/vif/workspace/ChatbotX/apps/builder/__tests__/integrations-public-api.test.ts`, snapshot OpenAPI/spec, `/home/vif/workspace/ChatbotX/apps/cli/README.md`, `/home/vif/workspace/ChatbotX/apps/mcp-server/`, `/home/vif/workspace/ChatbotX/docs/openai-compatible.md`.
 
@@ -69,7 +70,7 @@ Hoàn thiện tích hợp **OpenAI-compatible** và bảo mật khoá API cho to
 | AC2 | Token `read_only` bị từ chối ở mọi procedure mutating qua HTTP method guard (`GET`/`HEAD` only trong `workspaceTokenAuthMidddleware` — không dùng `_confirm`); response của `getAiProvider` / `updateAiProvider` / `connections` không bao giờ chứa `apiKey` hay ciphertext, chỉ trả `hasApiKey: boolean` | Security / API client | Test token `read_only` bị `403 FORBIDDEN` (kể cả `POST`, `PATCH`, `DELETE`); assert payload response chỉ có `hasApiKey`, không có `auth`/`apiKey` |
 | AC3 | `updateAiProvider` với `provider="openaiCompatible"` thiếu `integrationId` trả lỗi validation; có `integrationId` (satellite hoặc parent) cập nhật đúng instance (`autoReply`, `enabled`, `name`, `preset` validate theo `openaiCompatibleProviderPresets` ∪ `"custom"`, `defaultModel`, `baseURL` chạy lại SSRF, `apiKey`) qua cùng service `updateWithVerification` với UI action | Agent / API client | Test trong `integrations-public-api.test.ts` với case thiếu/có `integrationId` |
 | AC4 | Sau migration `encryptedAuth` và backfill (được PO duyệt), mọi row ở cả 7 bảng AI provider (`openai`, `claude`, `gemini`, `deepseek`, `muse`, `openrouter`, `openaiCompatible`) không còn `auth` plaintext (`secretTextAuthSchema.safeParse` trên giá trị thô thất bại); trong giai đoạn chuyển tiếp trước backfill, reader đọc được cả ciphertext lẫn plaintext và luồng AI vẫn gọi được provider | Security / Runtime | Kiểm tra SQL migration + dry-run backfill + query DB sau apply + test dual-format reader & AI runtime |
-| AC5 | SSRF guard (`assertPublicUrl`) bật mặc định trên mọi edition: chặn `http://127.0.0.1:11434/v1` và `http://127.0.0.1:1234/v1` (preset `lmstudio`) cả trên self-hosted lẫn cloud khi chưa opt-out (`POST /v1/connections` trả `400 connectionCredentialsRejected` do connection engine bọc lỗi provider; `PATCH /v1/integrations/ai/openaiCompatible` trả `400 ssrfBlocked`); đặt `OPENAI_COMPATIBLE_ALLOW_PRIVATE_URLS` cho phép trên self-hosted nhưng bị bỏ qua khi `isCloud()` | Security / Self-hosted ops | Unit/API test cho cả 3 case (cloud, self-hosted mặc định, self-hosted có env); `.env.example` và docs khớp tên env và mã lỗi thực tế |
+| AC5 | SSRF guard (`assertPublicUrl`) bật mặc định trên mọi edition: chặn `http://127.0.0.1:11434/v1` và `http://127.0.0.1:1234/v1` (preset `lmstudio`) cả trên self-hosted lẫn cloud khi chưa opt-out — cả `POST /api/v1/connections` lẫn `PATCH /api/v1/integrations/ai/openaiCompatible` đều trả **`400 ssrfBlocked`** (không giữ `connectionCredentialsRejected`) và **message không lộ mã nội bộ `(code ...)`**; đặt `OPENAI_COMPATIBLE_ALLOW_PRIVATE_URLS` cho phép trên self-hosted nhưng bị bỏ qua khi `isCloud()`. Trên UI connect, khi endpoint không truy cập được (fail-closed) trả lỗi/thông điệp riêng `providerUnreachable`, tách khỏi `invalidBaseURL` | Security / Self-hosted ops / UI | Unit/API test cho cả 3 case (cloud, self-hosted mặc định, self-hosted có env); assert `POST /api/v1/connections` & `PATCH` trả `400 ssrfBlocked` và message không chứa `(code ...)`; test UI `connect.action.ts` tách `providerUnreachable` vs `invalidBaseURL`; `.env.example` và docs khớp tên env và mã lỗi |
 | AC6 | `api-parity-manifest.json` không còn entry `private:` cho `integration-openai-compatible/*`; `pnpm lint`, `pnpm check-types` (hoặc `check-types:cold`), test builder (gồm `integrations-public-api.test.ts`), snapshot spec đã regenerate và `cli-mcp-docs` pass | Developer / QA | Chạy lệnh kiểm tra tại `/home/vif/workspace/ChatbotX` và kiểm tra diff manifest/snapshot |
 
 ---
@@ -87,9 +88,10 @@ Hoàn thiện tích hợp **OpenAI-compatible** và bảo mật khoá API cho to
 3. **Validation & Preset:**
    - `preset` validate theo `openaiCompatibleProviderPresets` ∪ `"custom"`; với `preset !== "custom"`, giữ partial unique index `IntegrationOpenaiCompatible_workspaceId_preset_key`.
    - `updateAiProvider` khi đổi `baseURL` phải chạy lại SSRF guard; khi đổi `baseURL` sang origin khác phải gửi `apiKey` mới; khi không truyền `apiKey` (cùng origin), giữ nguyên key hiện có.
-4. **SSRF, Opt-out & Mã lỗi thực tế:**
+4. **SSRF, Opt-out & Mã lỗi đã chốt (theo quyết định PO):**
    - Bỏ gate `isCloud()` ở `validateOpenaiCompatibleBaseUrlForEnvironment`; chỉ cho phép bỏ qua `assertPublicUrl` khi `!isCloud()` và `OPENAI_COMPATIBLE_ALLOW_PRIVATE_URLS` được bật.
-   - **Contract mã lỗi thực tế:** trên `POST /v1/connections`, `packages/connections/src/credentials.ts:114-127` bọc mọi lỗi của credential provider thành `400 connectionCredentialsRejected` (guard vẫn chặn và không probe host nội bộ); trên `PATCH /v1/integrations/ai/openaiCompatible`, lỗi SSRF trả trực tiếp `400 ssrfBlocked`. Đề xuất giữ nguyên hành vi & docs mô tả đúng contract này (chỉ map riêng `ssrfBlocked` cho `connections.create` nếu PO yêu cầu thêm).
+   - **Connect private trả `400 ssrfBlocked`:** Cả `POST /api/v1/connections` (`packages/connections/src/credentials.ts`) lẫn `PATCH /api/v1/integrations/ai/openaiCompatible` khi bị SSRF guard chặn đều phải trả `400 ssrfBlocked` (không giữ `connectionCredentialsRejected`), và **message công khai không được lộ mã nội bộ `(code ...)`**.
+   - **UI connect fail-closed (`connect.action.ts`):** Tách `providerUnreachable` khỏi `invalidBaseURL` với message riêng khi endpoint không truy cập được/timeout/5xx (phân biệt với URL sai hoặc bị chặn SSRF).
 5. **Migration & Rollout PR 2:**
    - Thêm cột `encryptedAuth` thay vì ghi ciphertext vào cột `auth` jsonb; reader hỗ trợ đọc dual-format trong giai đoạn chuyển tiếp.
    - SQL migration và script backfill TypeScript (`--dry-run`) phải trình PO duyệt trước khi apply.
@@ -111,12 +113,13 @@ Hoàn thiện tích hợp **OpenAI-compatible** và bảo mật khoá API cho to
 
 ---
 
-## Gap test cần bổ sung & Phát hiện QA (PR 1 @ `2782fe418` — Verdict PASS PR 1)
+## Gap test cần bổ sung & Phát hiện QA (PR 1 @ `2782fe418` — Verdict PASS PR 1, merge PR 1 chờ PR 2)
 
-1. **Gap bằng chứng — Test tự động `PATCH /v1/integrations/ai/{provider}` với token `read_only`:** Đã kiểm chứng chạy thật trong E2E (trả `403` trước handler theo allow-list `GET|HEAD`), nhưng test tự động hiện có mới phủ `POST` và `DELETE` (`/v1/connections`) — cần bổ sung test cho `PATCH /v1/integrations/ai/openaiCompatible` với token `read_only`.
-2. **Follow-up lọc message lỗi connect private:** Trên `POST /api/v1/connections`, response công khai khi bị SSRF/provider reject hiện còn lộ mã nội bộ `"(code connectionProviderRejected)"` trong message (`"OpenAI-compatible base URL is not allowed. (code connectionProviderRejected)"`) — ghi nhận làm follow-up lọc message (chưa sửa PR 1 sau khi đã PASS).
-3. **PR 2 (AC4) chưa triển khai:** 0/7 bảng AI provider có `encryptedAuth`, chưa có backfill script — **CB-1 tổng thể chưa thể đóng/DONE cho tới khi PR 2 xong và PO duyệt SQL/backfill**.
-4. **Thay đổi UX trên UI connect (ngoài AC, cần PO ghi nhận):** `connect.action.ts` chuyển sang fail-closed khi endpoint không truy cập được và trả thông điệp `invalidBaseURL` (không phân biệt URL bị chặn với server đang tắt); ngoài ra connect qua UI hiện probe `/models` hai lần (`verifyOpenaiCompatibleProvider` rồi `fromCredentials`).
+1. **Bổ sung theo quyết định PO #1 — Map `400 ssrfBlocked` & lọc message trên `POST /api/v1/connections`:** Ở head `2782fe418`, connect URL private đang trả `400 connectionCredentialsRejected` kèm chuỗi lộ mã nội bộ `"(code connectionProviderRejected)"`. Cần sửa để trả `400 ssrfBlocked`, bỏ `(code ...)` trong message công khai, cập nhật `docs/openai-compatible.md` và bổ sung test API tương ứng.
+2. **Bổ sung theo quyết định PO #2 — Tách `providerUnreachable` trên UI connect:** Ở head `2782fe418`, `connect.action.ts` gộp trường hợp endpoint không truy cập được vào `invalidBaseURL`. Cần tách lỗi/message `providerUnreachable` riêng (kèm i18n & test `openai-compatible-actions.test.ts`).
+3. **Gap bằng chứng — Test tự động `PATCH /api/v1/integrations/ai/{provider}` với token `read_only`:** Đã kiểm chứng chạy thật trong E2E (trả `403` trước handler theo allow-list `GET|HEAD`), nhưng test tự động hiện có mới phủ `POST` và `DELETE` (`/api/v1/connections`) — cần bổ sung test cho `PATCH /api/v1/integrations/ai/openaiCompatible` với token `read_only`.
+4. **PR 2 (AC4) chưa triển khai:** 0/7 bảng AI provider có `encryptedAuth`, chưa có backfill script — **CB-1 tổng thể chưa thể đóng/merge hoàn tất cho tới khi PR 2 xong và PO duyệt SQL/backfill** (merge PR 1 đang chờ PR 2).
+5. **Ghi nhận hiệu năng UI connect (mức thấp):** Connect qua UI hiện probe `/models` hai lần (`verifyOpenaiCompatibleProvider` rồi `fromCredentials`); giữ ghi nhận tối ưu sau nếu cần.
 
 ---
 
@@ -152,13 +155,13 @@ Hoàn thiện tích hợp **OpenAI-compatible** và bảo mật khoá API cho to
 
 ## Cập nhật docs sau khi DONE
 
-- [ ] SRS: `docs/chatbotx/srs/integration-openai-compatible.md` — ghi nhận API `/v1/integrations/ai` (satellite ID vs parent ID), SSRF guard + `OPENAI_COMPATIBLE_ALLOW_PRIVATE_URLS` + contract lỗi `connectionCredentialsRejected` vs `ssrfBlocked`, lưu ý disconnect, và mã hoá `encryptedAuth`.
+- [ ] SRS: `docs/chatbotx/srs/integration-openai-compatible.md` — ghi nhận API `/api/v1/integrations/ai` (satellite ID vs parent ID), SSRF guard (`400 ssrfBlocked` thống nhất cho connect & update, không lộ `(code ...)`) + `OPENAI_COMPATIBLE_ALLOW_PRIVATE_URLS`, tách `providerUnreachable` trên UI connect, lưu ý disconnect, và mã hoá `encryptedAuth`.
 - [ ] ADR: quyết định dùng `encryptedAuth` tại `store-bindings.ts` cho toàn bộ AI providers.
 
 ---
 
 ## Open Questions (chỉ giữ điểm thật sự chưa chốt)
 
-1. **Mã lỗi SSRF trên `POST /v1/connections`:** PO chốt giữ contract thực tế (`400 connectionCredentialsRejected` ở `POST /v1/connections`, `400 ssrfBlocked` ở `PATCH /v1/integrations/ai/openaiCompatible` — đã khớp docs hiện tại) hay yêu cầu map riêng `ssrfBlocked` cho `connections.create`?
-2. **UX connect fail-closed khi endpoint tắt (phát hiện #7 của QA):** PO giữ thông điệp `invalidBaseURL` hay tách lỗi riêng `providerUnreachable` khi endpoint không truy cập được?
-3. **Env mã hoá ở self-hosted (PR 2):** Ngoài `ENCRYPTION_KEY` (`.env.example:87`), `@chatbotx.io/encryption` có yêu cầu biến môi trường nào khác trên bản self-hosted cần ghi vào `.env.example` không?
+*(Đã đóng OQ1 về mã lỗi SSRF trên `POST /api/v1/connections` → PO chốt map `400 ssrfBlocked` không lộ `(code ...)`; đã đóng OQ2 về UI connect fail-closed → PO chốt tách `providerUnreachable` khỏi `invalidBaseURL`.)*
+
+1. **Env mã hoá ở self-hosted (PR 2):** Ngoài `ENCRYPTION_KEY` (`.env.example:87`), `@chatbotx.io/encryption` có yêu cầu biến môi trường nào khác trên bản self-hosted cần ghi vào `.env.example` không?
