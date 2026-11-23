@@ -43,3 +43,4 @@ Stage: backlog → refining → spec → clear → dev → qa → pr → staging
 - 22:0x Dev: #8 merged `a28adfda4`; #7 rebase sạch → head mới `6f0e00f55` (MERGEABLE, CI đang chạy). SM đã giao QA verify #7 tại đúng head này; merge #7/#6 chờ verdict PASS.
 - 22:1x CI #7 XANH tại `6f0e00f55` (14/14 check SUCCESS, MERGEABLE) — Dev giữ watch, không merge; chờ verdict QA đúng head này.
 - 22:1x QA đọc handoff nhưng kết thúc turn im lặng, không sinh evidence mới (mtime cuối 18:04) — cùng kiểu lỗi phiên: tin vào chat cũ `5ea26f58`, Home Chat hiện tại `c6ffdcf3`. SM gửi lại qua `--chat new` + yêu cầu ACK bắt đầu/verdict.
+- 22:2x QA ACK: verify #7 @6f0e00f55 bằng worktree tạm `/tmp/qa-cb7-pr7` + compose project `qa-cb7` port riêng, 7 nhóm test case chức năng (schema, store-bindings+AAD, dual-read, consumer, backfill dry-run, public API, 401/403), gate local lint+check-types, ghi link CI + head sha; teardown sau.
