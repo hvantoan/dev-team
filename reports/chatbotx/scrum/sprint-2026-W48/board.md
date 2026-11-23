@@ -5,7 +5,7 @@ Cập nhật: 2026-11-23 (sprint start)
 | KEY | Stage | Owner | Artifact | Ghi chú |
 |---|---|---|---|---|
 | CB-2 | refined — PO duyệt | BA | `reports/chatbotx/ba/CB-2/refinement.md` | PO duyệt cắt story + thứ tự Đợt 1 (2026-11-23, item 4). Đợt 1 CB-3 → CB-5 → CB-4 → CB-8, CB-1 song song |
-| CB-1 | qa — PR1 PASS; PR2 + fix lane | QA / Dev | `reports/chatbotx/qa/CB-1/verdict.md` + PR 2 + PR fix | PR1 #6 PASS; PO chốt chờ PR2 mới merge; fix map `ssrfBlocked` + `providerUnreachable` đang code; PR2 mã hoá + backfill đang code |
+| CB-1 | qa — PR1 PASS; PR2 + contract-fix workers | QA / Dev | `reports/chatbotx/qa/CB-1/verdict.md` + PR 2 + PR fix | PR1 #6 PASS; PO chốt chờ PR2 mới merge; fix `ssrfBlocked` + `providerUnreachable` trên `fix/cb-1-pr1-contract`; PR2 `feat/cb-1-pr2-encrypted-auth` — rebase sau fix |
 | CB-3 | clear — chờ input vận hành | — | `reports/chatbotx/ba/CB-3/spec.md` | PO clear 2026-11-23; cần stack test, nick/QR, nhóm test; Dev nhận sau PR 2 |
 | CB-4 → CB-17 | backlog | — | — | `To Do` + `idea`, chưa qua gate |
 
@@ -24,3 +24,4 @@ Stage: backlog → refining → spec → clear → dev → qa → pr → staging
 - 14:35 PO clear CB-3 + mở lane PR2; 14:40 QA BLOCKED (AC1) → SM duyệt retry stack riêng.
 - 14:43 PR2 worker trên branch riêng; 15:25 QA retry PASS PR1 (E2E 6 bước); BA sửa AC1 scope.
 - 16:10 PO chốt: merge PR1 chờ PR2; connect map `ssrfBlocked`; UI tách `providerUnreachable` — Dev nhận fix lane, BA sync spec.
+- 16:15 Dev dispatch worker contract-fix (`fix/cb-1-pr1-contract`, worktree riêng, item #6); PR2 rebase sau khi fix vào base.
