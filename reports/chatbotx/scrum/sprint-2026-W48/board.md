@@ -41,3 +41,4 @@ Stage: backlog → refining → spec → clear → dev → qa → pr → staging
 - 21:4x **PO uỷ quyền merge** (phương án 2): Dev tự merge #8 → rebase #7 (QA PASS head mới) → merge #7 → merge #6 vào main. Không chạy backfill `--apply` thật. SM đã handoff Dev + báo QA chuẩn bị verify #7 sau rebase.
 - 21:5x **Dev runtime chết** (không còn process `pi`; 4 session sống đều là `omp`) → 2 lần nhắn vào Home Chat cũ không có agent đọc. SM mở chat mới cho Dev (`--chat new`) → session sống lại, **PR #8 MERGED** vào `feat/cb-1-openai-compatible-api-ssrf` (base mới `a28adfda4`). Tiếp: rebase #7.
 - 22:0x Dev: #8 merged `a28adfda4`; #7 rebase sạch → head mới `6f0e00f55` (MERGEABLE, CI đang chạy). SM đã giao QA verify #7 tại đúng head này; merge #7/#6 chờ verdict PASS.
+- 22:1x CI #7 XANH tại `6f0e00f55` (14/14 check SUCCESS, MERGEABLE) — Dev giữ watch, không merge; chờ verdict QA đúng head này.
