@@ -1,0 +1,12 @@
+### business 2026-11-23T14:33:12+07:00
+ Test Files  4 passed (4)
+      Tests  48 passed (48)
+BIZ_EXIT=0
+### builder 2026-11-23T14:33:16+07:00
+ Test Files  7 passed (7)
+      Tests  128 passed (128)
+BUILDER_EXIT=0
+### cli 2026-11-23T14:33:53+07:00
+ Test Files  5 passed (5)
+      Tests  60 passed (60)
+CLI_EXIT=0

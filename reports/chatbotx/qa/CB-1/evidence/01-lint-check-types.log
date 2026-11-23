@@ -1,0 +1,23 @@
+# Independent re-run at 2782fe418 (worktree /home/vif/workspace/worktrees/ChatbotX-cb-1-openai-compatible-api-ssrf)
+# 2026-11-23T14:35:10+07:00 node v24.22.2 pnpm 10.31.0
+
+### lint 2026-11-23T14:31:13+07:00
+> pnpm check:agent-instructions && pnpm check:invariants && turbo run lint && ultracite check
+Checked 21 skills in .agents/skills — all valid
+> chatbotx-monorepo@ check:invariants /home/vif/workspace/worktrees/ChatbotX-cb-1-openai-compatible-api-ssrf
+> node scripts/check-invariants.mjs
+Checked 8107 source files — invariants hold
+@chatbotx.io/database:lint: Schema is in sync with the migration snapshot chain.
+ Tasks:    2 successful, 2 total
+Cached:    2 cached, 2 total
+  Time:    90ms >>> FULL TURBO
+Checked 11445 files in 57s. No fixes applied.
+LINT_EXIT=0
+### check-types 2026-11-23T14:32:14+07:00
+ Tasks:    69 successful, 69 total
+Cached:    69 cached, 69 total
+  Time:    111ms >>> FULL TURBO
+TYPES_EXIT=0
+
+# Note: header pnpm 10.31.0 is the host shim; repo pins pnpm@10.34.5 (package.json packageManager) and corepack ran that version inside the repo.
+# check-types above was a FULL TURBO cache hit (identical inputs already type-checked). Forced fresh run: see below.
