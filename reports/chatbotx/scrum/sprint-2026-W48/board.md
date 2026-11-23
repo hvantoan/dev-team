@@ -14,7 +14,7 @@ Stage: backlog → refining → spec → clear → dev → qa → pr → staging
 ## Daily
 
 - **Đang làm:** CB-1 PR2 xong (PR #7) + contract-fix xong (PR #8), cả hai CI green; chờ merge thứ tự #8 → #7 → #6.
-- **Chờ:** PO merge theo thứ tự #8→#7→#6 sau khi QA verify PR8; CB-3 chờ stack/nick/nhóm test.
+- **Chờ:** PO quyết PR reverse-script trước --apply (item 4 needs-you); PO merge theo thứ tự #8→#7→#6 sau khi QA verify PR8; CB-3 chờ stack/nick/nhóm test.
 - **Chặn:** MCP `jira-vtx` lỗi certifi ở phiên SM (đã workaround qua Chef).
 
 ## Log
