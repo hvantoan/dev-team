@@ -5,7 +5,7 @@ Cập nhật: 2026-11-23 (sprint start)
 | KEY | Stage | Owner | Artifact | Ghi chú |
 |---|---|---|---|---|
 | CB-2 | refined — PO duyệt | BA | `reports/chatbotx/ba/CB-2/refinement.md` | PO duyệt cắt story + thứ tự Đợt 1 (2026-11-23, item 4). Đợt 1 CB-3 → CB-5 → CB-4 → CB-8, CB-1 song song |
-| CB-1 | qa — PR1 PASS; PR2 + contract-fix CI green, chờ PO duyệt migration | QA / Dev | `reports/chatbotx/qa/CB-1/verdict.md` + PR #6, #7, #8 | PR1 #6 PASS; fix `ssrfBlocked` + `providerUnreachable` ở PR https://github.com/hvantoan/ChatbotX/pull/8 (head `340868793`, CI green); PR2 https://github.com/hvantoan/ChatbotX/pull/7 (head `56b5f7b8f`, CI green) chờ rebase sau #8. Thứ tự merge đề xuất: #8 → #7 → #6. Chặn DoD: PO duyệt SQL migration + backfill dry-run (item 4) |
+| CB-1 | qa — PR1 PASS; PR2 + contract-fix CI green; chờ dry-run log + QA verify PR8 + merge order | QA / Dev | `reports/chatbotx/qa/CB-1/verdict.md` + PR #6, #7, #8 | PR1 #6 PASS; fix `ssrfBlocked` + `providerUnreachable` ở PR #8 (head `340868793`, CI green) — QA đang verify; PR2 #7 (head `56b5f7b8f`, CI green) chờ rebase sau #8. Thứ tự merge đề xuất: #8 → #7 → #6. Chặn DoD: log backfill dry-run DB dev (PO đã duyệt migration) + PO chốt merge order (item 4) |
 | CB-3 | clear — chờ input vận hành | — | `reports/chatbotx/ba/CB-3/spec.md` | PO clear 2026-11-23; cần stack test, nick/QR, nhóm test; Dev nhận sau PR 2 |
 | CB-4 → CB-17 | backlog | — | — | `To Do` + `idea`, chưa qua gate |
 
@@ -14,7 +14,7 @@ Stage: backlog → refining → spec → clear → dev → qa → pr → staging
 ## Daily
 
 - **Đang làm:** CB-1 PR2 xong (PR #7) + contract-fix xong (PR #8), cả hai CI green; chờ merge thứ tự #8 → #7 → #6.
-- **Chờ:** PO duyệt SQL migration mã hoá auth (chặn backfill dry-run + merge PR2, item 4); QA re-verify sau merge; CB-3 chờ stack/nick/nhóm test.
+- **Chờ:** PO chốt merge order #8→#7→#6 (item 4 needs-you); log backfill dry-run DB dev; QA verify PR8; CB-3 chờ stack/nick/nhóm test.
 - **Chặn:** MCP `jira-vtx` lỗi certifi ở phiên SM (đã workaround qua Chef).
 
 ## Log
