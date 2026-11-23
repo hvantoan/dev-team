@@ -21,3 +21,9 @@ TYPES_EXIT=0
 
 # Note: header pnpm 10.31.0 is the host shim; repo pins pnpm@10.34.5 (package.json packageManager) and corepack ran that version inside the repo.
 # check-types above was a FULL TURBO cache hit (identical inputs already type-checked). Forced fresh run: see below.
+
+### forced fresh check-types (no cache) 2026-11-23T14:54:05+07:00
+$ pnpm exec turbo run check-types --force --concurrency=2
+ Tasks:    69 successful, 69 total
+  Time:    16m52.535s 
+FORCED_TYPES_EXIT=0

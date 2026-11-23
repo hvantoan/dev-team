@@ -1,0 +1,28 @@
+# AC5 — SSRF default-on, isolated stack WITHOUT opt-out (PR head 2782fe418)
+
+Builder restarted on `:3124` from the same worktree with `OPENAI_COMPATIBLE_ALLOW_PRIVATE_URLS=false` (`/tmp/qa-cb1/qa-no-optout.env`), `NEXT_PUBLIC_EDITION=community`. Cùng DB/redis/worker của stack test.
+
+| Case | Request | Kết quả |
+|---|---|---|
+| Connect loopback khi chưa opt-out | `POST /api/v1/connections` `{baseURL:"http://127.0.0.1:1235/blocked/v1"}` | `400` `{"code":"connectionCredentialsRejected","message":"OpenAI-compatible base URL is not allowed. (code connectionProviderRejected)"}` |
+| Connect metadata IP | `POST /api/v1/connections` `{baseURL:"http://169.254.169.254/latest/meta-data"}` | `400 connectionCredentialsRejected` + message "base URL is not allowed." |
+| Connect private LAN | `POST /api/v1/connections` `{baseURL:"http://10.0.0.5:1234/v1"}` | `400 connectionCredentialsRejected` + message "base URL is not allowed." |
+| PATCH baseURL private (cùng origin đang lưu) | `PATCH /api/v1/integrations/ai/openaiCompatible` `{integrationId:"11793662632387519","baseURL":"http://127.0.0.1:1235/api/v1"}` | `400` `{"code":"ssrfBlocked","message":"OpenAI-compatible base URL is not allowed."}` |
+| PATCH baseURL sang metadata IP | cùng route, `baseURL:"http://169.254.169.254/latest/meta-data"` | `422` `{"code":"validation","message":"Provide an API key when changing baseURL to a different origin."}` — chặn bởi guard đổi origin (chạy trước SSRF), không tới được endpoint lạ |
+| PATCH baseURL sai scheme | `baseURL:"ftp://example.com/v1"` | `422 invalidRequestData` "must be a valid HTTP or HTTPS URL" |
+
+**Không probe endpoint bị chặn:** log mock server (127.0.0.1:1235) không có request nào sau `08:14:01Z`; toàn bộ log trong toàn phiên:
+
+```
+08:08:10 GET /v1/models              <- connect #1 (opt-out ON)
+08:12:31 POST /v1/chat/completions   <- agent trả lời (step 5)
+08:12:31 POST /v1/chat/completions
+08:13:10 GET /other/v1/models        <- PATCH cùng origin, verify bằng key đang lưu
+08:13:38 GET /v1/models              <- PATCH khác origin có apiKey
+08:14:01 GET /api/v1/models          <- connect #2 (opt-out ON)
+```
+
+## Case không chạy được tại chỗ
+
+- **Cloud + env opt-out** (`isCloud() === true` bỏ qua env): không có build cloud ở máy này (`NEXT_PUBLIC_EDITION=community`), nên chỉ có bằng chứng unit test `packages/business/__tests__/integration-openai-compatible-base-url.test.ts` ("blocks unsafe URLs in cloud mode even when opt-out env is enabled", `assertPublicUrl` vẫn được gọi) + nhánh code `if (!isCloud() && allowPrivateOpenaiCompatibleUrls())`.
+- **DNS-rebinding / hostname phân giải ra IP nội bộ**: `assertPublicUrl` dùng DNS-over-HTTPS, cần internet; không kiểm trong môi trường này.
