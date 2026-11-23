@@ -51,7 +51,7 @@
     ],
     "notes": [
       "Không commit thẳng main; nhánh feat|fix/<issue-or-description>, PR bắt buộc, conventional commits (lefthook).",
-      "Local checks (PO 2026-11-23): KHÔNG chạy pnpm check-types/check-types:cold — CI Types jobs là cổng type duy nhất; local chỉ lint + test targeted.",
+      "Local checks (PO 2026-11-23): hạn chế chạy pnpm check-types/check-types:cold — CI Types jobs là cổng type; local chỉ lint + test targeted (check-types chỉ khi debug type cụ thể).",
       "db:migrate chỉ áp lên DB local qua dev-up; migration lên DB dùng chung/staging/prod phải có PO duyệt SQL.",
       "Port cố định, chỉ một stack local cho mỗi project — Dev/QA phải nhả stack trước khi bàn giao.",
       "Stack có 2 chế độ: host dev (`dev-up.sh`, pid /tmp/chatbotx-dev.pid) và docker stack (`docker compose ps`: builder/caddy/worker/realtime). Kiểm `docker compose ps` trước khi `up`; không kill container đang chạy của anh Toàn.",
