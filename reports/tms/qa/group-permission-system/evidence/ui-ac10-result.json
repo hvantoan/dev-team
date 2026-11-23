@@ -1,0 +1,13 @@
+{
+  "mode": "ac10",
+  "appUrl": "http://tuanvudev.localhost:4700/tms/",
+  "generatedAt": "2026-11-22T18:20:10.708Z",
+  "httpStatus": 200,
+  "finalUrl": "http://tuanvudev.localhost:4700/tms/vehicle-routes",
+  "heading": "",
+  "hasLoginForm": 0,
+  "tableRows": 20,
+  "bodyTextSample": "Tổng Quan Vận Hành 0 Danh sách tuyến xe Thêm Tuyến Xe Tìm kiếm ​ Tìm kiếm Ngày tạo 0 Mã tuyến 0 Tên tuyến xe Xuất tại kho Nhập tại kho 14/08/2026 12:12 T-06 Kiwi KHO ĐỒNG NAI Quốc lộ 1A, Xã Xuân Định, Thành phố Đồng Nai KHO NM BÌNH ĐIỂN Cụm Công Nghiệp Long Định, Xã Long Cang, Tây Ninh 28/05/2026 10",
+  "screenshot": "ac10-vehr-cu-vehicle-routes.png",
+  "pass": true
+}

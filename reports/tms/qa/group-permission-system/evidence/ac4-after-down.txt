@@ -1,0 +1,4 @@
+qa-rec-debt-balance=["rec_debt_balance", "cus_r", "cusdeb_hx", "rec_r"]
+qa-supdeb-hx=["supdeb_hx", "cus_r"]
+qa-supdeb-open=["supdeb_hx", "cus_r"]
+qa-supdeb-rc=["supdeb_hx", "cus_r"]

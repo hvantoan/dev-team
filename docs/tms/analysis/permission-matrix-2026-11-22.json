@@ -1,0 +1,1190 @@
+{
+ "generated": "2026-11-22",
+ "base": "tms_application@origin/main, tms-web@origin/dev",
+ "rules": "allOf[]=và; allowAnyOf[]=hoặc; '(authenticated)' = mọi user đã đăng nhập",
+ "endpoints": [
+  {
+   "endpoint": "/tms.AuditService/GroupAudit",
+   "module": "audit",
+   "allowAnyOf": [
+    "audit_r"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.AuditService/ListAudit",
+   "module": "audit",
+   "allowAnyOf": [
+    "audit_r"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại."
+  },
+  {
+   "endpoint": "/tms.AuthService/Login",
+   "module": "(auth)",
+   "allowAnyOf": [
+    "(authenticated hoặc public)"
+   ],
+   "allOf": [],
+   "rationale": "Login/Register là public theo thiết kế; các method khác của service này không có."
+  },
+  {
+   "endpoint": "/tms.CostService/DeleteCost",
+   "module": "cost",
+   "allowAnyOf": [
+    "costs_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.CostService/GetCost",
+   "module": "cost",
+   "allowAnyOf": [
+    "costs_r",
+    "diso_cu",
+    "do_cu"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form — allowAnyOf gồm quyền xem module sở hữu + quyền edit/view của các màn gọi nó. Phương án thay thế: giữ 1 quyền + WithCheck trong registry (ít quyền hơn nhưng role phình). Đề xuất chọn allowAnyOf cho endpoint chia sẻ."
+  },
+  {
+   "endpoint": "/tms.CostService/ListCost",
+   "module": "cost",
+   "allowAnyOf": [
+    "costs_r",
+    "diso_cu",
+    "do_cu"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form — allowAnyOf gồm quyền xem module sở hữu + quyền edit/view của các màn gọi nó. Phương án thay thế: giữ 1 quyền + WithCheck trong registry (ít quyền hơn nhưng role phình). Đề xuất chọn allowAnyOf cho endpoint chia sẻ."
+  },
+  {
+   "endpoint": "/tms.CostService/SaveCost",
+   "module": "cost",
+   "allowAnyOf": [
+    "costs_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.CustomerDebtService/Export",
+   "module": "customer-debt",
+   "allowAnyOf": [
+    "cusdeb_ex"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.CustomerDebtService/ExportCustomerDebtDetail",
+   "module": "customer-debt",
+   "allowAnyOf": [
+    "cusdeb_ex"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.CustomerDebtService/Get",
+   "module": "customer-debt",
+   "allowAnyOf": [
+    "rec_debt_balance",
+    "rec_r",
+    "cusdeb_hx"
+   ],
+   "allOf": [],
+   "rationale": "CHỐT (ITMS-411): form phiếu thu đọc số dư qua rec_debt_balance/rec_r; màn Công nợ KH vẫn đọc qua Get nên giữ cusdeb_hx. KHÔNG gồm cus_r — ITMS-383 chốt không mở ngoài phạm vi phiếu thu/công nợ. Thay đổi so với #136 ({cusdeb_hx, rec_debt_balance}): thêm rec_r."
+  },
+  {
+   "endpoint": "/tms.CustomerDebtService/History",
+   "module": "customer-debt",
+   "allowAnyOf": [
+    "cusdeb_hx"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.CustomerDebtService/List",
+   "module": "customer-debt",
+   "allowAnyOf": [
+    "cusdeb_hx"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại."
+  },
+  {
+   "endpoint": "/tms.CustomerDebtService/Recalculate",
+   "module": "customer-debt",
+   "allowAnyOf": [
+    "cusdeb_rc"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.CustomerReceiptService/Delete",
+   "module": "customer-receipt",
+   "allowAnyOf": [
+    "rec_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.CustomerReceiptService/Get",
+   "module": "customer-receipt",
+   "allowAnyOf": [
+    "rec_r"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại."
+  },
+  {
+   "endpoint": "/tms.CustomerReceiptService/List",
+   "module": "customer-receipt",
+   "allowAnyOf": [
+    "rec_r"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại."
+  },
+  {
+   "endpoint": "/tms.CustomerReceiptService/Save",
+   "module": "customer-receipt",
+   "allowAnyOf": [
+    "rec_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.DeliveryInstructionService/DeleteDeliveryInstruction",
+   "module": "delivery-instruction",
+   "allowAnyOf": [
+    "do_di"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.DeliveryInstructionService/ExportDeliveryInstruction",
+   "module": "delivery-instruction",
+   "allowAnyOf": [
+    "do_di_ex"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.DeliveryInstructionService/GetDeliveryInstruction",
+   "module": "delivery-instruction",
+   "allowAnyOf": [
+    "do_di",
+    "diso_cu",
+    "diso_r"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form — allowAnyOf gồm quyền xem module sở hữu + quyền edit/view của các màn gọi nó. Phương án thay thế: giữ 1 quyền + WithCheck trong registry (ít quyền hơn nhưng role phình). Đề xuất chọn allowAnyOf cho endpoint chia sẻ."
+  },
+  {
+   "endpoint": "/tms.DeliveryInstructionService/GetLatestDeliveryInstructionByCode",
+   "module": "delivery-instruction",
+   "allowAnyOf": [
+    "do_di",
+    "diso_cu",
+    "diso_r"
+   ],
+   "allOf": [],
+   "rationale": "CHỐT (ITMS-411): guard bắt buộc (trước không guard). Phục vụ form chỉ thị (do_di) và form nhật ký điều xe (diso_*)."
+  },
+  {
+   "endpoint": "/tms.DeliveryInstructionService/ListDeliveryInstruction",
+   "module": "delivery-instruction",
+   "allowAnyOf": [
+    "do_di",
+    "diso_cu",
+    "diso_r"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form — allowAnyOf gồm quyền xem module sở hữu + quyền edit/view của các màn gọi nó. Phương án thay thế: giữ 1 quyền + WithCheck trong registry (ít quyền hơn nhưng role phình). Đề xuất chọn allowAnyOf cho endpoint chia sẻ."
+  },
+  {
+   "endpoint": "/tms.DeliveryInstructionService/ListVehicleByDICode",
+   "module": "delivery-instruction",
+   "allowAnyOf": [
+    "do_di",
+    "diso_cu",
+    "diso_r"
+   ],
+   "allOf": [],
+   "rationale": "CHỐT (ITMS-411): guard bắt buộc (trước không guard). Đồng bộ xe theo mã DI từ màn chỉ thị và điều xe."
+  },
+  {
+   "endpoint": "/tms.DeliveryInstructionService/SaveDeliveryInstruction",
+   "module": "delivery-instruction",
+   "allowAnyOf": [
+    "do_di"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.DeliveryInstructionService/ValidateDeliveryInstruction",
+   "module": "delivery-instruction",
+   "allowAnyOf": [
+    "do_di"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.DeliveryOrderService/DeleteDeliveryOrder",
+   "module": "delivery-order",
+   "allowAnyOf": [
+    "do_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.DeliveryOrderService/ExportDeliveryOrder",
+   "module": "delivery-order",
+   "allowAnyOf": [
+    "do_ex"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.DeliveryOrderService/GetDeliveryOrder",
+   "module": "delivery-order",
+   "allowAnyOf": [
+    "do_r",
+    "diso_cu",
+    "diso_r",
+    "do_di",
+    "subcon_cu"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form — allowAnyOf gồm quyền xem module sở hữu + quyền edit/view của các màn gọi nó. Phương án thay thế: giữ 1 quyền + WithCheck trong registry (ít quyền hơn nhưng role phình). Đề xuất chọn allowAnyOf cho endpoint chia sẻ."
+  },
+  {
+   "endpoint": "/tms.DeliveryOrderService/ListDeliveryOrder",
+   "module": "delivery-order",
+   "allowAnyOf": [
+    "do_r",
+    "diso_cu",
+    "diso_r",
+    "do_di",
+    "subcon_cu"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form — allowAnyOf gồm quyền xem module sở hữu + quyền edit/view của các màn gọi nó. Phương án thay thế: giữ 1 quyền + WithCheck trong registry (ít quyền hơn nhưng role phình). Đề xuất chọn allowAnyOf cho endpoint chia sẻ."
+  },
+  {
+   "endpoint": "/tms.DeliveryOrderService/SaveDeliveryOrder",
+   "module": "delivery-order",
+   "allowAnyOf": [
+    "do_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.DispatchOrderService/DeleteDispatchOrder",
+   "module": "dispatch-order",
+   "allowAnyOf": [
+    "diso_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.DispatchOrderService/ExportDispatchOrder",
+   "module": "dispatch-order",
+   "allowAnyOf": [
+    "diso_ex"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.DispatchOrderService/GetDispatchOrder",
+   "module": "dispatch-order",
+   "allowAnyOf": [
+    "diso_r"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại."
+  },
+  {
+   "endpoint": "/tms.DispatchOrderService/ListDispatchOrder",
+   "module": "dispatch-order",
+   "allowAnyOf": [
+    "diso_r"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại."
+  },
+  {
+   "endpoint": "/tms.DispatchOrderService/SaveDispatchOrder",
+   "module": "dispatch-order",
+   "allowAnyOf": [
+    "diso_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.DriverService/DeleteDriver",
+   "module": "driver",
+   "allowAnyOf": [
+    "drv_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.DriverService/GetDriver",
+   "module": "driver",
+   "allowAnyOf": [
+    "drv_r",
+    "diso_cu"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form — allowAnyOf gồm quyền xem module sở hữu + quyền edit/view của các màn gọi nó. Phương án thay thế: giữ 1 quyền + WithCheck trong registry (ít quyền hơn nhưng role phình). Đề xuất chọn allowAnyOf cho endpoint chia sẻ."
+  },
+  {
+   "endpoint": "/tms.DriverService/ListDriver",
+   "module": "driver",
+   "allowAnyOf": [
+    "drv_r",
+    "diso_cu"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form — allowAnyOf gồm quyền xem module sở hữu + quyền edit/view của các màn gọi nó. Phương án thay thế: giữ 1 quyền + WithCheck trong registry (ít quyền hơn nhưng role phình). Đề xuất chọn allowAnyOf cho endpoint chia sẻ."
+  },
+  {
+   "endpoint": "/tms.DriverService/SaveDriver",
+   "module": "driver",
+   "allowAnyOf": [
+    "drv_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.FuelAdjustmentService/Delete",
+   "module": "fuel-adjustment",
+   "allowAnyOf": [
+    "fadj_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.FuelAdjustmentService/Get",
+   "module": "fuel-adjustment",
+   "allowAnyOf": [
+    "fadj_r"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại."
+  },
+  {
+   "endpoint": "/tms.FuelAdjustmentService/GetSystemBalance",
+   "module": "fuel-adjustment",
+   "allowAnyOf": [
+    "fadj_r"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại."
+  },
+  {
+   "endpoint": "/tms.FuelAdjustmentService/List",
+   "module": "fuel-adjustment",
+   "allowAnyOf": [
+    "fadj_r"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại."
+  },
+  {
+   "endpoint": "/tms.FuelAdjustmentService/Save",
+   "module": "fuel-adjustment",
+   "allowAnyOf": [
+    "fadj_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.FuelIssueService/Delete",
+   "module": "fuel-issue",
+   "allowAnyOf": [
+    "fissue_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.FuelIssueService/Get",
+   "module": "fuel-issue",
+   "allowAnyOf": [
+    "fissue_r",
+    "fadj_cu"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form — allowAnyOf gồm quyền xem module sở hữu + quyền edit/view của các màn gọi nó. Phương án thay thế: giữ 1 quyền + WithCheck trong registry (ít quyền hơn nhưng role phình). Đề xuất chọn allowAnyOf cho endpoint chia sẻ."
+  },
+  {
+   "endpoint": "/tms.FuelIssueService/List",
+   "module": "fuel-issue",
+   "allowAnyOf": [
+    "fissue_r",
+    "fadj_cu"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form — allowAnyOf gồm quyền xem module sở hữu + quyền edit/view của các màn gọi nó. Phương án thay thế: giữ 1 quyền + WithCheck trong registry (ít quyền hơn nhưng role phình). Đề xuất chọn allowAnyOf cho endpoint chia sẻ."
+  },
+  {
+   "endpoint": "/tms.FuelIssueService/Save",
+   "module": "fuel-issue",
+   "allowAnyOf": [
+    "fissue_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.FuelReceiptService/Delete",
+   "module": "fuel-receipt",
+   "allowAnyOf": [
+    "frcp_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.FuelReceiptService/Get",
+   "module": "fuel-receipt",
+   "allowAnyOf": [
+    "frcp_r",
+    "fadj_cu"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form — allowAnyOf gồm quyền xem module sở hữu + quyền edit/view của các màn gọi nó. Phương án thay thế: giữ 1 quyền + WithCheck trong registry (ít quyền hơn nhưng role phình). Đề xuất chọn allowAnyOf cho endpoint chia sẻ."
+  },
+  {
+   "endpoint": "/tms.FuelReceiptService/List",
+   "module": "fuel-receipt",
+   "allowAnyOf": [
+    "frcp_r",
+    "fadj_cu"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form — allowAnyOf gồm quyền xem module sở hữu + quyền edit/view của các màn gọi nó. Phương án thay thế: giữ 1 quyền + WithCheck trong registry (ít quyền hơn nhưng role phình). Đề xuất chọn allowAnyOf cho endpoint chia sẻ."
+  },
+  {
+   "endpoint": "/tms.FuelReceiptService/Save",
+   "module": "fuel-receipt",
+   "allowAnyOf": [
+    "frcp_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.FuelTankService/Activity",
+   "module": "fuel-tank",
+   "allowAnyOf": [
+    "ftk_r"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.FuelTankService/Delete",
+   "module": "fuel-tank",
+   "allowAnyOf": [
+    "ftk_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.FuelTankService/Get",
+   "module": "fuel-tank",
+   "allowAnyOf": [
+    "ftk_r",
+    "fadj_cu",
+    "fissue_cu",
+    "frcp_cu"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form — allowAnyOf gồm quyền xem module sở hữu + quyền edit/view của các màn gọi nó. Phương án thay thế: giữ 1 quyền + WithCheck trong registry (ít quyền hơn nhưng role phình). Đề xuất chọn allowAnyOf cho endpoint chia sẻ."
+  },
+  {
+   "endpoint": "/tms.FuelTankService/List",
+   "module": "fuel-tank",
+   "allowAnyOf": [
+    "ftk_r",
+    "fadj_cu",
+    "fissue_cu",
+    "frcp_cu"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form — allowAnyOf gồm quyền xem module sở hữu + quyền edit/view của các màn gọi nó. Phương án thay thế: giữ 1 quyền + WithCheck trong registry (ít quyền hơn nhưng role phình). Đề xuất chọn allowAnyOf cho endpoint chia sẻ."
+  },
+  {
+   "endpoint": "/tms.FuelTankService/Save",
+   "module": "fuel-tank",
+   "allowAnyOf": [
+    "ftk_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.ImageService/DeleteImage",
+   "module": "(shared)",
+   "allowAnyOf": [
+    "(authenticated)"
+   ],
+   "allOf": [],
+   "rationale": "CHỐT (ITMS-411): tối thiểu authenticated; quyền xoá theo chủ sở hữu ảnh (entity ref) do service kiểm — không biểu diễn bằng tập quyền tĩnh vì ảnh thuộc nhiều module."
+  },
+  {
+   "endpoint": "/tms.NotificationService/GetNotificationSettings",
+   "module": "(shared)",
+   "allowAnyOf": [
+    "(authenticated)"
+   ],
+   "allOf": [],
+   "rationale": "Thông báo là dữ liệu riêng từng user, không gắn module nghiệp vụ."
+  },
+  {
+   "endpoint": "/tms.NotificationService/GetUnreadCount",
+   "module": "(shared)",
+   "allowAnyOf": [
+    "(authenticated)"
+   ],
+   "allOf": [],
+   "rationale": "Thông báo là dữ liệu riêng từng user, không gắn module nghiệp vụ."
+  },
+  {
+   "endpoint": "/tms.NotificationService/ListNotifications",
+   "module": "(shared)",
+   "allowAnyOf": [
+    "(authenticated)"
+   ],
+   "allOf": [],
+   "rationale": "Thông báo là dữ liệu riêng từng user, không gắn module nghiệp vụ."
+  },
+  {
+   "endpoint": "/tms.NotificationService/MarkAsRead",
+   "module": "(shared)",
+   "allowAnyOf": [
+    "(authenticated)"
+   ],
+   "allOf": [],
+   "rationale": "Thông báo là dữ liệu riêng từng user, không gắn module nghiệp vụ."
+  },
+  {
+   "endpoint": "/tms.NotificationService/UpdateNotificationSetting",
+   "module": "(shared)",
+   "allowAnyOf": [
+    "(authenticated)"
+   ],
+   "allOf": [],
+   "rationale": "Thông báo là dữ liệu riêng từng user, không gắn module nghiệp vụ."
+  },
+  {
+   "endpoint": "/tms.PartnerService/DeletePartner",
+   "module": "partner",
+   "allowAnyOf": [
+    "cus_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.PartnerService/GetPartner",
+   "module": "partner",
+   "allowAnyOf": [
+    "cus_r",
+    "pmt_r",
+    "pmt_cu",
+    "do_cu",
+    "do_di",
+    "diso_r",
+    "diso_cu",
+    "cusdeb_hx",
+    "supdeb_hx",
+    "rec_cu",
+    "rec_debt_balance",
+    "subcon_cu"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form và filter danh sách — allowAnyOf gồm quyền xem module sở hữu + quyền xem/sửa của mọi màn gọi nó (gồm cả view-only: filter phiếu chi dùng PartnerSelect nên cần pmt_r; màn điều xe dùng PartnerSelect nên cần diso_r/diso_cu). Nguồn sự thật callers: bảng form→API trong file .md."
+  },
+  {
+   "endpoint": "/tms.PartnerService/GetPartnerOpeningBalance",
+   "module": "partner",
+   "allowAnyOf": [
+    "cus_r",
+    "pmt_cu",
+    "do_cu",
+    "do_di",
+    "cusdeb_hx",
+    "supdeb_hx",
+    "rec_cu",
+    "rec_debt_balance",
+    "subcon_cu"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form — allowAnyOf gồm quyền xem module sở hữu + quyền edit/view của các màn gọi nó. Phương án thay thế: giữ 1 quyền + WithCheck trong registry (ít quyền hơn nhưng role phình). Đề xuất chọn allowAnyOf cho endpoint chia sẻ."
+  },
+  {
+   "endpoint": "/tms.PartnerService/ListPartner",
+   "module": "partner",
+   "allowAnyOf": [
+    "cus_r",
+    "pmt_r",
+    "pmt_cu",
+    "do_cu",
+    "do_di",
+    "diso_r",
+    "diso_cu",
+    "cusdeb_hx",
+    "supdeb_hx",
+    "rec_cu",
+    "rec_debt_balance",
+    "subcon_cu"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form và filter danh sách — allowAnyOf gồm quyền xem module sở hữu + quyền xem/sửa của mọi màn gọi nó (gồm cả view-only: filter phiếu chi dùng PartnerSelect nên cần pmt_r; màn điều xe dùng PartnerSelect nên cần diso_r/diso_cu). Nguồn sự thật callers: bảng form→API trong file .md."
+  },
+  {
+   "endpoint": "/tms.PartnerService/SavePartner",
+   "module": "partner",
+   "allowAnyOf": [
+    "cus_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.PartnerService/SavePartnerCustomerOpeningBalance",
+   "module": "partner",
+   "allowAnyOf": [
+    "cus_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.PartnerService/SavePartnerSupplierOpeningBalance",
+   "module": "partner",
+   "allowAnyOf": [
+    "supdeb_open"
+   ],
+   "allOf": [],
+   "rationale": "CHỐT (ITMS-411): tách key mới supdeb_open (nhóm Công nợ NCC) thay cus_cu; migration backfill cho role đang có cus_cu để không mất quyền nhập số dư đầu kỳ NCC."
+  },
+  {
+   "endpoint": "/tms.PaymentMethodService/DeletePaymentMethod",
+   "module": "payment-method",
+   "allowAnyOf": [
+    "pytmtd_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.PaymentMethodService/GetPaymentMethod",
+   "module": "payment-method",
+   "allowAnyOf": [
+    "pytmtd_r",
+    "pmt_cu",
+    "rec_cu"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form — allowAnyOf gồm quyền xem module sở hữu + quyền edit/view của các màn gọi nó. Phương án thay thế: giữ 1 quyền + WithCheck trong registry (ít quyền hơn nhưng role phình). Đề xuất chọn allowAnyOf cho endpoint chia sẻ."
+  },
+  {
+   "endpoint": "/tms.PaymentMethodService/ListBank",
+   "module": "payment-method",
+   "allowAnyOf": [
+    "pytmtd_r",
+    "pmt_cu",
+    "rec_cu"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form — allowAnyOf gồm quyền xem module sở hữu + quyền edit/view của các màn gọi nó. Phương án thay thế: giữ 1 quyền + WithCheck trong registry (ít quyền hơn nhưng role phình). Đề xuất chọn allowAnyOf cho endpoint chia sẻ."
+  },
+  {
+   "endpoint": "/tms.PaymentMethodService/ListPaymentMethod",
+   "module": "payment-method",
+   "allowAnyOf": [
+    "pytmtd_r",
+    "pmt_cu",
+    "rec_cu"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form — allowAnyOf gồm quyền xem module sở hữu + quyền edit/view của các màn gọi nó. Phương án thay thế: giữ 1 quyền + WithCheck trong registry (ít quyền hơn nhưng role phình). Đề xuất chọn allowAnyOf cho endpoint chia sẻ."
+  },
+  {
+   "endpoint": "/tms.PaymentMethodService/SavePaymentMethod",
+   "module": "payment-method",
+   "allowAnyOf": [
+    "pytmtd_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.PaymentVoucherService/CancelPaymentVoucher",
+   "module": "payment-voucher",
+   "allowAnyOf": [
+    "pmt_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.PaymentVoucherService/GetPaymentVoucher",
+   "module": "payment-voucher",
+   "allowAnyOf": [
+    "pmt_r"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại."
+  },
+  {
+   "endpoint": "/tms.PaymentVoucherService/GetSupplierPayableAmount",
+   "module": "payment-voucher",
+   "allowAnyOf": [
+    "pmt_r",
+    "pmt_cu",
+    "supdeb_hx"
+   ],
+   "allOf": [],
+   "rationale": "Số tiền phải trả NCC — dùng trong form phiếu chi (pmt_cu) và có thể trong màn công nợ NCC."
+  },
+  {
+   "endpoint": "/tms.PaymentVoucherService/ListPaymentVoucher",
+   "module": "payment-voucher",
+   "allowAnyOf": [
+    "pmt_r"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại."
+  },
+  {
+   "endpoint": "/tms.PaymentVoucherService/SavePaymentVoucher",
+   "module": "payment-voucher",
+   "allowAnyOf": [
+    "pmt_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.ProductService/DeleteProduct",
+   "module": "product",
+   "allowAnyOf": [
+    "prd_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.ProductService/GetProduct",
+   "module": "product",
+   "allowAnyOf": [
+    "prd_r",
+    "do_cu"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form — allowAnyOf gồm quyền xem module sở hữu + quyền edit/view của các màn gọi nó. Phương án thay thế: giữ 1 quyền + WithCheck trong registry (ít quyền hơn nhưng role phình). Đề xuất chọn allowAnyOf cho endpoint chia sẻ."
+  },
+  {
+   "endpoint": "/tms.ProductService/ListProduct",
+   "module": "product",
+   "allowAnyOf": [
+    "prd_r",
+    "do_cu"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form — allowAnyOf gồm quyền xem module sở hữu + quyền edit/view của các màn gọi nó. Phương án thay thế: giữ 1 quyền + WithCheck trong registry (ít quyền hơn nhưng role phình). Đề xuất chọn allowAnyOf cho endpoint chia sẻ."
+  },
+  {
+   "endpoint": "/tms.ProductService/SaveProduct",
+   "module": "product",
+   "allowAnyOf": [
+    "prd_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.ResourceService/ListAdUnit",
+   "module": "(shared)",
+   "allowAnyOf": [],
+   "allOf": [],
+   "rationale": "CHƯA PHỦ — không xác định được rule.",
+   "needs_decision": "Cần review thủ công method này."
+  },
+  {
+   "endpoint": "/tms.RoleService/DeleteRole",
+   "module": "role",
+   "allowAnyOf": [
+    "role_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.RoleService/GetModules",
+   "module": "role",
+   "allowAnyOf": [
+    "role_r",
+    "role_cu",
+    "usr_cu"
+   ],
+   "allOf": [],
+   "rationale": "CHỐT (ITMS-411): catalog module/action phục vụ cả màn Phân quyền (role_r/role_cu) lẫn form Người dùng (usr_cu gán vai trò). Trước đây không guard — bây giờ guard bằng tập này."
+  },
+  {
+   "endpoint": "/tms.RoleService/GetRole",
+   "module": "role",
+   "allowAnyOf": [
+    "role_r",
+    "usr_cu",
+    "usr_r"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form — allowAnyOf gồm quyền xem module sở hữu + quyền edit/view của các màn gọi nó. Phương án thay thế: giữ 1 quyền + WithCheck trong registry (ít quyền hơn nhưng role phình). Đề xuất chọn allowAnyOf cho endpoint chia sẻ."
+  },
+  {
+   "endpoint": "/tms.RoleService/ListRole",
+   "module": "role",
+   "allowAnyOf": [
+    "role_r",
+    "usr_cu",
+    "usr_r"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form — allowAnyOf gồm quyền xem module sở hữu + quyền edit/view của các màn gọi nó. Phương án thay thế: giữ 1 quyền + WithCheck trong registry (ít quyền hơn nhưng role phình). Đề xuất chọn allowAnyOf cho endpoint chia sẻ."
+  },
+  {
+   "endpoint": "/tms.RoleService/SaveRole",
+   "module": "role",
+   "allowAnyOf": [
+    "role_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.RouteService/DeleteRoute",
+   "module": "route",
+   "allowAnyOf": [
+    "vehr_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.RouteService/GetRoute",
+   "module": "route",
+   "allowAnyOf": [
+    "vehr_r",
+    "do_cu",
+    "cus_cu"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form — allowAnyOf gồm quyền xem module sở hữu + quyền edit/view của các màn gọi nó. Phương án thay thế: giữ 1 quyền + WithCheck trong registry (ít quyền hơn nhưng role phình). Đề xuất chọn allowAnyOf cho endpoint chia sẻ."
+  },
+  {
+   "endpoint": "/tms.RouteService/ListRoute",
+   "module": "route",
+   "allowAnyOf": [
+    "vehr_r",
+    "do_cu",
+    "cus_cu"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form — allowAnyOf gồm quyền xem module sở hữu + quyền edit/view của các màn gọi nó. Phương án thay thế: giữ 1 quyền + WithCheck trong registry (ít quyền hơn nhưng role phình). Đề xuất chọn allowAnyOf cho endpoint chia sẻ."
+  },
+  {
+   "endpoint": "/tms.RouteService/SaveRoute",
+   "module": "route",
+   "allowAnyOf": [
+    "vehr_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.SettingService/GetNumberFormat",
+   "module": "(shared)",
+   "allowAnyOf": [
+    "(authenticated)"
+   ],
+   "allOf": [],
+   "rationale": "NumberFormat là cấu hình hiển thị dùng chung mọi màn."
+  },
+  {
+   "endpoint": "/tms.SubcontractService/DeleteSubcontract",
+   "module": "subcontract",
+   "allowAnyOf": [
+    "subcon_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.SubcontractService/GetSubcontract",
+   "module": "subcontract",
+   "allowAnyOf": [
+    "subcon_r",
+    "do_di",
+    "do_cu"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form — allowAnyOf gồm quyền xem module sở hữu + quyền edit/view của các màn gọi nó. Phương án thay thế: giữ 1 quyền + WithCheck trong registry (ít quyền hơn nhưng role phình). Đề xuất chọn allowAnyOf cho endpoint chia sẻ."
+  },
+  {
+   "endpoint": "/tms.SubcontractService/GetSubcontractRelatedOrders",
+   "module": "subcontract",
+   "allowAnyOf": [
+    "subcon_r"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại."
+  },
+  {
+   "endpoint": "/tms.SubcontractService/ListSubcontract",
+   "module": "subcontract",
+   "allowAnyOf": [
+    "subcon_r",
+    "do_di",
+    "do_cu"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form — allowAnyOf gồm quyền xem module sở hữu + quyền edit/view của các màn gọi nó. Phương án thay thế: giữ 1 quyền + WithCheck trong registry (ít quyền hơn nhưng role phình). Đề xuất chọn allowAnyOf cho endpoint chia sẻ."
+  },
+  {
+   "endpoint": "/tms.SubcontractService/SaveSubcontract",
+   "module": "subcontract",
+   "allowAnyOf": [
+    "subcon_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.SupplierDebtService/Get",
+   "module": "supplier-debt",
+   "allowAnyOf": [
+    "supdeb_hx"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại."
+  },
+  {
+   "endpoint": "/tms.SupplierDebtService/History",
+   "module": "supplier-debt",
+   "allowAnyOf": [
+    "supdeb_hx"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.SupplierDebtService/List",
+   "module": "supplier-debt",
+   "allowAnyOf": [
+    "supdeb_hx"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại."
+  },
+  {
+   "endpoint": "/tms.SupplierDebtService/Recalculate",
+   "module": "supplier-debt",
+   "allowAnyOf": [
+    "supdeb_rc"
+   ],
+   "allOf": [],
+   "rationale": "CHỐT (ITMS-411): tách key mới supdeb_rc (nhóm Công nợ NCC) cho hành động ghi; migration backfill cho mọi role đang có supdeb_hx — tiền lệ cusdeb_rc."
+  },
+  {
+   "endpoint": "/tms.TenantService/Register",
+   "module": "(auth)",
+   "allowAnyOf": [
+    "(authenticated hoặc public)"
+   ],
+   "allOf": [],
+   "rationale": "Login/Register là public theo thiết kế; các method khác của service này không có."
+  },
+  {
+   "endpoint": "/tms.UserService/DeleteUser",
+   "module": "user",
+   "allowAnyOf": [
+    "usr_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.UserService/GetPermissions",
+   "module": "user",
+   "allowAnyOf": [
+    "(authenticated)"
+   ],
+   "allOf": [],
+   "rationale": "Trả quyền của chính user — mọi user cần gọi để FE render."
+  },
+  {
+   "endpoint": "/tms.UserService/GetUser",
+   "module": "user",
+   "allowAnyOf": [
+    "usr_r",
+    "audit_r"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form — allowAnyOf gồm quyền xem module sở hữu + quyền edit/view của các màn gọi nó. Phương án thay thế: giữ 1 quyền + WithCheck trong registry (ít quyền hơn nhưng role phình). Đề xuất chọn allowAnyOf cho endpoint chia sẻ."
+  },
+  {
+   "endpoint": "/tms.UserService/ListUser",
+   "module": "user",
+   "allowAnyOf": [
+    "usr_r",
+    "audit_r"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form — allowAnyOf gồm quyền xem module sở hữu + quyền edit/view của các màn gọi nó. Phương án thay thế: giữ 1 quyền + WithCheck trong registry (ít quyền hơn nhưng role phình). Đề xuất chọn allowAnyOf cho endpoint chia sẻ."
+  },
+  {
+   "endpoint": "/tms.UserService/SaveUser",
+   "module": "user",
+   "allowAnyOf": [
+    "usr_cu"
+   ],
+   "allOf": [],
+   "rationale": "CHỐT (ITMS-411): giữ usr_cu; BỔ SUNG rule conditional trong service — request truyền roleId ⇒ user phải có thêm role_cu (chặn tăng quyền gián tiếp cho user khác). Self đã chặn #128. Conditional không biểu diễn bằng tập quyền tĩnh — cần check trong service."
+  },
+  {
+   "endpoint": "/tms.VehicleService/DeleteVehicle",
+   "module": "vehicle",
+   "allowAnyOf": [
+    "veh_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.VehicleService/GetVehicle",
+   "module": "vehicle",
+   "allowAnyOf": [
+    "veh_r",
+    "do_di",
+    "diso_cu"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form — allowAnyOf gồm quyền xem module sở hữu + quyền edit/view của các màn gọi nó. Phương án thay thế: giữ 1 quyền + WithCheck trong registry (ít quyền hơn nhưng role phình). Đề xuất chọn allowAnyOf cho endpoint chia sẻ."
+  },
+  {
+   "endpoint": "/tms.VehicleService/ListVehicle",
+   "module": "vehicle",
+   "allowAnyOf": [
+    "veh_r",
+    "do_di",
+    "diso_cu"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form — allowAnyOf gồm quyền xem module sở hữu + quyền edit/view của các màn gọi nó. Phương án thay thế: giữ 1 quyền + WithCheck trong registry (ít quyền hơn nhưng role phình). Đề xuất chọn allowAnyOf cho endpoint chia sẻ."
+  },
+  {
+   "endpoint": "/tms.VehicleService/SaveVehicle",
+   "module": "vehicle",
+   "allowAnyOf": [
+    "veh_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.WarehouseService/DeleteWarehouse",
+   "module": "warehouse",
+   "allowAnyOf": [
+    "wh_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.WarehouseService/GetWarehouse",
+   "module": "warehouse",
+   "allowAnyOf": [
+    "wh_r",
+    "do_cu",
+    "frcp_cu",
+    "fissue_cu",
+    "fadj_cu"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form — allowAnyOf gồm quyền xem module sở hữu + quyền edit/view của các màn gọi nó. Phương án thay thế: giữ 1 quyền + WithCheck trong registry (ít quyền hơn nhưng role phình). Đề xuất chọn allowAnyOf cho endpoint chia sẻ."
+  },
+  {
+   "endpoint": "/tms.WarehouseService/ListWarehouse",
+   "module": "warehouse",
+   "allowAnyOf": [
+    "wh_r",
+    "do_cu",
+    "frcp_cu",
+    "fissue_cu",
+    "fadj_cu"
+   ],
+   "allOf": [],
+   "rationale": "API dùng chung cho select/lookup của nhiều form — allowAnyOf gồm quyền xem module sở hữu + quyền edit/view của các màn gọi nó. Phương án thay thế: giữ 1 quyền + WithCheck trong registry (ít quyền hơn nhưng role phình). Đề xuất chọn allowAnyOf cho endpoint chia sẻ."
+  },
+  {
+   "endpoint": "/tms.WarehouseService/SaveWarehouse",
+   "module": "warehouse",
+   "allowAnyOf": [
+    "wh_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  }
+ ],
+ "conflicts": [
+  {
+   "id": "vehr_cu-collision",
+   "type": "action-key-collision",
+   "key": "vehr_cu",
+   "actions": [
+    {
+     "id": 10304,
+     "name": "Action_CustomerAddRoute"
+    },
+    {
+     "id": 10602,
+     "name": "Action_RouteEdit"
+    }
+   ],
+   "status": "GIỮ NGUYÊN cả 2 action trong catalog (chốt lại theo brief ITMS-411, 22/11)",
+   "rationale": "Xoá dòng quyền là thay đổi không hoàn tác được với dữ liệu role đang tham chiếu; chưa xác định action nào còn được code dùng.",
+   "needs_decision": "Dev xác định action nào còn sống trong code trước khi xoá; nếu xoá thì migration đi kèm trong PR của nhóm."
+  }
+ ]
+}

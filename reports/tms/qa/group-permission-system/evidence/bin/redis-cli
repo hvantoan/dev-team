@@ -1,0 +1,12 @@
+#!/bin/sh
+# Shim redis-cli cho host không cài redis-cli: chạy redis-cli trong container tms-redis.
+# Bỏ -h/-p của host (trong container redis ở 6379), giữ -n/--scan/--pattern/dbsize/del.
+new=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -h|-p) shift 2 ;;
+    *) new="$new $1"; shift ;;
+  esac
+done
+# shellcheck disable=SC2086
+exec docker exec -i -e REDISCLI_AUTH tms-redis redis-cli $new

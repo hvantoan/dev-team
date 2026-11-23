@@ -1,0 +1,97 @@
+{
+  "results": [
+    {
+      "screen": "warehouses",
+      "url": "http://tuanvudev.localhost:4701/tms/warehouses",
+      "onLogin": false,
+      "errors": false,
+      "rows": 15,
+      "newTrpcFails": 0
+    },
+    {
+      "screen": "delivery-orders",
+      "url": "http://tuanvudev.localhost:4701/tms/delivery-orders?from=2026-10-21T00%3A00%3A00.000%2B07%3A00&to=2026-11-21T23%3A59%3A59.999%2B07%3A00",
+      "onLogin": false,
+      "errors": false,
+      "rows": 2,
+      "newTrpcFails": 0
+    },
+    {
+      "screen": "dispatch-orders",
+      "url": "http://tuanvudev.localhost:4701/tms/dispatch-orders?status=0",
+      "onLogin": false,
+      "errors": false,
+      "rows": 21,
+      "newTrpcFails": 0
+    },
+    {
+      "screen": "subcontracts",
+      "url": "http://tuanvudev.localhost:4701/tms/subcontracts?from=2026-10-21T00%3A00%3A00.000%2B07%3A00&to=2026-11-21T23%3A59%3A59.999%2B07%3A00&status=0",
+      "onLogin": false,
+      "errors": false,
+      "rows": 1,
+      "newTrpcFails": 0
+    },
+    {
+      "screen": "vehicles",
+      "url": "http://tuanvudev.localhost:4701/tms/vehicles",
+      "onLogin": false,
+      "errors": false,
+      "rows": 16,
+      "newTrpcFails": 0
+    },
+    {
+      "screen": "drivers",
+      "url": "http://tuanvudev.localhost:4701/tms/drivers",
+      "onLogin": false,
+      "errors": false,
+      "rows": 10,
+      "newTrpcFails": 0
+    },
+    {
+      "screen": "vehicle-routes",
+      "url": "http://tuanvudev.localhost:4701/tms/vehicle-routes",
+      "onLogin": false,
+      "errors": false,
+      "rows": 20,
+      "newTrpcFails": 0
+    },
+    {
+      "screen": "partners",
+      "url": "http://tuanvudev.localhost:4701/tms/partners",
+      "onLogin": false,
+      "errors": false,
+      "rows": 20,
+      "newTrpcFails": 0
+    },
+    {
+      "screen": "products",
+      "url": "http://tuanvudev.localhost:4701/tms/products",
+      "onLogin": false,
+      "errors": false,
+      "rows": 20,
+      "newTrpcFails": 0
+    },
+    {
+      "screen": "users",
+      "url": "http://tuanvudev.localhost:4701/tms/users",
+      "onLogin": false,
+      "errors": false,
+      "rows": 16,
+      "newTrpcFails": 0
+    },
+    {
+      "screen": "settings",
+      "url": "http://tuanvudev.localhost:4701/tms/settings",
+      "onLogin": false,
+      "errors": false,
+      "rows": 0,
+      "newTrpcFails": 0
+    }
+  ],
+  "pageErrors": [
+    "Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A serve",
+    "Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A serve"
+  ],
+  "trpcFail": []
+}

@@ -1,0 +1,7 @@
+{
+  "mode": "ac11",
+  "appUrl": "http://tuanvudev.localhost:4700/tms/",
+  "generatedAt": "2026-11-22T18:23:07.151Z",
+  "error": "Error: dialog did not open: {\"url\":\"http://tuanvudev.localhost:4700/tms/supplier-debt?from=2026-11-01T00%3A00%3A00.000%2B07%3A00&to=2026-11-23T23%3A59%3A59.999%2B07%3A00&type=in_period&sort=code%3Aasc\",\"rows\":1,\"bodyText\":\"Tổng Quan Vận Hành Quỹ 0 Công nợ nhà cung cấp Ngày bắt đầu 01/ 11/ 2026 Ngày bắt đầu Ngày kết thúc 23/ 11/ 2026 Ngày kết thúc Tìm kiếm ​ Tìm kiếm Nhà cung cấp Nhà cung cấp Loại Phát sinh trong kỳ Loại Mã NCC Tên NCC Đầu kỳ Trong kỳ Cuối kỳ Nợ Có Nợ Có Nợ Có Không tìm thấy kết quả Số dòng mỗi trang 20\",\"screenshot\":\"debug-dialog-1795371810936.png\"}",
+  "pass": false
+}

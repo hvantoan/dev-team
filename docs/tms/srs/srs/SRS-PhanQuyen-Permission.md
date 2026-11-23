@@ -11,6 +11,7 @@
 
 | Phiên bản | Ngày | Người | Nội dung |
 |---|---|---|---|
+| v0.5-draft | 22/11/2026 | BA TMS | ITMS-411: áp permission matrix (docs/tms/analysis/permission-matrix-2026-11-22.json/.md); cập nhật BR-PQ-007 (thêm `rec_r` vào tập Get, giữ `cusdeb_hx`); thêm key `supdeb_rc`, `supdeb_open`; BR-PQ-008/009/010 quy tắc tập quyền & guard mới |
 | v0.4-draft | 22/11/2026 | BA TMS | ITMS-383: thêm `rec_debt_balance` nhóm Phiếu thu; rule OR `cusdeb_hx`/`rec_debt_balance` cho endpoint số dư công nợ (BR-PQ-007); backfill cho role có `rec_r`/`rec_cu` |
 | v0.3-draft | 19/11/2026 | BA TMS | Bổ sung dep same-module cho `diso_cu` (ITMS-384): tick phải kéo `diso_r` + `do_r` + `do_di`; làm rõ BR-PQ-003 dep cross-module là BỔ SUNG, không thay thế dep same-module |
 | v0.2-draft | 19/11/2026 | BA TMS | Chốt expected + rule cho ITMS-384, 385 theo bằng chứng reproduce của QA; bổ sung permission key Nhóm A; đề xuất scope fix Nhóm A |
@@ -85,6 +86,10 @@ Tài liệu này chuẩn hóa **rule phân quyền xuyên suốt các module TMS
 | Fuel | `fissue_d` | Xuất nhiên liệu (Fuel issue) - Xóa | ITMS-385 |
 | Customer Debt | `cusdeb_hx` | Customer debt - View/Balance | ITMS-383 |
 | Customer Debt | *(chưa rõ key)* | Customer debt - Export Excel | ITMS-378 |
+| Customer Debt | `cusdeb_rc` | Tính lại công nợ khách hàng | ITMS-398 |
+| Supplier Debt | `supdeb_hx` | Công nợ NCC - Xem/Lịch sử | ITMS-411 |
+| Supplier Debt | `supdeb_rc` | Tính lại công nợ NCC (key mới, backfill từ `supdeb_hx`) | ITMS-411 |
+| Supplier Debt | `supdeb_open` | Nhập số dư đầu kỳ NCC (key mới, backfill từ `cus_cu`) | ITMS-411 |
 | Customer Receipt | `rec_debt_balance` | Xem số dư công nợ khách hàng (auto-check `rec_r`) | ITMS-383 |
 | User | `usr_cu` | User - Create/Update | ITMS-382 |
 | User | *(chưa rõ key)* | User - Delete | ITMS-388 |
@@ -107,7 +112,10 @@ Tài liệu này chuẩn hóa **rule phân quyền xuyên suốt các module TMS
 | BR-PQ-004 | Mọi RPC method nhạy cảm phải có mapping trong `method_permissions.go`; method thiếu mapping = lỗi bảo mật. | Draft — căn cứ ITMS-383 |
 | BR-PQ-005 | User **không được phép tự thay đổi role/quyền của chính mình** khi không có quyền quản trị role tương ứng. | Draft — căn cứ ITMS-382 |
 | BR-PQ-006 | User **không được phép xoá chính tài khoản mình**, kể cả khi có quyền "User - Delete". | Draft — căn cứ ITMS-388 |
-| BR-PQ-007 | Endpoint số dư công nợ khách hàng `GET /api/v1/customer-debts/{customerId}` (`CustomerDebtService/Get`, FE gọi qua `customerDebt.balance`) **CHẤP NHẬN `cusdeb_hx` HOẶC `rec_debt_balance`**; chỉ có `rec_r`/`rec_cu` hoặc thiếu cả hai → **403**. Không tái dùng `rec_r`/`rec_cu` cho quyền đọc số dư; dùng tập quyền OR (`methodAnyPermissions`). `List`/`History` vẫn chỉ `cusdeb_hx`. | Draft — căn cứ ITMS-383, quyết định anh Toàn 22/11/2026 |
+| BR-PQ-007 | Endpoint số dư công nợ khách hàng `GET /api/v1/customer-debts/{customerId}` (`CustomerDebtService/Get`, FE gọi qua `customerDebt.balance`) **CHẤP NHẬN `rec_debt_balance` HOẶC `rec_r` HOẶC `cusdeb_hx`** — thiếu cả ba → **403**. Không gồm `cus_r` (không mở ngoài phạm vi phiếu thu/công nợ). `List`/`History` vẫn chỉ `cusdeb_hx`. **Thay đổi so với #136:** thêm `rec_r` vào tập chấp nhận. | Chốt ITMS-411 (22/11/2026); gốc ITMS-383 |
+| BR-PQ-008 | **Nguyên tắc tập quyền endpoint**: mỗi endpoint khai `allowAnyOf` (đủ 1 là qua) / `allOf` (đủ tất cả) theo matrix `docs/tms/analysis/permission-matrix-2026-11-22.json` — không hard-code 1 quyền. API chia sẻ cho select/lookup của nhiều form (partner, vehicle, driver, product, route, warehouse, fuel-tank, fuel-issue, subcontract, delivery-order, delivery-instruction, cost, role, user, payment-method) → `allowAnyOf` gồm quyền xem module sở hữu + quyền của các màn gọi nó. Rule ghi (`*_cu`, `*_d`, `*_ex`, `*_rc`) bắt buộc kèm `*_r` cùng module. **Mọi thay đổi rule/quyền mới phải kèm migration backfill** (tiền lệ 000023). | Chốt ITMS-411 (22/11/2026) |
+| BR-PQ-009 | **Endpoint guard bổ sung (ITMS-411)**: `RoleService/GetModules` = `[role_r, role_cu, usr_cu]`; `DeliveryInstructionService/GetLatestDeliveryInstructionByCode` & `ListVehicleByDICode` = `[do_di, diso_cu, diso_r]`; `ImageService/DeleteImage` = authenticated + service kiểm chủ sở hữu ảnh (entity ref); `SupplierDebtService/Recalculate` = `supdeb_rc` (key mới); `PartnerService/SavePartnerSupplierOpeningBalance` = `supdeb_open` (key mới); `UserService/SaveUser` truyền `roleId` ⇒ cần thêm `role_cu` (check conditional trong service). | Chốt ITMS-411 (22/11/2026) |
+| BR-PQ-010 | **Key collision `vehr_cu`**: action 10304 (`CustomerAddRoute`) và 10602 (`RouteEdit`) cùng map `vehr_cu`. **GIỮ NGUYÊN cả 2 action trong catalog** — xoá là thay đổi không hoàn tác với dữ liệu role đang tham chiếu. Dev phải xác định action nào còn sống trong code trước khi xoá; việc xoá (nếu có) đi kèm migration trong PR của nhóm. | Chờ Dev xác định — chốt lại theo brief ITMS-411, 22/11/2026 |
 
 ### 4.2. Rule theo ticket — chờ bằng chứng reproduce của QA để chốt expected
 
@@ -121,6 +129,8 @@ Tài liệu này chuẩn hóa **rule phân quyền xuyên suốt các module TMS
 | ITMS-387 | Payment/Receipt | Nút Cancel/Create trên Payment Voucher & Receipt chỉ hiện khi có quyền tương ứng. | ☐ chờ | ☐ |
 | ITMS-388 | Users | Nút Delete ẩn trên row của chính mình + BE từ chối `Delete(id == self)`. | ☐ chờ | ☐ |
 | ITMS-378 | Customer Debt | Nút Export Excel chỉ hiện khi có `CustomerDebtExport` — Dev báo đã fix ở commit `32ba7c4` (#182), chỉ còn verify. | ☐ chờ verify | ☐ |
+
+> **Lưu ý ITMS-411:** bằng chứng QA ở dòng ITMS-383 phản ánh rule #136 (`{cusdeb_hx, rec_debt_balance}`). Theo quyết định ITMS-411 (BR-PQ-007 mới), `rec_r` một mình **phải được chấp nhận** — khi retest, case "chỉ `rec_r` → 403" không còn đúng expected.
 
 ### 4.3. Scope fix đề xuất — Nhóm A (ITMS-384 + 385, chung 1 PR)
 
@@ -142,6 +152,7 @@ Migration `000023_itms383_backfill_receipt_debt_balance_permission` (repo `tms_a
 - **Down**: gỡ `rec_debt_balance` khỏi mọi role.
 - **Vì sao bắt buộc**: không backfill thì role thu ngân/kế toán đang có `rec_r`/`rec_cu` bị 403 ở form phiếu thu sau deploy; FE fallback `totalDue = debtBalance?.closingDebt ?? outstanding ?? 0` nên ô tổng nợ hiển thị **0** mà không báo lỗi.
 - **Phạm vi đã verify**: bản clone local 7 role khớp rule; staging lúc review 2 role active — **Bán hàng**, **Manager**. Production áp cùng rule khi deploy.
+- **ITMS-411 (cùng nguyên tắc)**: key `supdeb_rc` → backfill cho mọi role đang có `supdeb_hx`; key `supdeb_open` → backfill cho mọi role đang có `cus_cu`. Idempotent, cùng PR thêm key.
 - **Hiệu lực quyền**: BE đọc quyền từ session snapshot (Redis) → user được backfill thấy key từ **lần đăng nhập kế tiếp** hoặc sau khi refresh session của role, không tức thời ngay sau `migrate up`.
 
 ## 5. LIÊN HỆ SRS KHÁC
@@ -155,3 +166,4 @@ Migration `000023_itms383_backfill_receipt_debt_balance_permission` (repo `tms_a
 1. Danh mục permission key đầy đủ từ `registry.go` (cần Dev export khi làm PR-A).
 2. Key/tên hiển thị chính xác cho các ô "chưa rõ key" ở mục 3.
 3. BR-PQ-002: với nút quan trọng (Cancel), chọn ẩn hoàn toàn hay disable + tooltip? — đề xuất ẩn, chờ anh Toàn chốt kèm kết quả QA.
+4. `ResourceService/ListAdUnit` phục vụ màn nào? — endpoint needs_decision duy nhất còn lại trong permission-matrix-2026-11-22.json.

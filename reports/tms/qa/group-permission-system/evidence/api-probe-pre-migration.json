@@ -1,0 +1,388 @@
+{
+  "label": "pre-migration",
+  "generatedAt": "2026-11-22T18:13:52.852Z",
+  "base": "http://127.0.0.1:8081",
+  "results": [
+    {
+      "id": "ac7.1-rec_r",
+      "user": "qa-rec-r",
+      "method": "GET",
+      "path": "/api/v1/customer-debts/01QA00000000000000000000",
+      "expect": 403,
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "rec_r"
+        ]
+      },
+      "status": 403,
+      "body": "{\"code\":7, \"message\":\"Bạn không có quyền truy cập\", \"details\":[]}",
+      "pass": true
+    },
+    {
+      "id": "ac7.2-rec_cu",
+      "user": "qa-rec-cu",
+      "method": "GET",
+      "path": "/api/v1/customer-debts/01QA00000000000000000000",
+      "expect": 403,
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "rec_cu"
+        ]
+      },
+      "status": 403,
+      "body": "{\"code\":7, \"message\":\"Bạn không có quyền truy cập\", \"details\":[]}",
+      "pass": true
+    },
+    {
+      "id": "ac7.3-cusdeb_hx",
+      "user": "qa-cusdeb-hx",
+      "method": "GET",
+      "path": "/api/v1/customer-debts/01QA00000000000000000000",
+      "expect": "not403",
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "cusdeb_hx"
+        ]
+      },
+      "status": 404,
+      "body": "{\"code\":5, \"message\":\"Không tìm thấy khách hàng\", \"details\":[]}",
+      "pass": true
+    },
+    {
+      "id": "ac7.4-rec_debt_balance",
+      "user": "qa-rec-debt-balance",
+      "method": "GET",
+      "path": "/api/v1/customer-debts/01QA00000000000000000000",
+      "expect": "not403",
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "rec_debt_balance"
+        ]
+      },
+      "status": 403,
+      "body": "{\"code\":7, \"message\":\"Bạn không có quyền truy cập\", \"details\":[]}",
+      "pass": false
+    },
+    {
+      "id": "ac6.1-prd_r",
+      "user": "qa-prd-r",
+      "method": "POST",
+      "path": "/api/v1/partners/list",
+      "expect": 403,
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "prd_r"
+        ]
+      },
+      "status": 403,
+      "body": "{\"code\":7, \"message\":\"Bạn không có quyền truy cập\", \"details\":[]}",
+      "pass": true
+    },
+    {
+      "id": "ac6.2-do_cu",
+      "user": "qa-do-cu",
+      "method": "POST",
+      "path": "/api/v1/partners/list",
+      "expect": "not403",
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "do_cu"
+        ]
+      },
+      "status": 403,
+      "body": "{\"code\":7, \"message\":\"Bạn không có quyền truy cập\", \"details\":[]}",
+      "pass": false
+    },
+    {
+      "id": "ac8.1-with-token",
+      "user": "qa-cusdeb-hx",
+      "method": "POST",
+      "path": "/api/v1/resources/ad-units/list",
+      "expect": 200,
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "cusdeb_hx"
+        ]
+      },
+      "status": 200,
+      "body": "{\"items\":[{\"code\":\"01\", \"name\":\"Thành phố Hà Nội\", \"shortName\":\"Tp. Hà Nội\"}, {\"code\":\"04\", \"name\":\"Cao Bằng\", \"shortName\":\"Cao Bằng\"}, {\"code\":\"08\", \"name\":\"Tuyên Quang\", \"shortName\":\"Tuyên Quang\"}, {\"code\":\"11\", \"name\":\"Điện Biên\", \"shortName\":\"Điện Biên\"}, {\"code\":\"12\", \"name\":\"Lai Châu\", \"shortName\":\"Lai Châu\"}, {\"code\":\"14\", \"name\":\"Sơn La\", \"shortName\":\"Sơn La\"}, {\"code\":\"15\", \"name\":\"Lào Cai\", \"shortName\":\"Lào Cai\"}, {\"code\":\"19\", \"name\":\"Thái Nguyên\", \"shortName\":\"Thái Nguyên\"}, {\"code\":\"20\", \"name\":\"Lạng Sơn\", \"shortName\":\"Lạng Sơn\"}, {\"code\":\"22\", \"name\":\"Quảng Ninh\", \"shortName\":\"Quảng Ninh\"}, {\"code\":\"24\", \"name\":\"Bắc Ninh\", \"shortName\":\"Bắc Ninh\"}, {\"code\":\"25\", \"name\":\"Phú Thọ\", \"shortName\":\"Phú Thọ\"}, {\"code\":\"31\", \"name\":\"Thành phố Hải Phòng\", \"shortName\":\"Tp. Hải Phòng\"}, ",
+      "pass": true
+    },
+    {
+      "id": "ac8.2-no-token",
+      "user": null,
+      "method": "POST",
+      "path": "/api/v1/resources/ad-units/list",
+      "expect": 401,
+      "status": 401,
+      "body": "{\"code\":16, \"message\":\"failed to process JWT: authorization header missing\", \"details\":[]}",
+      "pass": true
+    },
+    {
+      "id": "ac9.1-supdeb_rc-recalculate",
+      "user": "qa-supdeb-rc",
+      "method": "POST",
+      "path": "/api/v1/supplier-debts/recalculate",
+      "expect": "not403",
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "supdeb_hx",
+          "supdeb_rc"
+        ]
+      },
+      "status": 500,
+      "body": "{\"code\":13, \"message\":\"supplier_debt.recalculate.supplier_notfound\", \"details\":[]}",
+      "pass": true
+    },
+    {
+      "id": "ac9.2-supdeb_hx-recalculate",
+      "user": "qa-supdeb-hx",
+      "method": "POST",
+      "path": "/api/v1/supplier-debts/recalculate",
+      "expect": 403,
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "supdeb_hx"
+        ]
+      },
+      "status": 403,
+      "body": "{\"code\":7, \"message\":\"Bạn không có quyền truy cập\", \"details\":[]}",
+      "pass": true
+    },
+    {
+      "id": "ac9.3-supdeb_open-save",
+      "user": "qa-supdeb-open",
+      "method": "POST",
+      "path": "/api/v1/partners/01QA00000000000000000002/opening-balance/supplier",
+      "expect": "not403",
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "supdeb_hx",
+          "supdeb_open"
+        ]
+      },
+      "status": 500,
+      "body": "{\"code\":13, \"message\":\"partner.opening_balance.balance_type_invalid\", \"details\":[]}",
+      "pass": true
+    },
+    {
+      "id": "ac9.4-supdeb_hx-save-open",
+      "user": "qa-supdeb-hx",
+      "method": "POST",
+      "path": "/api/v1/partners/01QA00000000000000000002/opening-balance/supplier",
+      "expect": 403,
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "supdeb_hx"
+        ]
+      },
+      "status": 403,
+      "body": "{\"code\":7, \"message\":\"Bạn không có quyền truy cập\", \"details\":[]}",
+      "pass": true
+    },
+    {
+      "id": "ac9.5-getmodules-role_r",
+      "user": "qa-role-r",
+      "method": "GET",
+      "path": "/api/v1/roles/modules",
+      "expect": 200,
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "role_r"
+        ]
+      },
+      "status": 200,
+      "body": "{\"modules\":[{\"id\":10000, \"name\":\"Quản lý vận hành\", \"numberOfActions\":18, \"children\":[{\"id\":10100, \"name\":\"Sản phẩm\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10200, \"name\":\"Kho\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10300, \"name\":\"Đối tác\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10400, \"name\":\"Tài xế\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10500, \"name\":\"Phương tiện\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10600, \"name\":\"Tuyến xe\", \"numberOfActions\":3, \"children\":[]}]}, {\"id\":20000, \"name\":\"Quản lý quỹ\", \"numberOfActions\":13, \"children\":[{\"id\":20100, \"name\":\"Phiếu thu\", \"numberOfActions\":4, \"children\":[]}, {\"id\":20200, \"name\":\"Phiếu chi\", \"numberOfActions\":3, \"children\":[]}, {\"id\":20300, \"name\":\"Công nợ\", \"numberOfActions\":3, \"children\":[]}, {\"id\":20400, \"name\":\"Công ",
+      "pass": true
+    },
+    {
+      "id": "ac9.6-getmodules-role_cu",
+      "user": "qa-role-cu",
+      "method": "GET",
+      "path": "/api/v1/roles/modules",
+      "expect": 200,
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "role_cu"
+        ]
+      },
+      "status": 200,
+      "body": "{\"modules\":[{\"id\":10000, \"name\":\"Quản lý vận hành\", \"numberOfActions\":18, \"children\":[{\"id\":10100, \"name\":\"Sản phẩm\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10200, \"name\":\"Kho\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10300, \"name\":\"Đối tác\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10400, \"name\":\"Tài xế\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10500, \"name\":\"Phương tiện\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10600, \"name\":\"Tuyến xe\", \"numberOfActions\":3, \"children\":[]}]}, {\"id\":20000, \"name\":\"Quản lý quỹ\", \"numberOfActions\":13, \"children\":[{\"id\":20100, \"name\":\"Phiếu thu\", \"numberOfActions\":4, \"children\":[]}, {\"id\":20200, \"name\":\"Phiếu chi\", \"numberOfActions\":3, \"children\":[]}, {\"id\":20300, \"name\":\"Công nợ\", \"numberOfActions\":3, \"children\":[]}, {\"id\":20400, \"name\":\"Công ",
+      "pass": true
+    },
+    {
+      "id": "ac9.7-getmodules-usr_cu",
+      "user": "qa-usr-cu",
+      "method": "GET",
+      "path": "/api/v1/roles/modules",
+      "expect": 200,
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "usr_cu"
+        ]
+      },
+      "status": 200,
+      "body": "{\"modules\":[{\"id\":10000, \"name\":\"Quản lý vận hành\", \"numberOfActions\":18, \"children\":[{\"id\":10100, \"name\":\"Sản phẩm\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10200, \"name\":\"Kho\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10300, \"name\":\"Đối tác\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10400, \"name\":\"Tài xế\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10500, \"name\":\"Phương tiện\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10600, \"name\":\"Tuyến xe\", \"numberOfActions\":3, \"children\":[]}]}, {\"id\":20000, \"name\":\"Quản lý quỹ\", \"numberOfActions\":13, \"children\":[{\"id\":20100, \"name\":\"Phiếu thu\", \"numberOfActions\":4, \"children\":[]}, {\"id\":20200, \"name\":\"Phiếu chi\", \"numberOfActions\":3, \"children\":[]}, {\"id\":20300, \"name\":\"Công nợ\", \"numberOfActions\":3, \"children\":[]}, {\"id\":20400, \"name\":\"Công ",
+      "pass": true
+    },
+    {
+      "id": "ac9.8-getmodules-usr_r",
+      "user": "qa-usr-r",
+      "method": "GET",
+      "path": "/api/v1/roles/modules",
+      "expect": 403,
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "usr_r"
+        ]
+      },
+      "status": 403,
+      "body": "{\"code\":7, \"message\":\"Bạn không có quyền truy cập\", \"details\":[]}",
+      "pass": true
+    },
+    {
+      "id": "ac9.9-di-do_di",
+      "user": "qa-do-di",
+      "method": "GET",
+      "path": "/api/v1/delivery-instructions/01QA00000000000000000000",
+      "expect": "not403",
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "do_di"
+        ]
+      },
+      "status": 500,
+      "body": "{\"code\":13, \"message\":\"delivery_instruction.detail.notfound\", \"details\":[]}",
+      "pass": true
+    },
+    {
+      "id": "ac9.10-di-diso_cu",
+      "user": "qa-diso-cu",
+      "method": "GET",
+      "path": "/api/v1/delivery-instructions/01QA00000000000000000000",
+      "expect": "not403",
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "diso_cu"
+        ]
+      },
+      "status": 500,
+      "body": "{\"code\":13, \"message\":\"delivery_instruction.detail.notfound\", \"details\":[]}",
+      "pass": true
+    },
+    {
+      "id": "ac9.11-di-diso_r",
+      "user": "qa-diso-r",
+      "method": "GET",
+      "path": "/api/v1/delivery-instructions/01QA00000000000000000000",
+      "expect": "not403",
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "diso_r"
+        ]
+      },
+      "status": 500,
+      "body": "{\"code\":13, \"message\":\"delivery_instruction.detail.notfound\", \"details\":[]}",
+      "pass": true
+    },
+    {
+      "id": "ac9.12-di-prd_r",
+      "user": "qa-prd-r",
+      "method": "GET",
+      "path": "/api/v1/delivery-instructions/01QA00000000000000000000",
+      "expect": 403,
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "prd_r"
+        ]
+      },
+      "status": 403,
+      "body": "{\"code\":7, \"message\":\"Bạn không có quyền truy cập\", \"details\":[]}",
+      "pass": true
+    },
+    {
+      "id": "ac9.13-deleteimage-authenticated",
+      "user": "qa-cusdeb-hx",
+      "method": "DELETE",
+      "path": "/api/v1/images/01QA00000000000000000003",
+      "expect": "not401",
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "cusdeb_hx"
+        ]
+      },
+      "status": 200,
+      "body": "{}",
+      "pass": true
+    },
+    {
+      "id": "ac9.14-saveuser-usr_cu-roleid",
+      "user": "qa-usr-cu",
+      "method": "POST",
+      "path": "/api/v1/users",
+      "expect": "rolePermissionRequired",
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "usr_cu"
+        ]
+      },
+      "status": 500,
+      "body": "{\"code\":13, \"message\":\"role.detail.notfound\", \"details\":[]}",
+      "pass": false
+    },
+    {
+      "id": "ac9.15-saveuser-usr_cu-role_cu",
+      "user": "qa-usr-cu-role-cu",
+      "method": "POST",
+      "path": "/api/v1/users",
+      "expect": "notRolePermissionRequired",
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "usr_cu",
+          "role_cu"
+        ]
+      },
+      "status": 500,
+      "body": "{\"code\":13, \"message\":\"role.detail.notfound\", \"details\":[]}",
+      "pass": true
+    },
+    {
+      "id": "ac10.catalog",
+      "user": "qa-role-r",
+      "method": "GET",
+      "path": "/api/v1/roles/modules",
+      "expect": "catalog",
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "role_r"
+        ]
+      },
+      "status": 200,
+      "body": "{\"modules\":[{\"id\":10000, \"name\":\"Quản lý vận hành\", \"numberOfActions\":18, \"children\":[{\"id\":10100, \"name\":\"Sản phẩm\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10200, \"name\":\"Kho\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10300, \"name\":\"Đối tác\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10400, \"name\":\"Tài xế\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10500, \"name\":\"Phương tiện\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10600, \"name\":\"Tuyến xe\", \"numberOfActions\":3, \"children\":[]}]}, {\"id\":20000, \"name\":\"Quản lý quỹ\", \"numberOfActions\":13, \"children\":[{\"id\":20100, \"name\":\"Phiếu thu\", \"numberOfActions\":4, \"children\":[]}, {\"id\":20200, \"name\":\"Phiếu chi\", \"numberOfActions\":3, \"children\":[]}, {\"id\":20300, \"name\":\"Công nợ\", \"numberOfActions\":3, \"children\":[]}, {\"id\":20400, \"name\":\"Công ",
+      "pass": false
+    }
+  ]
+}

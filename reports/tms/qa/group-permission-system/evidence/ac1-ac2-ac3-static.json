@@ -1,0 +1,121 @@
+{
+  "ac1": {
+    "endpoints_total": 118,
+    "allowAnyOf_gt1": 5,
+    "allowAnyOf_gt1_detail": [
+      {
+        "endpoint": "/tms.DeliveryInstructionService/GetDeliveryInstruction",
+        "allowAnyOf": [
+          "do_di",
+          "diso_cu",
+          "diso_r"
+        ],
+        "exception": "E3"
+      },
+      {
+        "endpoint": "/tms.DeliveryInstructionService/GetLatestDeliveryInstructionByCode",
+        "allowAnyOf": [
+          "do_di",
+          "diso_cu",
+          "diso_r"
+        ],
+        "exception": "E3"
+      },
+      {
+        "endpoint": "/tms.DeliveryInstructionService/ListDeliveryInstruction",
+        "allowAnyOf": [
+          "do_di",
+          "diso_cu",
+          "diso_r"
+        ],
+        "exception": "E3"
+      },
+      {
+        "endpoint": "/tms.DeliveryInstructionService/ListVehicleByDICode",
+        "allowAnyOf": [
+          "do_di",
+          "diso_cu",
+          "diso_r"
+        ],
+        "exception": "E3"
+      },
+      {
+        "endpoint": "/tms.RoleService/GetModules",
+        "allowAnyOf": [
+          "role_r",
+          "role_cu",
+          "usr_cu"
+        ],
+        "exception": "E2"
+      }
+    ],
+    "all_have_exception": true,
+    "no_allOf_multi": [],
+    "needs_decision": []
+  },
+  "ac2": {
+    "docs_count": 118,
+    "be_count": 118,
+    "missing_in_be": [],
+    "extra_in_be": [],
+    "field_diffs": [],
+    "be_allowAnyOf_gt1": 5,
+    "be_allowAnyOf_gt1_detail": [
+      {
+        "endpoint": "/tms.DeliveryInstructionService/GetDeliveryInstruction",
+        "allowAnyOf": [
+          "do_di",
+          "diso_cu",
+          "diso_r"
+        ],
+        "exception": "E3"
+      },
+      {
+        "endpoint": "/tms.DeliveryInstructionService/GetLatestDeliveryInstructionByCode",
+        "allowAnyOf": [
+          "do_di",
+          "diso_cu",
+          "diso_r"
+        ],
+        "exception": "E3"
+      },
+      {
+        "endpoint": "/tms.DeliveryInstructionService/ListDeliveryInstruction",
+        "allowAnyOf": [
+          "do_di",
+          "diso_cu",
+          "diso_r"
+        ],
+        "exception": "E3"
+      },
+      {
+        "endpoint": "/tms.DeliveryInstructionService/ListVehicleByDICode",
+        "allowAnyOf": [
+          "do_di",
+          "diso_cu",
+          "diso_r"
+        ],
+        "exception": "E3"
+      },
+      {
+        "endpoint": "/tms.RoleService/GetModules",
+        "allowAnyOf": [
+          "role_r",
+          "role_cu",
+          "usr_cu"
+        ],
+        "exception": "E2"
+      }
+    ],
+    "PASS": true
+  },
+  "ac3_registry": {
+    "raw_edges_found": 90,
+    "mapped_edges": 90,
+    "matrix_edges": 90,
+    "unmapped_enums": [],
+    "missing_in_registry": [],
+    "extra_in_registry": [],
+    "PASS": true
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "mode": "ac12-check",
+  "appUrl": "http://tuanvudev.localhost:4700/tms/",
+  "generatedAt": "2026-11-22T18:32:10.108Z",
+  "httpStatus": 500,
+  "finalUrl": "http://tuanvudev.localhost:4700/tms/supplier-debt",
+  "hasLoginForm": 0,
+  "screenshot": "ac12-after-flush-redirect.png",
+  "pass": false
+}

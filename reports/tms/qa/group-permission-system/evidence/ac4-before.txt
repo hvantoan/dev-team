@@ -1,0 +1,4 @@
+qa-diso-d=["diso_d"]
+qa-do-cu=["do_cu"]
+qa-rec-debt-balance=["rec_debt_balance"]
+qa-rec-r=["rec_r"]

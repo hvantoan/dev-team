@@ -1,0 +1,2219 @@
+{
+ "generated": "2026-11-23",
+ "supersedes": "permission-matrix-2026-11-22.json",
+ "base": "tms_application@fix/group-permission-system (460db00), tms-web@fix/group-permission-system (eb945bb)",
+ "policy": "v2-one-owner: mỗi endpoint chỉ khai quyền module sở hữu; cross-module = dependency trong registry",
+ "rules": "allOf[]=và; allowAnyOf[]=hoặc; '(authenticated)' = mọi user đã đăng nhập",
+ "exceptions": [
+  {
+   "id": "E2",
+   "endpoint": "/tms.RoleService/GetModules",
+   "allowAnyOf": [
+    "role_r",
+    "role_cu",
+    "usr_cu"
+   ],
+   "why": "Ngoại lệ có chủ đích (PO chốt): catalog module/action dùng chung cho màn Phân quyền (`role_r`/`role_cu`) và form Người dùng (`usr_cu` gán vai trò)."
+  },
+  {
+   "id": "E3",
+   "endpoint": "/tms.DeliveryInstructionService/GetDeliveryInstruction",
+   "allowAnyOf": [
+    "do_di",
+    "diso_cu",
+    "diso_r"
+   ],
+   "why": "Ngoại lệ có chủ đích (PO chốt 22/11, giữ nguyên ở v3): phục vụ cả form Chỉ thị (`do_di`) và nhật ký điều xe (`diso_cu`/`diso_r`) — đây là 2 method mở guard + 2 method list cùng bộ."
+  },
+  {
+   "id": "E3",
+   "endpoint": "/tms.DeliveryInstructionService/GetLatestDeliveryInstructionByCode",
+   "allowAnyOf": [
+    "do_di",
+    "diso_cu",
+    "diso_r"
+   ],
+   "why": "Ngoại lệ có chủ đích (PO chốt 22/11, giữ nguyên ở v3): phục vụ cả form Chỉ thị (`do_di`) và nhật ký điều xe (`diso_cu`/`diso_r`) — đây là 2 method mở guard + 2 method list cùng bộ."
+  },
+  {
+   "id": "E3",
+   "endpoint": "/tms.DeliveryInstructionService/ListDeliveryInstruction",
+   "allowAnyOf": [
+    "do_di",
+    "diso_cu",
+    "diso_r"
+   ],
+   "why": "Ngoại lệ có chủ đích (PO chốt 22/11, giữ nguyên ở v3): phục vụ cả form Chỉ thị (`do_di`) và nhật ký điều xe (`diso_cu`/`diso_r`) — đây là 2 method mở guard + 2 method list cùng bộ."
+  },
+  {
+   "id": "E3",
+   "endpoint": "/tms.DeliveryInstructionService/ListVehicleByDICode",
+   "allowAnyOf": [
+    "do_di",
+    "diso_cu",
+    "diso_r"
+   ],
+   "why": "Ngoại lệ có chủ đích (PO chốt 22/11, giữ nguyên ở v3): phục vụ cả form Chỉ thị (`do_di`) và nhật ký điều xe (`diso_cu`/`diso_r`) — đây là 2 method mở guard + 2 method list cùng bộ."
+  }
+ ],
+ "retired_exceptions": [
+  {
+   "id": "E1",
+   "endpoint": "/tms.CustomerDebtService/Get",
+   "was": [
+    "rec_debt_balance",
+    "cusdeb_hx"
+   ],
+   "now": [
+    "cusdeb_hx"
+   ],
+   "why": "PO chốt 2026-11-23 (bổ sung, sau khi clear spec): siết tuyệt đối 1 quyền/endpoint — E1 bị bãi bỏ. Form phiếu thu đọc số dư qua cạnh `rec_debt_balance → cusdeb_hx`. Hệ quả đã được PO chấp nhận: role làm phiếu thu nay thấy được màn Công nợ KH; điều này thay thế BR-PQ-007 và một phần chốt ITMS-383."
+  }
+ ],
+ "endpoints": [
+  {
+   "endpoint": "/tms.AuditService/GroupAudit",
+   "module": "audit",
+   "allowAnyOf": [
+    "audit_r"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.AuditService/ListAudit",
+   "module": "audit",
+   "allowAnyOf": [
+    "audit_r"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại."
+  },
+  {
+   "endpoint": "/tms.AuthService/Login",
+   "module": "(auth)",
+   "allowAnyOf": [
+    "(authenticated hoặc public)"
+   ],
+   "allOf": [],
+   "rationale": "Login/Register là public theo thiết kế; các method khác của service này không có."
+  },
+  {
+   "endpoint": "/tms.CostService/DeleteCost",
+   "module": "cost",
+   "allowAnyOf": [
+    "costs_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.CostService/GetCost",
+   "module": "cost",
+   "allowAnyOf": [
+    "costs_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `costs_r`. Bỏ 2 quyền khỏi endpoint (`diso_cu`, `do_cu`); nhu cầu của màn gọi chuyển thành dependency trong registry (diso_cu → costs_r, do_cu → costs_r).",
+   "removed": [
+    "diso_cu",
+    "do_cu"
+   ]
+  },
+  {
+   "endpoint": "/tms.CostService/ListCost",
+   "module": "cost",
+   "allowAnyOf": [
+    "costs_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `costs_r`. Bỏ 2 quyền khỏi endpoint (`diso_cu`, `do_cu`); nhu cầu của màn gọi chuyển thành dependency trong registry (diso_cu → costs_r, do_cu → costs_r).",
+   "removed": [
+    "diso_cu",
+    "do_cu"
+   ]
+  },
+  {
+   "endpoint": "/tms.CostService/SaveCost",
+   "module": "cost",
+   "allowAnyOf": [
+    "costs_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.CustomerDebtService/Export",
+   "module": "customer-debt",
+   "allowAnyOf": [
+    "cusdeb_ex"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.CustomerDebtService/ExportCustomerDebtDetail",
+   "module": "customer-debt",
+   "allowAnyOf": [
+    "cusdeb_ex"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.CustomerDebtService/Get",
+   "module": "customer-debt",
+   "allowAnyOf": [
+    "cusdeb_hx"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `cusdeb_hx`. Bỏ 2 quyền khỏi endpoint (`rec_debt_balance`, `rec_r`); nhu cầu của màn gọi chuyển thành dependency trong registry (rec_debt_balance → cusdeb_hx). `rec_r` không có caller thật nên bỏ hẳn, không tạo cạnh.",
+   "removed": [
+    "rec_debt_balance",
+    "rec_r"
+   ]
+  },
+  {
+   "endpoint": "/tms.CustomerDebtService/History",
+   "module": "customer-debt",
+   "allowAnyOf": [
+    "cusdeb_hx"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.CustomerDebtService/List",
+   "module": "customer-debt",
+   "allowAnyOf": [
+    "cusdeb_hx"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại."
+  },
+  {
+   "endpoint": "/tms.CustomerDebtService/Recalculate",
+   "module": "customer-debt",
+   "allowAnyOf": [
+    "cusdeb_rc"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.CustomerReceiptService/Delete",
+   "module": "customer-receipt",
+   "allowAnyOf": [
+    "rec_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.CustomerReceiptService/Get",
+   "module": "customer-receipt",
+   "allowAnyOf": [
+    "rec_r"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại."
+  },
+  {
+   "endpoint": "/tms.CustomerReceiptService/List",
+   "module": "customer-receipt",
+   "allowAnyOf": [
+    "rec_r"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại."
+  },
+  {
+   "endpoint": "/tms.CustomerReceiptService/Save",
+   "module": "customer-receipt",
+   "allowAnyOf": [
+    "rec_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.DeliveryInstructionService/DeleteDeliveryInstruction",
+   "module": "delivery-instruction",
+   "allowAnyOf": [
+    "do_di"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.DeliveryInstructionService/ExportDeliveryInstruction",
+   "module": "delivery-instruction",
+   "allowAnyOf": [
+    "do_di_ex"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.DeliveryInstructionService/GetDeliveryInstruction",
+   "module": "delivery-instruction",
+   "allowAnyOf": [
+    "do_di",
+    "diso_cu",
+    "diso_r"
+   ],
+   "allOf": [],
+   "rationale": "Ngoại lệ có chủ đích (PO chốt 22/11, giữ nguyên ở v3): phục vụ cả form Chỉ thị (`do_di`) và nhật ký điều xe (`diso_cu`/`diso_r`) — đây là 2 method mở guard + 2 method list cùng bộ.",
+   "exception": "E3"
+  },
+  {
+   "endpoint": "/tms.DeliveryInstructionService/GetLatestDeliveryInstructionByCode",
+   "module": "delivery-instruction",
+   "allowAnyOf": [
+    "do_di",
+    "diso_cu",
+    "diso_r"
+   ],
+   "allOf": [],
+   "rationale": "Ngoại lệ có chủ đích (PO chốt 22/11, giữ nguyên ở v3): phục vụ cả form Chỉ thị (`do_di`) và nhật ký điều xe (`diso_cu`/`diso_r`) — đây là 2 method mở guard + 2 method list cùng bộ.",
+   "exception": "E3"
+  },
+  {
+   "endpoint": "/tms.DeliveryInstructionService/ListDeliveryInstruction",
+   "module": "delivery-instruction",
+   "allowAnyOf": [
+    "do_di",
+    "diso_cu",
+    "diso_r"
+   ],
+   "allOf": [],
+   "rationale": "Ngoại lệ có chủ đích (PO chốt 22/11, giữ nguyên ở v3): phục vụ cả form Chỉ thị (`do_di`) và nhật ký điều xe (`diso_cu`/`diso_r`) — đây là 2 method mở guard + 2 method list cùng bộ.",
+   "exception": "E3"
+  },
+  {
+   "endpoint": "/tms.DeliveryInstructionService/ListVehicleByDICode",
+   "module": "delivery-instruction",
+   "allowAnyOf": [
+    "do_di",
+    "diso_cu",
+    "diso_r"
+   ],
+   "allOf": [],
+   "rationale": "Ngoại lệ có chủ đích (PO chốt 22/11, giữ nguyên ở v3): phục vụ cả form Chỉ thị (`do_di`) và nhật ký điều xe (`diso_cu`/`diso_r`) — đây là 2 method mở guard + 2 method list cùng bộ.",
+   "exception": "E3"
+  },
+  {
+   "endpoint": "/tms.DeliveryInstructionService/SaveDeliveryInstruction",
+   "module": "delivery-instruction",
+   "allowAnyOf": [
+    "do_di"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.DeliveryInstructionService/ValidateDeliveryInstruction",
+   "module": "delivery-instruction",
+   "allowAnyOf": [
+    "do_di"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.DeliveryOrderService/DeleteDeliveryOrder",
+   "module": "delivery-order",
+   "allowAnyOf": [
+    "do_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.DeliveryOrderService/ExportDeliveryOrder",
+   "module": "delivery-order",
+   "allowAnyOf": [
+    "do_ex"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.DeliveryOrderService/GetDeliveryOrder",
+   "module": "delivery-order",
+   "allowAnyOf": [
+    "do_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `do_r`. Bỏ 4 quyền khỏi endpoint (`diso_cu`, `diso_r`, `do_di`, `subcon_cu`); nhu cầu của màn gọi chuyển thành dependency trong registry (diso_cu → do_r, diso_r → do_r, do_di → do_r, subcon_cu → do_r).",
+   "removed": [
+    "diso_cu",
+    "diso_r",
+    "do_di",
+    "subcon_cu"
+   ]
+  },
+  {
+   "endpoint": "/tms.DeliveryOrderService/ListDeliveryOrder",
+   "module": "delivery-order",
+   "allowAnyOf": [
+    "do_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `do_r`. Bỏ 4 quyền khỏi endpoint (`diso_cu`, `diso_r`, `do_di`, `subcon_cu`); nhu cầu của màn gọi chuyển thành dependency trong registry (diso_cu → do_r, diso_r → do_r, do_di → do_r, subcon_cu → do_r).",
+   "removed": [
+    "diso_cu",
+    "diso_r",
+    "do_di",
+    "subcon_cu"
+   ]
+  },
+  {
+   "endpoint": "/tms.DeliveryOrderService/SaveDeliveryOrder",
+   "module": "delivery-order",
+   "allowAnyOf": [
+    "do_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.DispatchOrderService/DeleteDispatchOrder",
+   "module": "dispatch-order",
+   "allowAnyOf": [
+    "diso_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.DispatchOrderService/ExportDispatchOrder",
+   "module": "dispatch-order",
+   "allowAnyOf": [
+    "diso_ex"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.DispatchOrderService/GetDispatchOrder",
+   "module": "dispatch-order",
+   "allowAnyOf": [
+    "diso_r"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại."
+  },
+  {
+   "endpoint": "/tms.DispatchOrderService/ListDispatchOrder",
+   "module": "dispatch-order",
+   "allowAnyOf": [
+    "diso_r"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại."
+  },
+  {
+   "endpoint": "/tms.DispatchOrderService/SaveDispatchOrder",
+   "module": "dispatch-order",
+   "allowAnyOf": [
+    "diso_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.DriverService/DeleteDriver",
+   "module": "driver",
+   "allowAnyOf": [
+    "drv_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.DriverService/GetDriver",
+   "module": "driver",
+   "allowAnyOf": [
+    "drv_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `drv_r`. Bỏ 1 quyền khỏi endpoint (`diso_cu`); nhu cầu của màn gọi chuyển thành dependency trong registry (diso_cu → drv_r).",
+   "removed": [
+    "diso_cu"
+   ]
+  },
+  {
+   "endpoint": "/tms.DriverService/ListDriver",
+   "module": "driver",
+   "allowAnyOf": [
+    "drv_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `drv_r`. Bỏ 1 quyền khỏi endpoint (`diso_cu`); nhu cầu của màn gọi chuyển thành dependency trong registry (diso_cu → drv_r).",
+   "removed": [
+    "diso_cu"
+   ]
+  },
+  {
+   "endpoint": "/tms.DriverService/SaveDriver",
+   "module": "driver",
+   "allowAnyOf": [
+    "drv_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.FuelAdjustmentService/Delete",
+   "module": "fuel-adjustment",
+   "allowAnyOf": [
+    "fadj_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.FuelAdjustmentService/Get",
+   "module": "fuel-adjustment",
+   "allowAnyOf": [
+    "fadj_r"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại."
+  },
+  {
+   "endpoint": "/tms.FuelAdjustmentService/GetSystemBalance",
+   "module": "fuel-adjustment",
+   "allowAnyOf": [
+    "fadj_r"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại."
+  },
+  {
+   "endpoint": "/tms.FuelAdjustmentService/List",
+   "module": "fuel-adjustment",
+   "allowAnyOf": [
+    "fadj_r"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại."
+  },
+  {
+   "endpoint": "/tms.FuelAdjustmentService/Save",
+   "module": "fuel-adjustment",
+   "allowAnyOf": [
+    "fadj_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.FuelIssueService/Delete",
+   "module": "fuel-issue",
+   "allowAnyOf": [
+    "fissue_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.FuelIssueService/Get",
+   "module": "fuel-issue",
+   "allowAnyOf": [
+    "fissue_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `fissue_r`. Bỏ 1 quyền khỏi endpoint (`fadj_cu`); nhu cầu của màn gọi chuyển thành dependency trong registry (fadj_cu → fissue_r).",
+   "removed": [
+    "fadj_cu"
+   ]
+  },
+  {
+   "endpoint": "/tms.FuelIssueService/List",
+   "module": "fuel-issue",
+   "allowAnyOf": [
+    "fissue_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `fissue_r`. Bỏ 1 quyền khỏi endpoint (`fadj_cu`); nhu cầu của màn gọi chuyển thành dependency trong registry (fadj_cu → fissue_r).",
+   "removed": [
+    "fadj_cu"
+   ]
+  },
+  {
+   "endpoint": "/tms.FuelIssueService/Save",
+   "module": "fuel-issue",
+   "allowAnyOf": [
+    "fissue_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.FuelReceiptService/Delete",
+   "module": "fuel-receipt",
+   "allowAnyOf": [
+    "frcp_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.FuelReceiptService/Get",
+   "module": "fuel-receipt",
+   "allowAnyOf": [
+    "frcp_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `frcp_r`. Bỏ 1 quyền khỏi endpoint (`fadj_cu`); nhu cầu của màn gọi chuyển thành dependency trong registry (fadj_cu → frcp_r).",
+   "removed": [
+    "fadj_cu"
+   ]
+  },
+  {
+   "endpoint": "/tms.FuelReceiptService/List",
+   "module": "fuel-receipt",
+   "allowAnyOf": [
+    "frcp_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `frcp_r`. Bỏ 1 quyền khỏi endpoint (`fadj_cu`); nhu cầu của màn gọi chuyển thành dependency trong registry (fadj_cu → frcp_r).",
+   "removed": [
+    "fadj_cu"
+   ]
+  },
+  {
+   "endpoint": "/tms.FuelReceiptService/Save",
+   "module": "fuel-receipt",
+   "allowAnyOf": [
+    "frcp_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.FuelTankService/Activity",
+   "module": "fuel-tank",
+   "allowAnyOf": [
+    "ftk_r"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.FuelTankService/Delete",
+   "module": "fuel-tank",
+   "allowAnyOf": [
+    "ftk_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.FuelTankService/Get",
+   "module": "fuel-tank",
+   "allowAnyOf": [
+    "ftk_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `ftk_r`. Bỏ 3 quyền khỏi endpoint (`fadj_cu`, `fissue_cu`, `frcp_cu`); nhu cầu của màn gọi chuyển thành dependency trong registry (fadj_cu → ftk_r, fissue_cu → ftk_r, frcp_cu → ftk_r).",
+   "removed": [
+    "fadj_cu",
+    "fissue_cu",
+    "frcp_cu"
+   ]
+  },
+  {
+   "endpoint": "/tms.FuelTankService/List",
+   "module": "fuel-tank",
+   "allowAnyOf": [
+    "ftk_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `ftk_r`. Bỏ 3 quyền khỏi endpoint (`fadj_cu`, `fissue_cu`, `frcp_cu`); nhu cầu của màn gọi chuyển thành dependency trong registry (fadj_cu → ftk_r, fissue_cu → ftk_r, frcp_cu → ftk_r).",
+   "removed": [
+    "fadj_cu",
+    "fissue_cu",
+    "frcp_cu"
+   ]
+  },
+  {
+   "endpoint": "/tms.FuelTankService/Save",
+   "module": "fuel-tank",
+   "allowAnyOf": [
+    "ftk_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.ImageService/DeleteImage",
+   "module": "(shared)",
+   "allowAnyOf": [
+    "(authenticated)"
+   ],
+   "allOf": [],
+   "rationale": "CHỐT (ITMS-411): tối thiểu authenticated; quyền xoá theo chủ sở hữu ảnh (entity ref) do service kiểm — không biểu diễn bằng tập quyền tĩnh vì ảnh thuộc nhiều module."
+  },
+  {
+   "endpoint": "/tms.NotificationService/GetNotificationSettings",
+   "module": "(shared)",
+   "allowAnyOf": [
+    "(authenticated)"
+   ],
+   "allOf": [],
+   "rationale": "Thông báo là dữ liệu riêng từng user, không gắn module nghiệp vụ."
+  },
+  {
+   "endpoint": "/tms.NotificationService/GetUnreadCount",
+   "module": "(shared)",
+   "allowAnyOf": [
+    "(authenticated)"
+   ],
+   "allOf": [],
+   "rationale": "Thông báo là dữ liệu riêng từng user, không gắn module nghiệp vụ."
+  },
+  {
+   "endpoint": "/tms.NotificationService/ListNotifications",
+   "module": "(shared)",
+   "allowAnyOf": [
+    "(authenticated)"
+   ],
+   "allOf": [],
+   "rationale": "Thông báo là dữ liệu riêng từng user, không gắn module nghiệp vụ."
+  },
+  {
+   "endpoint": "/tms.NotificationService/MarkAsRead",
+   "module": "(shared)",
+   "allowAnyOf": [
+    "(authenticated)"
+   ],
+   "allOf": [],
+   "rationale": "Thông báo là dữ liệu riêng từng user, không gắn module nghiệp vụ."
+  },
+  {
+   "endpoint": "/tms.NotificationService/UpdateNotificationSetting",
+   "module": "(shared)",
+   "allowAnyOf": [
+    "(authenticated)"
+   ],
+   "allOf": [],
+   "rationale": "Thông báo là dữ liệu riêng từng user, không gắn module nghiệp vụ."
+  },
+  {
+   "endpoint": "/tms.PartnerService/DeletePartner",
+   "module": "partner",
+   "allowAnyOf": [
+    "cus_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.PartnerService/GetPartner",
+   "module": "partner",
+   "allowAnyOf": [
+    "cus_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `cus_r`. Bỏ 11 quyền khỏi endpoint (`pmt_r`, `pmt_cu`, `do_cu`, `do_di`, `diso_r`, `diso_cu`, `cusdeb_hx`, `supdeb_hx`, `rec_cu`, `rec_debt_balance`, `subcon_cu`); nhu cầu của màn gọi chuyển thành dependency trong registry (pmt_r → cus_r, pmt_cu → cus_r, do_cu → cus_r, do_di → cus_r, diso_r → cus_r, diso_cu → cus_r, cusdeb_hx → cus_r, supdeb_hx → cus_r, rec_cu → cus_r, rec_debt_balance → cus_r, subcon_cu → cus_r).",
+   "removed": [
+    "pmt_r",
+    "pmt_cu",
+    "do_cu",
+    "do_di",
+    "diso_r",
+    "diso_cu",
+    "cusdeb_hx",
+    "supdeb_hx",
+    "rec_cu",
+    "rec_debt_balance",
+    "subcon_cu"
+   ]
+  },
+  {
+   "endpoint": "/tms.PartnerService/GetPartnerOpeningBalance",
+   "module": "partner",
+   "allowAnyOf": [
+    "cus_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `cus_r`. Bỏ 8 quyền khỏi endpoint (`pmt_cu`, `do_cu`, `do_di`, `cusdeb_hx`, `supdeb_hx`, `rec_cu`, `rec_debt_balance`, `subcon_cu`); nhu cầu của màn gọi chuyển thành dependency trong registry (pmt_cu → cus_r, do_cu → cus_r, do_di → cus_r, cusdeb_hx → cus_r, supdeb_hx → cus_r, rec_cu → cus_r, rec_debt_balance → cus_r, subcon_cu → cus_r).",
+   "removed": [
+    "pmt_cu",
+    "do_cu",
+    "do_di",
+    "cusdeb_hx",
+    "supdeb_hx",
+    "rec_cu",
+    "rec_debt_balance",
+    "subcon_cu"
+   ]
+  },
+  {
+   "endpoint": "/tms.PartnerService/ListPartner",
+   "module": "partner",
+   "allowAnyOf": [
+    "cus_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `cus_r`. Bỏ 11 quyền khỏi endpoint (`pmt_r`, `pmt_cu`, `do_cu`, `do_di`, `diso_r`, `diso_cu`, `cusdeb_hx`, `supdeb_hx`, `rec_cu`, `rec_debt_balance`, `subcon_cu`); nhu cầu của màn gọi chuyển thành dependency trong registry (pmt_r → cus_r, pmt_cu → cus_r, do_cu → cus_r, do_di → cus_r, diso_r → cus_r, diso_cu → cus_r, cusdeb_hx → cus_r, supdeb_hx → cus_r, rec_cu → cus_r, rec_debt_balance → cus_r, subcon_cu → cus_r).",
+   "removed": [
+    "pmt_r",
+    "pmt_cu",
+    "do_cu",
+    "do_di",
+    "diso_r",
+    "diso_cu",
+    "cusdeb_hx",
+    "supdeb_hx",
+    "rec_cu",
+    "rec_debt_balance",
+    "subcon_cu"
+   ]
+  },
+  {
+   "endpoint": "/tms.PartnerService/SavePartner",
+   "module": "partner",
+   "allowAnyOf": [
+    "cus_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.PartnerService/SavePartnerCustomerOpeningBalance",
+   "module": "partner",
+   "allowAnyOf": [
+    "cus_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.PartnerService/SavePartnerSupplierOpeningBalance",
+   "module": "partner",
+   "allowAnyOf": [
+    "supdeb_open"
+   ],
+   "allOf": [],
+   "rationale": "CHỐT (ITMS-411): tách key mới supdeb_open (nhóm Công nợ NCC) thay cus_cu; migration backfill cho role đang có cus_cu để không mất quyền nhập số dư đầu kỳ NCC."
+  },
+  {
+   "endpoint": "/tms.PaymentMethodService/DeletePaymentMethod",
+   "module": "payment-method",
+   "allowAnyOf": [
+    "pytmtd_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.PaymentMethodService/GetPaymentMethod",
+   "module": "payment-method",
+   "allowAnyOf": [
+    "pytmtd_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `pytmtd_r`. Bỏ 2 quyền khỏi endpoint (`pmt_cu`, `rec_cu`); nhu cầu của màn gọi chuyển thành dependency trong registry (pmt_cu → pytmtd_r, rec_cu → pytmtd_r).",
+   "removed": [
+    "pmt_cu",
+    "rec_cu"
+   ]
+  },
+  {
+   "endpoint": "/tms.PaymentMethodService/ListBank",
+   "module": "payment-method",
+   "allowAnyOf": [
+    "pytmtd_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `pytmtd_r`. Bỏ 2 quyền khỏi endpoint (`pmt_cu`, `rec_cu`); nhu cầu của màn gọi chuyển thành dependency trong registry (pmt_cu → pytmtd_r, rec_cu → pytmtd_r).",
+   "removed": [
+    "pmt_cu",
+    "rec_cu"
+   ]
+  },
+  {
+   "endpoint": "/tms.PaymentMethodService/ListPaymentMethod",
+   "module": "payment-method",
+   "allowAnyOf": [
+    "pytmtd_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `pytmtd_r`. Bỏ 2 quyền khỏi endpoint (`pmt_cu`, `rec_cu`); nhu cầu của màn gọi chuyển thành dependency trong registry (pmt_cu → pytmtd_r, rec_cu → pytmtd_r).",
+   "removed": [
+    "pmt_cu",
+    "rec_cu"
+   ]
+  },
+  {
+   "endpoint": "/tms.PaymentMethodService/SavePaymentMethod",
+   "module": "payment-method",
+   "allowAnyOf": [
+    "pytmtd_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.PaymentVoucherService/CancelPaymentVoucher",
+   "module": "payment-voucher",
+   "allowAnyOf": [
+    "pmt_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.PaymentVoucherService/GetPaymentVoucher",
+   "module": "payment-voucher",
+   "allowAnyOf": [
+    "pmt_r"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại."
+  },
+  {
+   "endpoint": "/tms.PaymentVoucherService/GetSupplierPayableAmount",
+   "module": "payment-voucher",
+   "allowAnyOf": [
+    "pmt_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `pmt_r`. Bỏ 2 quyền khỏi endpoint (`pmt_cu`, `supdeb_hx`); nhu cầu của màn gọi chuyển thành dependency trong registry (pmt_cu → pmt_r). `supdeb_hx` không có caller thật nên bỏ hẳn, không tạo cạnh.",
+   "removed": [
+    "pmt_cu",
+    "supdeb_hx"
+   ]
+  },
+  {
+   "endpoint": "/tms.PaymentVoucherService/ListPaymentVoucher",
+   "module": "payment-voucher",
+   "allowAnyOf": [
+    "pmt_r"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại."
+  },
+  {
+   "endpoint": "/tms.PaymentVoucherService/SavePaymentVoucher",
+   "module": "payment-voucher",
+   "allowAnyOf": [
+    "pmt_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.ProductService/DeleteProduct",
+   "module": "product",
+   "allowAnyOf": [
+    "prd_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.ProductService/GetProduct",
+   "module": "product",
+   "allowAnyOf": [
+    "prd_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `prd_r`. Bỏ 1 quyền khỏi endpoint (`do_cu`); nhu cầu của màn gọi chuyển thành dependency trong registry (do_cu → prd_r).",
+   "removed": [
+    "do_cu"
+   ]
+  },
+  {
+   "endpoint": "/tms.ProductService/ListProduct",
+   "module": "product",
+   "allowAnyOf": [
+    "prd_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `prd_r`. Bỏ 1 quyền khỏi endpoint (`do_cu`); nhu cầu của màn gọi chuyển thành dependency trong registry (do_cu → prd_r).",
+   "removed": [
+    "do_cu"
+   ]
+  },
+  {
+   "endpoint": "/tms.ProductService/SaveProduct",
+   "module": "product",
+   "allowAnyOf": [
+    "prd_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.ResourceService/ListAdUnit",
+   "module": "(shared)",
+   "allowAnyOf": [
+    "(authenticated)"
+   ],
+   "allOf": [],
+   "rationale": "CHỐT (PO 2026-11-23): danh mục xã/phường là dữ liệu công khai, dùng bởi CommuneSelect trong form tài xế/đối tác/tuyến/kho nên chỉ cần đăng nhập."
+  },
+  {
+   "endpoint": "/tms.RoleService/DeleteRole",
+   "module": "role",
+   "allowAnyOf": [
+    "role_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.RoleService/GetModules",
+   "module": "role",
+   "allowAnyOf": [
+    "role_r",
+    "role_cu",
+    "usr_cu"
+   ],
+   "allOf": [],
+   "rationale": "Ngoại lệ có chủ đích (PO chốt): catalog module/action dùng chung cho màn Phân quyền (`role_r`/`role_cu`) và form Người dùng (`usr_cu` gán vai trò).",
+   "exception": "E2"
+  },
+  {
+   "endpoint": "/tms.RoleService/GetRole",
+   "module": "role",
+   "allowAnyOf": [
+    "role_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `role_r`. Bỏ 2 quyền khỏi endpoint (`usr_cu`, `usr_r`); nhu cầu của màn gọi chuyển thành dependency trong registry (usr_cu → role_r, usr_r → role_r).",
+   "removed": [
+    "usr_cu",
+    "usr_r"
+   ]
+  },
+  {
+   "endpoint": "/tms.RoleService/ListRole",
+   "module": "role",
+   "allowAnyOf": [
+    "role_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `role_r`. Bỏ 2 quyền khỏi endpoint (`usr_cu`, `usr_r`); nhu cầu của màn gọi chuyển thành dependency trong registry (usr_cu → role_r, usr_r → role_r).",
+   "removed": [
+    "usr_cu",
+    "usr_r"
+   ]
+  },
+  {
+   "endpoint": "/tms.RoleService/SaveRole",
+   "module": "role",
+   "allowAnyOf": [
+    "role_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.RouteService/DeleteRoute",
+   "module": "route",
+   "allowAnyOf": [
+    "vehr_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.RouteService/GetRoute",
+   "module": "route",
+   "allowAnyOf": [
+    "vehr_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `vehr_r`. Bỏ 2 quyền khỏi endpoint (`do_cu`, `cus_cu`); nhu cầu của màn gọi chuyển thành dependency trong registry (do_cu → vehr_r, cus_cu → vehr_r).",
+   "removed": [
+    "do_cu",
+    "cus_cu"
+   ]
+  },
+  {
+   "endpoint": "/tms.RouteService/ListRoute",
+   "module": "route",
+   "allowAnyOf": [
+    "vehr_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `vehr_r`. Bỏ 2 quyền khỏi endpoint (`do_cu`, `cus_cu`); nhu cầu của màn gọi chuyển thành dependency trong registry (do_cu → vehr_r, cus_cu → vehr_r).",
+   "removed": [
+    "do_cu",
+    "cus_cu"
+   ]
+  },
+  {
+   "endpoint": "/tms.RouteService/SaveRoute",
+   "module": "route",
+   "allowAnyOf": [
+    "vehr_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.SettingService/GetNumberFormat",
+   "module": "(shared)",
+   "allowAnyOf": [
+    "(authenticated)"
+   ],
+   "allOf": [],
+   "rationale": "NumberFormat là cấu hình hiển thị dùng chung mọi màn."
+  },
+  {
+   "endpoint": "/tms.SubcontractService/DeleteSubcontract",
+   "module": "subcontract",
+   "allowAnyOf": [
+    "subcon_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.SubcontractService/GetSubcontract",
+   "module": "subcontract",
+   "allowAnyOf": [
+    "subcon_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `subcon_r`. Bỏ 2 quyền khỏi endpoint (`do_di`, `do_cu`); nhu cầu của màn gọi chuyển thành dependency trong registry (do_di → subcon_r, do_cu → subcon_r).",
+   "removed": [
+    "do_di",
+    "do_cu"
+   ]
+  },
+  {
+   "endpoint": "/tms.SubcontractService/GetSubcontractRelatedOrders",
+   "module": "subcontract",
+   "allowAnyOf": [
+    "subcon_r"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại."
+  },
+  {
+   "endpoint": "/tms.SubcontractService/ListSubcontract",
+   "module": "subcontract",
+   "allowAnyOf": [
+    "subcon_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `subcon_r`. Bỏ 2 quyền khỏi endpoint (`do_di`, `do_cu`); nhu cầu của màn gọi chuyển thành dependency trong registry (do_di → subcon_r, do_cu → subcon_r).",
+   "removed": [
+    "do_di",
+    "do_cu"
+   ]
+  },
+  {
+   "endpoint": "/tms.SubcontractService/SaveSubcontract",
+   "module": "subcontract",
+   "allowAnyOf": [
+    "subcon_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.SupplierDebtService/Get",
+   "module": "supplier-debt",
+   "allowAnyOf": [
+    "supdeb_hx"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại."
+  },
+  {
+   "endpoint": "/tms.SupplierDebtService/History",
+   "module": "supplier-debt",
+   "allowAnyOf": [
+    "supdeb_hx"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.SupplierDebtService/List",
+   "module": "supplier-debt",
+   "allowAnyOf": [
+    "supdeb_hx"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại."
+  },
+  {
+   "endpoint": "/tms.SupplierDebtService/Recalculate",
+   "module": "supplier-debt",
+   "allowAnyOf": [
+    "supdeb_rc"
+   ],
+   "allOf": [],
+   "rationale": "CHỐT (ITMS-411): tách key mới supdeb_rc (nhóm Công nợ NCC) cho hành động ghi; migration backfill cho mọi role đang có supdeb_hx — tiền lệ cusdeb_rc."
+  },
+  {
+   "endpoint": "/tms.TenantService/Register",
+   "module": "(auth)",
+   "allowAnyOf": [
+    "(authenticated hoặc public)"
+   ],
+   "allOf": [],
+   "rationale": "Login/Register là public theo thiết kế; các method khác của service này không có."
+  },
+  {
+   "endpoint": "/tms.UserService/DeleteUser",
+   "module": "user",
+   "allowAnyOf": [
+    "usr_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.UserService/GetPermissions",
+   "module": "user",
+   "allowAnyOf": [
+    "(authenticated)"
+   ],
+   "allOf": [],
+   "rationale": "Trả quyền của chính user — mọi user cần gọi để FE render."
+  },
+  {
+   "endpoint": "/tms.UserService/GetUser",
+   "module": "user",
+   "allowAnyOf": [
+    "usr_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `usr_r`. Bỏ 1 quyền khỏi endpoint (`audit_r`); nhu cầu của màn gọi chuyển thành dependency trong registry (audit_r → usr_r).",
+   "removed": [
+    "audit_r"
+   ]
+  },
+  {
+   "endpoint": "/tms.UserService/ListUser",
+   "module": "user",
+   "allowAnyOf": [
+    "usr_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `usr_r`. Bỏ 1 quyền khỏi endpoint (`audit_r`); nhu cầu của màn gọi chuyển thành dependency trong registry (audit_r → usr_r).",
+   "removed": [
+    "audit_r"
+   ]
+  },
+  {
+   "endpoint": "/tms.UserService/SaveUser",
+   "module": "user",
+   "allowAnyOf": [
+    "usr_cu"
+   ],
+   "allOf": [],
+   "rationale": "CHỐT (ITMS-411): giữ usr_cu; BỔ SUNG rule conditional trong service — request truyền roleId ⇒ user phải có thêm role_cu (chặn tăng quyền gián tiếp cho user khác). Self đã chặn #128. Conditional không biểu diễn bằng tập quyền tĩnh — cần check trong service."
+  },
+  {
+   "endpoint": "/tms.VehicleService/DeleteVehicle",
+   "module": "vehicle",
+   "allowAnyOf": [
+    "veh_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.VehicleService/GetVehicle",
+   "module": "vehicle",
+   "allowAnyOf": [
+    "veh_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `veh_r`. Bỏ 2 quyền khỏi endpoint (`do_di`, `diso_cu`); nhu cầu của màn gọi chuyển thành dependency trong registry (do_di → veh_r, diso_cu → veh_r).",
+   "removed": [
+    "do_di",
+    "diso_cu"
+   ]
+  },
+  {
+   "endpoint": "/tms.VehicleService/ListVehicle",
+   "module": "vehicle",
+   "allowAnyOf": [
+    "veh_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `veh_r`. Bỏ 2 quyền khỏi endpoint (`do_di`, `diso_cu`); nhu cầu của màn gọi chuyển thành dependency trong registry (do_di → veh_r, diso_cu → veh_r).",
+   "removed": [
+    "do_di",
+    "diso_cu"
+   ]
+  },
+  {
+   "endpoint": "/tms.VehicleService/SaveVehicle",
+   "module": "vehicle",
+   "allowAnyOf": [
+    "veh_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.WarehouseService/DeleteWarehouse",
+   "module": "warehouse",
+   "allowAnyOf": [
+    "wh_d"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  },
+  {
+   "endpoint": "/tms.WarehouseService/GetWarehouse",
+   "module": "warehouse",
+   "allowAnyOf": [
+    "wh_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `wh_r`. Bỏ 4 quyền khỏi endpoint (`do_cu`, `frcp_cu`, `fissue_cu`, `fadj_cu`); nhu cầu của màn gọi chuyển thành dependency trong registry (do_cu → wh_r, frcp_cu → wh_r, fissue_cu → wh_r, fadj_cu → wh_r).",
+   "removed": [
+    "do_cu",
+    "frcp_cu",
+    "fissue_cu",
+    "fadj_cu"
+   ]
+  },
+  {
+   "endpoint": "/tms.WarehouseService/ListWarehouse",
+   "module": "warehouse",
+   "allowAnyOf": [
+    "wh_r"
+   ],
+   "allOf": [],
+   "rationale": "Matrix v3 (PO 2026-11-23): endpoint chỉ khai quyền module sở hữu — `wh_r`. Bỏ 4 quyền khỏi endpoint (`do_cu`, `frcp_cu`, `fissue_cu`, `fadj_cu`); nhu cầu của màn gọi chuyển thành dependency trong registry (do_cu → wh_r, frcp_cu → wh_r, fissue_cu → wh_r, fadj_cu → wh_r).",
+   "removed": [
+    "do_cu",
+    "frcp_cu",
+    "fissue_cu",
+    "fadj_cu"
+   ]
+  },
+  {
+   "endpoint": "/tms.WarehouseService/SaveWarehouse",
+   "module": "warehouse",
+   "allowAnyOf": [
+    "wh_cu"
+   ],
+   "allOf": [],
+   "rationale": "Giữ quyền hiện tại (endpoint ghi/chuyên biệt)."
+  }
+ ],
+ "dependencies": [
+  {
+   "from": "audit_r",
+   "to": "usr_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `audit_r` gọi `/tms.UserService/GetUser` nên phải kèm quyền xem module sở hữu `usr_r`.",
+   "evidence": [
+    "/tms.UserService/GetUser",
+    "/tms.UserService/ListUser"
+   ],
+   "status": "missing"
+  },
+  {
+   "from": "cus_cu",
+   "to": "vehr_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `cus_cu` gọi `/tms.RouteService/GetRoute` nên phải kèm quyền xem module sở hữu `vehr_r`.",
+   "evidence": [
+    "/tms.RouteService/GetRoute",
+    "/tms.RouteService/ListRoute"
+   ],
+   "status": "missing"
+  },
+  {
+   "from": "cusdeb_hx",
+   "to": "cus_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `cusdeb_hx` gọi `/tms.PartnerService/GetPartner` nên phải kèm quyền xem module sở hữu `cus_r`.",
+   "evidence": [
+    "/tms.PartnerService/GetPartner",
+    "/tms.PartnerService/GetPartnerOpeningBalance",
+    "/tms.PartnerService/ListPartner"
+   ],
+   "status": "existing"
+  },
+  {
+   "from": "diso_cu",
+   "to": "costs_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `diso_cu` gọi `/tms.CostService/GetCost` nên phải kèm quyền xem module sở hữu `costs_r`.",
+   "evidence": [
+    "/tms.CostService/GetCost",
+    "/tms.CostService/ListCost"
+   ],
+   "status": "missing"
+  },
+  {
+   "from": "diso_cu",
+   "to": "cus_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `diso_cu` gọi `/tms.PartnerService/GetPartner` nên phải kèm quyền xem module sở hữu `cus_r`.",
+   "evidence": [
+    "/tms.PartnerService/GetPartner",
+    "/tms.PartnerService/ListPartner"
+   ],
+   "status": "missing"
+  },
+  {
+   "from": "diso_cu",
+   "to": "do_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `diso_cu` gọi `/tms.DeliveryOrderService/GetDeliveryOrder` nên phải kèm quyền xem module sở hữu `do_r`.",
+   "evidence": [
+    "/tms.DeliveryOrderService/GetDeliveryOrder",
+    "/tms.DeliveryOrderService/ListDeliveryOrder"
+   ],
+   "status": "existing"
+  },
+  {
+   "from": "diso_cu",
+   "to": "drv_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `diso_cu` gọi `/tms.DriverService/GetDriver` nên phải kèm quyền xem module sở hữu `drv_r`.",
+   "evidence": [
+    "/tms.DriverService/GetDriver",
+    "/tms.DriverService/ListDriver"
+   ],
+   "status": "existing"
+  },
+  {
+   "from": "diso_cu",
+   "to": "veh_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `diso_cu` gọi `/tms.VehicleService/GetVehicle` nên phải kèm quyền xem module sở hữu `veh_r`.",
+   "evidence": [
+    "/tms.VehicleService/GetVehicle",
+    "/tms.VehicleService/ListVehicle"
+   ],
+   "status": "existing"
+  },
+  {
+   "from": "diso_r",
+   "to": "cus_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `diso_r` gọi `/tms.PartnerService/GetPartner` nên phải kèm quyền xem module sở hữu `cus_r`.",
+   "evidence": [
+    "/tms.PartnerService/GetPartner",
+    "/tms.PartnerService/ListPartner"
+   ],
+   "status": "missing"
+  },
+  {
+   "from": "diso_r",
+   "to": "do_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `diso_r` gọi `/tms.DeliveryOrderService/GetDeliveryOrder` nên phải kèm quyền xem module sở hữu `do_r`.",
+   "evidence": [
+    "/tms.DeliveryOrderService/GetDeliveryOrder",
+    "/tms.DeliveryOrderService/ListDeliveryOrder"
+   ],
+   "status": "missing"
+  },
+  {
+   "from": "do_cu",
+   "to": "costs_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `do_cu` gọi `/tms.CostService/GetCost` nên phải kèm quyền xem module sở hữu `costs_r`.",
+   "evidence": [
+    "/tms.CostService/GetCost",
+    "/tms.CostService/ListCost"
+   ],
+   "status": "missing"
+  },
+  {
+   "from": "do_cu",
+   "to": "cus_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `do_cu` gọi `/tms.PartnerService/GetPartner` nên phải kèm quyền xem module sở hữu `cus_r`.",
+   "evidence": [
+    "/tms.PartnerService/GetPartner",
+    "/tms.PartnerService/GetPartnerOpeningBalance",
+    "/tms.PartnerService/ListPartner"
+   ],
+   "status": "existing"
+  },
+  {
+   "from": "do_cu",
+   "to": "prd_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `do_cu` gọi `/tms.ProductService/GetProduct` nên phải kèm quyền xem module sở hữu `prd_r`.",
+   "evidence": [
+    "/tms.ProductService/GetProduct",
+    "/tms.ProductService/ListProduct"
+   ],
+   "status": "existing"
+  },
+  {
+   "from": "do_cu",
+   "to": "subcon_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `do_cu` gọi `/tms.SubcontractService/GetSubcontract` nên phải kèm quyền xem module sở hữu `subcon_r`.",
+   "evidence": [
+    "/tms.SubcontractService/GetSubcontract",
+    "/tms.SubcontractService/ListSubcontract"
+   ],
+   "status": "missing"
+  },
+  {
+   "from": "do_cu",
+   "to": "vehr_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `do_cu` gọi `/tms.RouteService/GetRoute` nên phải kèm quyền xem module sở hữu `vehr_r`.",
+   "evidence": [
+    "/tms.RouteService/GetRoute",
+    "/tms.RouteService/ListRoute"
+   ],
+   "status": "existing"
+  },
+  {
+   "from": "do_cu",
+   "to": "wh_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `do_cu` gọi `/tms.WarehouseService/GetWarehouse` nên phải kèm quyền xem module sở hữu `wh_r`.",
+   "evidence": [
+    "/tms.WarehouseService/GetWarehouse",
+    "/tms.WarehouseService/ListWarehouse"
+   ],
+   "status": "missing"
+  },
+  {
+   "from": "do_di",
+   "to": "cus_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `do_di` gọi `/tms.PartnerService/GetPartner` nên phải kèm quyền xem module sở hữu `cus_r`.",
+   "evidence": [
+    "/tms.PartnerService/GetPartner",
+    "/tms.PartnerService/GetPartnerOpeningBalance",
+    "/tms.PartnerService/ListPartner"
+   ],
+   "status": "missing"
+  },
+  {
+   "from": "do_di",
+   "to": "subcon_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `do_di` gọi `/tms.SubcontractService/GetSubcontract` nên phải kèm quyền xem module sở hữu `subcon_r`.",
+   "evidence": [
+    "/tms.SubcontractService/GetSubcontract",
+    "/tms.SubcontractService/ListSubcontract"
+   ],
+   "status": "existing"
+  },
+  {
+   "from": "do_di",
+   "to": "veh_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `do_di` gọi `/tms.VehicleService/GetVehicle` nên phải kèm quyền xem module sở hữu `veh_r`.",
+   "evidence": [
+    "/tms.VehicleService/GetVehicle",
+    "/tms.VehicleService/ListVehicle"
+   ],
+   "status": "existing"
+  },
+  {
+   "from": "fadj_cu",
+   "to": "fissue_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `fadj_cu` gọi `/tms.FuelIssueService/Get` nên phải kèm quyền xem module sở hữu `fissue_r`.",
+   "evidence": [
+    "/tms.FuelIssueService/Get",
+    "/tms.FuelIssueService/List"
+   ],
+   "status": "missing"
+  },
+  {
+   "from": "fadj_cu",
+   "to": "frcp_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `fadj_cu` gọi `/tms.FuelReceiptService/Get` nên phải kèm quyền xem module sở hữu `frcp_r`.",
+   "evidence": [
+    "/tms.FuelReceiptService/Get",
+    "/tms.FuelReceiptService/List"
+   ],
+   "status": "missing"
+  },
+  {
+   "from": "fadj_cu",
+   "to": "ftk_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `fadj_cu` gọi `/tms.FuelTankService/Get` nên phải kèm quyền xem module sở hữu `ftk_r`.",
+   "evidence": [
+    "/tms.FuelTankService/Get",
+    "/tms.FuelTankService/List"
+   ],
+   "status": "existing"
+  },
+  {
+   "from": "fadj_cu",
+   "to": "wh_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `fadj_cu` gọi `/tms.WarehouseService/GetWarehouse` nên phải kèm quyền xem module sở hữu `wh_r`.",
+   "evidence": [
+    "/tms.WarehouseService/GetWarehouse",
+    "/tms.WarehouseService/ListWarehouse"
+   ],
+   "status": "missing"
+  },
+  {
+   "from": "fissue_cu",
+   "to": "ftk_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `fissue_cu` gọi `/tms.FuelTankService/Get` nên phải kèm quyền xem module sở hữu `ftk_r`.",
+   "evidence": [
+    "/tms.FuelTankService/Get",
+    "/tms.FuelTankService/List"
+   ],
+   "status": "existing"
+  },
+  {
+   "from": "fissue_cu",
+   "to": "wh_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `fissue_cu` gọi `/tms.WarehouseService/GetWarehouse` nên phải kèm quyền xem module sở hữu `wh_r`.",
+   "evidence": [
+    "/tms.WarehouseService/GetWarehouse",
+    "/tms.WarehouseService/ListWarehouse"
+   ],
+   "status": "missing"
+  },
+  {
+   "from": "frcp_cu",
+   "to": "ftk_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `frcp_cu` gọi `/tms.FuelTankService/Get` nên phải kèm quyền xem module sở hữu `ftk_r`.",
+   "evidence": [
+    "/tms.FuelTankService/Get",
+    "/tms.FuelTankService/List"
+   ],
+   "status": "existing"
+  },
+  {
+   "from": "frcp_cu",
+   "to": "wh_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `frcp_cu` gọi `/tms.WarehouseService/GetWarehouse` nên phải kèm quyền xem module sở hữu `wh_r`.",
+   "evidence": [
+    "/tms.WarehouseService/GetWarehouse",
+    "/tms.WarehouseService/ListWarehouse"
+   ],
+   "status": "missing"
+  },
+  {
+   "from": "pmt_cu",
+   "to": "cus_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `pmt_cu` gọi `/tms.PartnerService/GetPartner` nên phải kèm quyền xem module sở hữu `cus_r`.",
+   "evidence": [
+    "/tms.PartnerService/GetPartner",
+    "/tms.PartnerService/GetPartnerOpeningBalance",
+    "/tms.PartnerService/ListPartner"
+   ],
+   "status": "existing"
+  },
+  {
+   "from": "pmt_cu",
+   "to": "pytmtd_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `pmt_cu` gọi `/tms.PaymentMethodService/GetPaymentMethod` nên phải kèm quyền xem module sở hữu `pytmtd_r`.",
+   "evidence": [
+    "/tms.PaymentMethodService/GetPaymentMethod",
+    "/tms.PaymentMethodService/ListBank",
+    "/tms.PaymentMethodService/ListPaymentMethod"
+   ],
+   "status": "missing"
+  },
+  {
+   "from": "pmt_r",
+   "to": "cus_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `pmt_r` gọi `/tms.PartnerService/GetPartner` nên phải kèm quyền xem module sở hữu `cus_r`.",
+   "evidence": [
+    "/tms.PartnerService/GetPartner",
+    "/tms.PartnerService/ListPartner"
+   ],
+   "status": "missing"
+  },
+  {
+   "from": "rec_cu",
+   "to": "cus_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `rec_cu` gọi `/tms.PartnerService/GetPartner` nên phải kèm quyền xem module sở hữu `cus_r`.",
+   "evidence": [
+    "/tms.PartnerService/GetPartner",
+    "/tms.PartnerService/GetPartnerOpeningBalance",
+    "/tms.PartnerService/ListPartner"
+   ],
+   "status": "missing"
+  },
+  {
+   "from": "rec_cu",
+   "to": "pytmtd_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `rec_cu` gọi `/tms.PaymentMethodService/GetPaymentMethod` nên phải kèm quyền xem module sở hữu `pytmtd_r`.",
+   "evidence": [
+    "/tms.PaymentMethodService/GetPaymentMethod",
+    "/tms.PaymentMethodService/ListBank",
+    "/tms.PaymentMethodService/ListPaymentMethod"
+   ],
+   "status": "missing"
+  },
+  {
+   "from": "rec_debt_balance",
+   "to": "cus_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `rec_debt_balance` gọi `/tms.PartnerService/GetPartner` nên phải kèm quyền xem module sở hữu `cus_r`.",
+   "evidence": [
+    "/tms.PartnerService/GetPartner",
+    "/tms.PartnerService/GetPartnerOpeningBalance",
+    "/tms.PartnerService/ListPartner"
+   ],
+   "status": "missing"
+  },
+  {
+   "from": "rec_debt_balance",
+   "to": "cusdeb_hx",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `rec_debt_balance` gọi `/tms.CustomerDebtService/Get` nên phải kèm quyền xem module sở hữu `cusdeb_hx`.",
+   "evidence": [
+    "/tms.CustomerDebtService/Get"
+   ],
+   "status": "missing"
+  },
+  {
+   "from": "rec_r",
+   "to": "cus_r",
+   "kind": "cross-module",
+   "reason": "Màn Phiếu thu (view `rec_r`) lọc danh sách theo khách hàng qua partner.list; xem chi tiết phiếu cũng hiển thị tên đối tác.",
+   "evidence": [
+    "/tms.PartnerService/ListPartner"
+   ],
+   "status": "missing"
+  },
+  {
+   "from": "subcon_cu",
+   "to": "cus_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `subcon_cu` gọi `/tms.PartnerService/GetPartner` nên phải kèm quyền xem module sở hữu `cus_r`.",
+   "evidence": [
+    "/tms.PartnerService/GetPartner",
+    "/tms.PartnerService/GetPartnerOpeningBalance",
+    "/tms.PartnerService/ListPartner"
+   ],
+   "status": "missing"
+  },
+  {
+   "from": "subcon_cu",
+   "to": "do_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `subcon_cu` gọi `/tms.DeliveryOrderService/GetDeliveryOrder` nên phải kèm quyền xem module sở hữu `do_r`.",
+   "evidence": [
+    "/tms.DeliveryOrderService/GetDeliveryOrder",
+    "/tms.DeliveryOrderService/ListDeliveryOrder"
+   ],
+   "status": "missing"
+  },
+  {
+   "from": "supdeb_hx",
+   "to": "cus_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `supdeb_hx` gọi `/tms.PartnerService/GetPartner` nên phải kèm quyền xem module sở hữu `cus_r`.",
+   "evidence": [
+    "/tms.PartnerService/GetPartner",
+    "/tms.PartnerService/GetPartnerOpeningBalance",
+    "/tms.PartnerService/ListPartner"
+   ],
+   "status": "existing"
+  },
+  {
+   "from": "usr_cu",
+   "to": "role_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `usr_cu` gọi `/tms.RoleService/GetRole` nên phải kèm quyền xem module sở hữu `role_r`.",
+   "evidence": [
+    "/tms.RoleService/GetRole",
+    "/tms.RoleService/ListRole"
+   ],
+   "status": "missing"
+  },
+  {
+   "from": "usr_r",
+   "to": "role_r",
+   "kind": "cross-module",
+   "reason": "Form/màn có quyền `usr_r` gọi `/tms.RoleService/GetRole` nên phải kèm quyền xem module sở hữu `role_r`.",
+   "evidence": [
+    "/tms.RoleService/GetRole",
+    "/tms.RoleService/ListRole"
+   ],
+   "status": "missing"
+  },
+  {
+   "from": "costs_cu",
+   "to": "costs_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "costs_d",
+   "to": "costs_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "cus_cu",
+   "to": "cus_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "cus_d",
+   "to": "cus_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "cusdeb_ex",
+   "to": "cusdeb_hx",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "cusdeb_rc",
+   "to": "cusdeb_hx",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "diso_cu",
+   "to": "diso_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "diso_d",
+   "to": "diso_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "diso_ex",
+   "to": "diso_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "do_cu",
+   "to": "do_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "do_d",
+   "to": "do_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "do_di",
+   "to": "do_r",
+   "kind": "same-module",
+   "reason": "Form/màn có quyền `do_di` gọi `/tms.DeliveryOrderService/GetDeliveryOrder` nên phải kèm quyền xem module sở hữu `do_r`.",
+   "evidence": [
+    "/tms.DeliveryOrderService/GetDeliveryOrder",
+    "/tms.DeliveryOrderService/ListDeliveryOrder"
+   ],
+   "status": "existing"
+  },
+  {
+   "from": "do_di_ex",
+   "to": "do_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "do_ex",
+   "to": "do_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "drv_cu",
+   "to": "drv_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "drv_d",
+   "to": "drv_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "fadj_cu",
+   "to": "fadj_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "fadj_d",
+   "to": "fadj_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "fissue_cu",
+   "to": "fissue_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "fissue_d",
+   "to": "fissue_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "frcp_cu",
+   "to": "frcp_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "frcp_d",
+   "to": "frcp_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "ftk_cu",
+   "to": "ftk_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "ftk_d",
+   "to": "ftk_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "pmt_cu",
+   "to": "pmt_r",
+   "kind": "same-module",
+   "reason": "Form/màn có quyền `pmt_cu` gọi `/tms.PaymentVoucherService/GetSupplierPayableAmount` nên phải kèm quyền xem module sở hữu `pmt_r`.",
+   "evidence": [
+    "/tms.PaymentVoucherService/GetSupplierPayableAmount"
+   ],
+   "status": "existing"
+  },
+  {
+   "from": "pmt_d",
+   "to": "pmt_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "prd_cu",
+   "to": "prd_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "prd_d",
+   "to": "prd_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "pytmtd_cu",
+   "to": "pytmtd_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "pytmtd_d",
+   "to": "pytmtd_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "rec_cu",
+   "to": "rec_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "rec_d",
+   "to": "rec_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "rec_debt_balance",
+   "to": "rec_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "role_cu",
+   "to": "role_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "role_d",
+   "to": "role_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "subcon_cu",
+   "to": "subcon_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "subcon_d",
+   "to": "subcon_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "subcon_di",
+   "to": "subcon_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "supdeb_open",
+   "to": "supdeb_hx",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "supdeb_rc",
+   "to": "supdeb_hx",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "usr_cu",
+   "to": "usr_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "usr_d",
+   "to": "usr_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "usr_pin",
+   "to": "usr_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "usr_pw",
+   "to": "usr_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "veh_cu",
+   "to": "veh_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "veh_d",
+   "to": "veh_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "vehr_cu",
+   "to": "vehr_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "vehr_d",
+   "to": "vehr_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "wh_cu",
+   "to": "wh_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  },
+  {
+   "from": "wh_d",
+   "to": "wh_r",
+   "kind": "same-module",
+   "reason": "Quyền ghi/xuất của module phải kèm quyền Xem cùng module (BR-PQ-003).",
+   "evidence": [],
+   "status": "existing"
+  }
+ ],
+ "closure": {
+  "recursive": true,
+  "note": "Migration phải lặp tới khi ổn định (hoặc dùng WITH RECURSIVE): mỗi vòng chỉ áp cạnh lên tập quyền hiện có, nên cạnh bắc cầu (vd rec_debt_balance → rec_r → cus_r) không đóng được trong 1 lượt.",
+  "order": [
+   "1. Thêm key mới (supdeb_rc, supdeb_open) + same-module của chúng",
+   "2. Lặp: áp toàn bộ dependency (same-module + cross-module) lên từng role tới khi không đổi",
+   "3. Ghi lại role chỉ khi tập quyền thay đổi (idempotent)",
+   "4. Vô hiệu hoá session của user thuộc role đã đổi (buộc đăng nhập lại)"
+  ]
+ },
+ "dropped_stale_allowances": [
+  {
+   "from": "rec_r",
+   "to": "cusdeb_hx",
+   "endpoint": "/tms.CustomerDebtService/Get",
+   "why": "Màn xem phiếu thu (`rec_r`) không gọi API số dư: ô công nợ chỉ hiện ở màn thêm mới (`!isEdit`, cần `rec_cu`). Cấp `cusdeb_hx` cho `rec_r` là mở màn Công nợ KH không có nhu cầu — bỏ."
+  },
+  {
+   "from": "supdeb_hx",
+   "to": "pmt_r",
+   "endpoint": "/tms.PaymentVoucherService/GetSupplierPayableAmount",
+   "why": "Quyền này có trong allowAnyOf cũ nhưng không màn nào dùng thật (không có caller trong code FE) — bỏ hẳn, KHÔNG tạo dependency (tránh cấp quyền xem module không liên quan)."
+  }
+ ],
+ "role_impact_staging": [
+  {
+   "code": "ROLE-20260512-001",
+   "name": "Bán hàng",
+   "gained": [
+    "pytmtd_r"
+   ],
+   "current_count": 59,
+   "new_count": 60
+  },
+  {
+   "code": "qa383-rec",
+   "name": "QA383 rec only",
+   "gained": [
+    "cus_r",
+    "pytmtd_r"
+   ],
+   "current_count": 2,
+   "new_count": 4
+  }
+ ],
+ "needs_decision": [],
+ "changes_vs_2026_11_22": {
+  "endpoints_changed": 35,
+  "endpoints_total": 118,
+  "dependencies_total": 90,
+  "dependencies_missing": 26
+ }
+}

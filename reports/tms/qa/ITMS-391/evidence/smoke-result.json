@@ -1,0 +1,35 @@
+{
+  "result": {
+    "login": {
+      "ok": true,
+      "url": "http://tuanvudev.localhost:4701/tms/warehouses"
+    },
+    "validation": {
+      "ok": true,
+      "messages": [
+        "Tên kho không được để trống",
+        "Không được để trống"
+      ],
+      "url": "http://tuanvudev.localhost:4701/tms/warehouses/new"
+    },
+    "submit": {
+      "ok": true,
+      "url": "http://tuanvudev.localhost:4701/tms/warehouses",
+      "redirect": true,
+      "rowVisible": true,
+      "warehouse": "QA ITMS391 TEMP 644023",
+      "province": "Thành phố Hồ Chí Minh",
+      "commune": "Phường Thủ Dầu Một",
+      "note": "Tổng Quan Vận Hành Quỹ Đơn Hàng Nhiên Liệu Tài Chính Lịch Sử Cài Đặt 4 Danh sách kho Thêm Kho Tất cả Hoạt động Ngưng hoạt động Tìm kiếm ​ Tìm kiếm Ngày tạo 0 Mã kho 0 Tên kho 0 Trạng thái 21/11/2026 0"
+    },
+    "cleanup": {
+      "deleted": false,
+      "reason": "delete button not found"
+    }
+  },
+  "pageErrors": [],
+  "consoleErrors": [
+    "{onSubmit: Object}"
+  ],
+  "trpcFail": []
+}

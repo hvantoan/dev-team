@@ -1,0 +1,2 @@
+qa-diso-d=["diso_d", "cus_r", "diso_r", "do_r"]
+qa-rec-debt-balance=["rec_debt_balance", "cus_r", "cusdeb_hx", "rec_r"]

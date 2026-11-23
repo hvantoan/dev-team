@@ -1,0 +1,388 @@
+{
+  "label": "pre-migration-2",
+  "generatedAt": "2026-11-22T18:14:25.497Z",
+  "base": "http://127.0.0.1:8081",
+  "results": [
+    {
+      "id": "ac7.1-rec_r",
+      "user": "qa-rec-r",
+      "method": "GET",
+      "path": "/api/v1/customer-debts/01QA00000000000000000000",
+      "expect": 403,
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "rec_r"
+        ]
+      },
+      "status": 403,
+      "body": "{\"code\":7, \"message\":\"Bạn không có quyền truy cập\", \"details\":[]}",
+      "pass": true
+    },
+    {
+      "id": "ac7.2-rec_cu",
+      "user": "qa-rec-cu",
+      "method": "GET",
+      "path": "/api/v1/customer-debts/01QA00000000000000000000",
+      "expect": 403,
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "rec_cu"
+        ]
+      },
+      "status": 403,
+      "body": "{\"code\":7, \"message\":\"Bạn không có quyền truy cập\", \"details\":[]}",
+      "pass": true
+    },
+    {
+      "id": "ac7.3-cusdeb_hx",
+      "user": "qa-cusdeb-hx",
+      "method": "GET",
+      "path": "/api/v1/customer-debts/01QA00000000000000000000",
+      "expect": "not403",
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "cusdeb_hx"
+        ]
+      },
+      "status": 404,
+      "body": "{\"code\":5, \"message\":\"Không tìm thấy khách hàng\", \"details\":[]}",
+      "pass": true
+    },
+    {
+      "id": "ac7.4-rec_debt_balance",
+      "user": "qa-rec-debt-balance",
+      "method": "GET",
+      "path": "/api/v1/customer-debts/01QA00000000000000000000",
+      "expect": "not403",
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "rec_debt_balance"
+        ]
+      },
+      "status": 403,
+      "body": "{\"code\":7, \"message\":\"Bạn không có quyền truy cập\", \"details\":[]}",
+      "pass": false
+    },
+    {
+      "id": "ac6.1-prd_r",
+      "user": "qa-prd-r",
+      "method": "POST",
+      "path": "/api/v1/partners/list",
+      "expect": 403,
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "prd_r"
+        ]
+      },
+      "status": 403,
+      "body": "{\"code\":7, \"message\":\"Bạn không có quyền truy cập\", \"details\":[]}",
+      "pass": true
+    },
+    {
+      "id": "ac6.2-do_cu",
+      "user": "qa-do-cu",
+      "method": "POST",
+      "path": "/api/v1/partners/list",
+      "expect": "not403",
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "do_cu"
+        ]
+      },
+      "status": 403,
+      "body": "{\"code\":7, \"message\":\"Bạn không có quyền truy cập\", \"details\":[]}",
+      "pass": false
+    },
+    {
+      "id": "ac8.1-with-token",
+      "user": "qa-cusdeb-hx",
+      "method": "POST",
+      "path": "/api/v1/resources/ad-units/list",
+      "expect": 200,
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "cusdeb_hx"
+        ]
+      },
+      "status": 200,
+      "body": "{\"items\":[{\"code\":\"01\", \"name\":\"Thành phố Hà Nội\", \"shortName\":\"Tp. Hà Nội\"}, {\"code\":\"04\", \"name\":\"Cao Bằng\", \"shortName\":\"Cao Bằng\"}, {\"code\":\"08\", \"name\":\"Tuyên Quang\", \"shortName\":\"Tuyên Quang\"}, {\"code\":\"11\", \"name\":\"Điện Biên\", \"shortName\":\"Điện Biên\"}, {\"code\":\"12\", \"name\":\"Lai Châu\", \"shortName\":\"Lai Châu\"}, {\"code\":\"14\", \"name\":\"Sơn La\", \"shortName\":\"Sơn La\"}, {\"code\":\"15\", \"name\":\"Lào Cai\", \"shortName\":\"Lào Cai\"}, {\"code\":\"19\", \"name\":\"Thái Nguyên\", \"shortName\":\"Thái Nguyên\"}, {\"code\":\"20\", \"name\":\"Lạng Sơn\", \"shortName\":\"Lạng Sơn\"}, {\"code\":\"22\", \"name\":\"Quảng Ninh\", \"shortName\":\"Quảng Ninh\"}, {\"code\":\"24\", \"name\":\"Bắc Ninh\", \"shortName\":\"Bắc Ninh\"}, {\"code\":\"25\", \"name\":\"Phú Thọ\", \"shortName\":\"Phú Thọ\"}, {\"code\":\"31\", \"name\":\"Thành phố Hải Phòng\", \"shortName\":\"Tp. Hải Phòng\"}, {\"code\":\"33\", \"name\":\"Hưng Yên\", \"shortName\":\"Hưng Yên\"}, {\"code\":\"37\", \"name\":\"Ninh Bình\", \"shortName\":\"Ninh Bình\"}, {\"code\":\"38\", \"name\":\"Thanh Hóa\", \"shortName\":\"Thanh Hóa\"}, {\"code\":\"40\", \"name\":\"Nghệ An\", \"shortName\":\"Nghệ An\"}, {\"code\":\"42\", \"name\":\"Hà Tĩnh\", \"shortName\":\"Hà Tĩnh\"}, {\"code\":\"44\", \"name\":\"Quảng Trị\", \"shortName\":\"Quảng Trị\"}, {\"code\":\"46\", \"name\":\"Thành phố Huế\", \"shortName\":\"Tp. Huế\"}, {\"code\":\"48\", \"name\":\"Thành phố Đà Nẵng\", \"shortName\":\"Tp. Đà Nẵng\"}, {\"code\":\"51\", \"name\":\"Quảng Ngãi\", \"shortName\":\"Quảng Ngãi\"}, {\"code\":\"52\", \"name\":\"Gia Lai\", \"shortName\":\"Gia Lai\"}, {\"code\":\"56\", \"name\":\"Khánh Hòa\", \"shortName\":\"Khánh Hòa\"}, {\"code\":\"66\", \"name\":\"Đắk Lắk\", \"shortName\":\"Đắk Lắk\"}, {\"code\":\"68\", \"name\":\"Lâm Đồng\", \"shortName\":\"Lâm Đồng\"}, {\"code\":\"75\", \"name\":\"Thành phố Đồng Nai\", \"shortName\":\"Đồng Nai\"}, {\"code\":\"79\", \"name\":\"Thành phố Hồ Chí Minh\", \"shortName\":\"Tp. Hồ Chí Minh\"}, {\"code\":\"80\", \"name\":\"Tây Ninh\", \"shortName\":\"Tây Ninh\"}, {\"code\":\"82\", \"name\":\"Đồng Tháp\", \"shortName\":\"Đồng Tháp\"}, {\"code\":\"86\", \"name\":\"Vĩnh Long\", \"shortName\":\"Vĩnh Long\"}, {\"code\":\"91\", \"name\":\"An Giang\", \"shortName\":\"An Giang\"}, {\"code\":\"92\", \"name\":\"Thành phố Cần Thơ\", \"shortName\":\"Tp. Cần Thơ\"}, {\"code\":\"96\", \"name\":\"Cà Mau\", \"shortName\":\"Cà Mau\"}]}",
+      "pass": true
+    },
+    {
+      "id": "ac8.2-no-token",
+      "user": null,
+      "method": "POST",
+      "path": "/api/v1/resources/ad-units/list",
+      "expect": 401,
+      "status": 401,
+      "body": "{\"code\":16, \"message\":\"failed to process JWT: authorization header missing\", \"details\":[]}",
+      "pass": true
+    },
+    {
+      "id": "ac9.1-supdeb_rc-recalculate",
+      "user": "qa-supdeb-rc",
+      "method": "POST",
+      "path": "/api/v1/supplier-debts/recalculate",
+      "expect": "not403",
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "supdeb_hx",
+          "supdeb_rc"
+        ]
+      },
+      "status": 500,
+      "body": "{\"code\":13, \"message\":\"supplier_debt.recalculate.supplier_notfound\", \"details\":[]}",
+      "pass": true
+    },
+    {
+      "id": "ac9.2-supdeb_hx-recalculate",
+      "user": "qa-supdeb-hx",
+      "method": "POST",
+      "path": "/api/v1/supplier-debts/recalculate",
+      "expect": 403,
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "supdeb_hx"
+        ]
+      },
+      "status": 403,
+      "body": "{\"code\":7, \"message\":\"Bạn không có quyền truy cập\", \"details\":[]}",
+      "pass": true
+    },
+    {
+      "id": "ac9.3-supdeb_open-save",
+      "user": "qa-supdeb-open",
+      "method": "POST",
+      "path": "/api/v1/partners/01QA00000000000000000002/opening-balance/supplier",
+      "expect": "not403",
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "supdeb_hx",
+          "supdeb_open"
+        ]
+      },
+      "status": 500,
+      "body": "{\"code\":13, \"message\":\"partner.opening_balance.balance_type_invalid\", \"details\":[]}",
+      "pass": true
+    },
+    {
+      "id": "ac9.4-supdeb_hx-save-open",
+      "user": "qa-supdeb-hx",
+      "method": "POST",
+      "path": "/api/v1/partners/01QA00000000000000000002/opening-balance/supplier",
+      "expect": 403,
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "supdeb_hx"
+        ]
+      },
+      "status": 403,
+      "body": "{\"code\":7, \"message\":\"Bạn không có quyền truy cập\", \"details\":[]}",
+      "pass": true
+    },
+    {
+      "id": "ac9.5-getmodules-role_r",
+      "user": "qa-role-r",
+      "method": "GET",
+      "path": "/api/v1/roles/modules",
+      "expect": 200,
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "role_r"
+        ]
+      },
+      "status": 200,
+      "body": "{\"modules\":[{\"id\":10000, \"name\":\"Quản lý vận hành\", \"numberOfActions\":18, \"children\":[{\"id\":10100, \"name\":\"Sản phẩm\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10200, \"name\":\"Kho\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10300, \"name\":\"Đối tác\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10400, \"name\":\"Tài xế\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10500, \"name\":\"Phương tiện\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10600, \"name\":\"Tuyến xe\", \"numberOfActions\":3, \"children\":[]}]}, {\"id\":20000, \"name\":\"Quản lý quỹ\", \"numberOfActions\":13, \"children\":[{\"id\":20100, \"name\":\"Phiếu thu\", \"numberOfActions\":4, \"children\":[]}, {\"id\":20200, \"name\":\"Phiếu chi\", \"numberOfActions\":3, \"children\":[]}, {\"id\":20300, \"name\":\"Công nợ\", \"numberOfActions\":3, \"children\":[]}, {\"id\":20400, \"name\":\"Công nợ NCC\", \"numberOfActions\":3, \"children\":[]}]}, {\"id\":30000, \"name\":\"Quản lý đơn hàng\", \"numberOfActions\":14, \"children\":[{\"id\":30100, \"name\":\"Đơn vận chuyển\", \"numberOfActions\":6, \"children\":[]}, {\"id\":30200, \"name\":\"Nhật ký điều xe\", \"numberOfActions\":4, \"children\":[]}, {\"id\":30300, \"name\":\"Thuê vận chuyển\", \"numberOfActions\":4, \"children\":[]}]}, {\"id\":40000, \"name\":\"Quản lý nhiên liệu\", \"numberOfActions\":12, \"children\":[{\"id\":40100, \"name\":\"Bồn nhiên liệu\", \"numberOfActions\":3, \"children\":[]}, {\"id\":40200, \"name\":\"Nhập nhiên liệu\", \"numberOfActions\":3, \"children\":[]}, {\"id\":40300, \"name\":\"Xuất nhiên liệu\", \"numberOfActions\":3, \"children\":[]}, {\"id\":40400, \"name\":\"Kiểm kê\", \"numberOfActions\":3, \"children\":[]}]}, {\"id\":50000, \"name\":\"Quản lý tài chính\", \"numberOfActions\":3, \"children\":[{\"id\":50100, \"name\":\"Chi phí\", \"numberOfActions\":3, \"children\":[]}]}, {\"id\":60000, \"name\":\"Lịch sử thao tác\", \"numberOfActions\":1, \"children\":[{\"id\":60000, \"name\":\"Lịch sử thao tác\", \"numberOfActions\":1, \"children\":[]}]}, {\"id\":70000, \"name\":\"Cài đặt\", \"numberOfActions\":11, \"children\":[{\"id\":70100, \"name\":\"Người dùng\", \"numberOfActions\":5, \"children\":[]}, {\"id\":70200, \"name\":\"Phân quyền\", \"numberOfActions\":3, \"children\":[]}, {\"id\":70300, \"name\":\"Phương thức thanh toán\", \"numberOfActions\":3, \"children\":[]}]}], \"actions\":[{\"actionId\":10101, \"key\":\"prd_r\", \"name\":\"Xem\", \"module\":10100, \"check\":[], \"uncheck\":[10102, 10103], \"description\":\"\"}, {\"actionId\":10102, \"key\":\"prd_cu\", \"name\":\"Thêm/Sửa\", \"module\":10100, \"check\":[10101], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10103, \"key\":\"prd_d\", \"name\":\"Xóa\", \"module\":10100, \"check\":[10101], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10201, \"key\":\"wh_r\", \"name\":\"Xem\", \"module\":10200, \"check\":[], \"uncheck\":[10202, 10203], \"description\":\"\"}, {\"actionId\":10202, \"key\":\"wh_cu\", \"name\":\"Thêm/Sửa\", \"module\":10200, \"check\":[10201], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10203, \"key\":\"wh_d\", \"name\":\"Xóa\", \"module\":10200, \"check\":[10201], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10301, \"key\":\"cus_r\", \"name\":\"Xem\", \"module\":10300, \"check\":[], \"uncheck\":[10302, 10303], \"description\":\"\"}, {\"actionId\":10302, \"key\":\"cus_cu\", \"name\":\"Thêm/Sửa\", \"module\":10300, \"check\":[10301, 10601], \"uncheck\":[], \"description\":\"Yêu cầu quyền xem Tuyến xe (select trong form)\"}, {\"actionId\":10303, \"key\":\"cus_d\", \"name\":\"Xóa\", \"module\":10300, \"check\":[10301], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10401, \"key\":\"drv_r\", \"name\":\"Xem\", \"module\":10400, \"check\":[], \"uncheck\":[10402, 10403], \"description\":\"\"}, {\"actionId\":10402, \"key\":\"drv_cu\", \"name\":\"Thêm/Sửa\", \"module\":10400, \"check\":[10401], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10403, \"key\":\"drv_d\", \"name\":\"Xóa\", \"module\":10400, \"check\":[10401], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10501, \"key\":\"veh_r\", \"name\":\"Xem\", \"module\":10500, \"check\":[], \"uncheck\":[10502, 10503], \"description\":\"\"}, {\"actionId\":10502, \"key\":\"veh_cu\", \"name\":\"Thêm/Sửa\", \"module\":10500, \"check\":[10501], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10503, \"key\":\"veh_d\", \"name\":\"Xóa\", \"module\":10500, \"check\":[10501], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10601, \"key\":\"vehr_r\", \"name\":\"Xem\", \"m",
+      "pass": true
+    },
+    {
+      "id": "ac9.6-getmodules-role_cu",
+      "user": "qa-role-cu",
+      "method": "GET",
+      "path": "/api/v1/roles/modules",
+      "expect": 200,
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "role_cu"
+        ]
+      },
+      "status": 200,
+      "body": "{\"modules\":[{\"id\":10000, \"name\":\"Quản lý vận hành\", \"numberOfActions\":18, \"children\":[{\"id\":10100, \"name\":\"Sản phẩm\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10200, \"name\":\"Kho\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10300, \"name\":\"Đối tác\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10400, \"name\":\"Tài xế\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10500, \"name\":\"Phương tiện\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10600, \"name\":\"Tuyến xe\", \"numberOfActions\":3, \"children\":[]}]}, {\"id\":20000, \"name\":\"Quản lý quỹ\", \"numberOfActions\":13, \"children\":[{\"id\":20100, \"name\":\"Phiếu thu\", \"numberOfActions\":4, \"children\":[]}, {\"id\":20200, \"name\":\"Phiếu chi\", \"numberOfActions\":3, \"children\":[]}, {\"id\":20300, \"name\":\"Công nợ\", \"numberOfActions\":3, \"children\":[]}, {\"id\":20400, \"name\":\"Công nợ NCC\", \"numberOfActions\":3, \"children\":[]}]}, {\"id\":30000, \"name\":\"Quản lý đơn hàng\", \"numberOfActions\":14, \"children\":[{\"id\":30100, \"name\":\"Đơn vận chuyển\", \"numberOfActions\":6, \"children\":[]}, {\"id\":30200, \"name\":\"Nhật ký điều xe\", \"numberOfActions\":4, \"children\":[]}, {\"id\":30300, \"name\":\"Thuê vận chuyển\", \"numberOfActions\":4, \"children\":[]}]}, {\"id\":40000, \"name\":\"Quản lý nhiên liệu\", \"numberOfActions\":12, \"children\":[{\"id\":40100, \"name\":\"Bồn nhiên liệu\", \"numberOfActions\":3, \"children\":[]}, {\"id\":40200, \"name\":\"Nhập nhiên liệu\", \"numberOfActions\":3, \"children\":[]}, {\"id\":40300, \"name\":\"Xuất nhiên liệu\", \"numberOfActions\":3, \"children\":[]}, {\"id\":40400, \"name\":\"Kiểm kê\", \"numberOfActions\":3, \"children\":[]}]}, {\"id\":50000, \"name\":\"Quản lý tài chính\", \"numberOfActions\":3, \"children\":[{\"id\":50100, \"name\":\"Chi phí\", \"numberOfActions\":3, \"children\":[]}]}, {\"id\":60000, \"name\":\"Lịch sử thao tác\", \"numberOfActions\":1, \"children\":[{\"id\":60000, \"name\":\"Lịch sử thao tác\", \"numberOfActions\":1, \"children\":[]}]}, {\"id\":70000, \"name\":\"Cài đặt\", \"numberOfActions\":11, \"children\":[{\"id\":70100, \"name\":\"Người dùng\", \"numberOfActions\":5, \"children\":[]}, {\"id\":70200, \"name\":\"Phân quyền\", \"numberOfActions\":3, \"children\":[]}, {\"id\":70300, \"name\":\"Phương thức thanh toán\", \"numberOfActions\":3, \"children\":[]}]}], \"actions\":[{\"actionId\":10101, \"key\":\"prd_r\", \"name\":\"Xem\", \"module\":10100, \"check\":[], \"uncheck\":[10102, 10103], \"description\":\"\"}, {\"actionId\":10102, \"key\":\"prd_cu\", \"name\":\"Thêm/Sửa\", \"module\":10100, \"check\":[10101], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10103, \"key\":\"prd_d\", \"name\":\"Xóa\", \"module\":10100, \"check\":[10101], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10201, \"key\":\"wh_r\", \"name\":\"Xem\", \"module\":10200, \"check\":[], \"uncheck\":[10202, 10203], \"description\":\"\"}, {\"actionId\":10202, \"key\":\"wh_cu\", \"name\":\"Thêm/Sửa\", \"module\":10200, \"check\":[10201], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10203, \"key\":\"wh_d\", \"name\":\"Xóa\", \"module\":10200, \"check\":[10201], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10301, \"key\":\"cus_r\", \"name\":\"Xem\", \"module\":10300, \"check\":[], \"uncheck\":[10302, 10303], \"description\":\"\"}, {\"actionId\":10302, \"key\":\"cus_cu\", \"name\":\"Thêm/Sửa\", \"module\":10300, \"check\":[10301, 10601], \"uncheck\":[], \"description\":\"Yêu cầu quyền xem Tuyến xe (select trong form)\"}, {\"actionId\":10303, \"key\":\"cus_d\", \"name\":\"Xóa\", \"module\":10300, \"check\":[10301], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10401, \"key\":\"drv_r\", \"name\":\"Xem\", \"module\":10400, \"check\":[], \"uncheck\":[10402, 10403], \"description\":\"\"}, {\"actionId\":10402, \"key\":\"drv_cu\", \"name\":\"Thêm/Sửa\", \"module\":10400, \"check\":[10401], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10403, \"key\":\"drv_d\", \"name\":\"Xóa\", \"module\":10400, \"check\":[10401], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10501, \"key\":\"veh_r\", \"name\":\"Xem\", \"module\":10500, \"check\":[], \"uncheck\":[10502, 10503], \"description\":\"\"}, {\"actionId\":10502, \"key\":\"veh_cu\", \"name\":\"Thêm/Sửa\", \"module\":10500, \"check\":[10501], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10503, \"key\":\"veh_d\", \"name\":\"Xóa\", \"module\":10500, \"check\":[10501], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10601, \"key\":\"vehr_r\", \"name\":\"Xem\", \"m",
+      "pass": true
+    },
+    {
+      "id": "ac9.7-getmodules-usr_cu",
+      "user": "qa-usr-cu",
+      "method": "GET",
+      "path": "/api/v1/roles/modules",
+      "expect": 200,
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "usr_cu"
+        ]
+      },
+      "status": 200,
+      "body": "{\"modules\":[{\"id\":10000, \"name\":\"Quản lý vận hành\", \"numberOfActions\":18, \"children\":[{\"id\":10100, \"name\":\"Sản phẩm\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10200, \"name\":\"Kho\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10300, \"name\":\"Đối tác\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10400, \"name\":\"Tài xế\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10500, \"name\":\"Phương tiện\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10600, \"name\":\"Tuyến xe\", \"numberOfActions\":3, \"children\":[]}]}, {\"id\":20000, \"name\":\"Quản lý quỹ\", \"numberOfActions\":13, \"children\":[{\"id\":20100, \"name\":\"Phiếu thu\", \"numberOfActions\":4, \"children\":[]}, {\"id\":20200, \"name\":\"Phiếu chi\", \"numberOfActions\":3, \"children\":[]}, {\"id\":20300, \"name\":\"Công nợ\", \"numberOfActions\":3, \"children\":[]}, {\"id\":20400, \"name\":\"Công nợ NCC\", \"numberOfActions\":3, \"children\":[]}]}, {\"id\":30000, \"name\":\"Quản lý đơn hàng\", \"numberOfActions\":14, \"children\":[{\"id\":30100, \"name\":\"Đơn vận chuyển\", \"numberOfActions\":6, \"children\":[]}, {\"id\":30200, \"name\":\"Nhật ký điều xe\", \"numberOfActions\":4, \"children\":[]}, {\"id\":30300, \"name\":\"Thuê vận chuyển\", \"numberOfActions\":4, \"children\":[]}]}, {\"id\":40000, \"name\":\"Quản lý nhiên liệu\", \"numberOfActions\":12, \"children\":[{\"id\":40100, \"name\":\"Bồn nhiên liệu\", \"numberOfActions\":3, \"children\":[]}, {\"id\":40200, \"name\":\"Nhập nhiên liệu\", \"numberOfActions\":3, \"children\":[]}, {\"id\":40300, \"name\":\"Xuất nhiên liệu\", \"numberOfActions\":3, \"children\":[]}, {\"id\":40400, \"name\":\"Kiểm kê\", \"numberOfActions\":3, \"children\":[]}]}, {\"id\":50000, \"name\":\"Quản lý tài chính\", \"numberOfActions\":3, \"children\":[{\"id\":50100, \"name\":\"Chi phí\", \"numberOfActions\":3, \"children\":[]}]}, {\"id\":60000, \"name\":\"Lịch sử thao tác\", \"numberOfActions\":1, \"children\":[{\"id\":60000, \"name\":\"Lịch sử thao tác\", \"numberOfActions\":1, \"children\":[]}]}, {\"id\":70000, \"name\":\"Cài đặt\", \"numberOfActions\":11, \"children\":[{\"id\":70100, \"name\":\"Người dùng\", \"numberOfActions\":5, \"children\":[]}, {\"id\":70200, \"name\":\"Phân quyền\", \"numberOfActions\":3, \"children\":[]}, {\"id\":70300, \"name\":\"Phương thức thanh toán\", \"numberOfActions\":3, \"children\":[]}]}], \"actions\":[{\"actionId\":10101, \"key\":\"prd_r\", \"name\":\"Xem\", \"module\":10100, \"check\":[], \"uncheck\":[10102, 10103], \"description\":\"\"}, {\"actionId\":10102, \"key\":\"prd_cu\", \"name\":\"Thêm/Sửa\", \"module\":10100, \"check\":[10101], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10103, \"key\":\"prd_d\", \"name\":\"Xóa\", \"module\":10100, \"check\":[10101], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10201, \"key\":\"wh_r\", \"name\":\"Xem\", \"module\":10200, \"check\":[], \"uncheck\":[10202, 10203], \"description\":\"\"}, {\"actionId\":10202, \"key\":\"wh_cu\", \"name\":\"Thêm/Sửa\", \"module\":10200, \"check\":[10201], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10203, \"key\":\"wh_d\", \"name\":\"Xóa\", \"module\":10200, \"check\":[10201], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10301, \"key\":\"cus_r\", \"name\":\"Xem\", \"module\":10300, \"check\":[], \"uncheck\":[10302, 10303], \"description\":\"\"}, {\"actionId\":10302, \"key\":\"cus_cu\", \"name\":\"Thêm/Sửa\", \"module\":10300, \"check\":[10301, 10601], \"uncheck\":[], \"description\":\"Yêu cầu quyền xem Tuyến xe (select trong form)\"}, {\"actionId\":10303, \"key\":\"cus_d\", \"name\":\"Xóa\", \"module\":10300, \"check\":[10301], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10401, \"key\":\"drv_r\", \"name\":\"Xem\", \"module\":10400, \"check\":[], \"uncheck\":[10402, 10403], \"description\":\"\"}, {\"actionId\":10402, \"key\":\"drv_cu\", \"name\":\"Thêm/Sửa\", \"module\":10400, \"check\":[10401], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10403, \"key\":\"drv_d\", \"name\":\"Xóa\", \"module\":10400, \"check\":[10401], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10501, \"key\":\"veh_r\", \"name\":\"Xem\", \"module\":10500, \"check\":[], \"uncheck\":[10502, 10503], \"description\":\"\"}, {\"actionId\":10502, \"key\":\"veh_cu\", \"name\":\"Thêm/Sửa\", \"module\":10500, \"check\":[10501], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10503, \"key\":\"veh_d\", \"name\":\"Xóa\", \"module\":10500, \"check\":[10501], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10601, \"key\":\"vehr_r\", \"name\":\"Xem\", \"m",
+      "pass": true
+    },
+    {
+      "id": "ac9.8-getmodules-usr_r",
+      "user": "qa-usr-r",
+      "method": "GET",
+      "path": "/api/v1/roles/modules",
+      "expect": 403,
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "usr_r"
+        ]
+      },
+      "status": 403,
+      "body": "{\"code\":7, \"message\":\"Bạn không có quyền truy cập\", \"details\":[]}",
+      "pass": true
+    },
+    {
+      "id": "ac9.9-di-do_di",
+      "user": "qa-do-di",
+      "method": "GET",
+      "path": "/api/v1/delivery-instructions/01QA00000000000000000000",
+      "expect": "not403",
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "do_di"
+        ]
+      },
+      "status": 500,
+      "body": "{\"code\":13, \"message\":\"delivery_instruction.detail.notfound\", \"details\":[]}",
+      "pass": true
+    },
+    {
+      "id": "ac9.10-di-diso_cu",
+      "user": "qa-diso-cu",
+      "method": "GET",
+      "path": "/api/v1/delivery-instructions/01QA00000000000000000000",
+      "expect": "not403",
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "diso_cu"
+        ]
+      },
+      "status": 500,
+      "body": "{\"code\":13, \"message\":\"delivery_instruction.detail.notfound\", \"details\":[]}",
+      "pass": true
+    },
+    {
+      "id": "ac9.11-di-diso_r",
+      "user": "qa-diso-r",
+      "method": "GET",
+      "path": "/api/v1/delivery-instructions/01QA00000000000000000000",
+      "expect": "not403",
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "diso_r"
+        ]
+      },
+      "status": 500,
+      "body": "{\"code\":13, \"message\":\"delivery_instruction.detail.notfound\", \"details\":[]}",
+      "pass": true
+    },
+    {
+      "id": "ac9.12-di-prd_r",
+      "user": "qa-prd-r",
+      "method": "GET",
+      "path": "/api/v1/delivery-instructions/01QA00000000000000000000",
+      "expect": 403,
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "prd_r"
+        ]
+      },
+      "status": 403,
+      "body": "{\"code\":7, \"message\":\"Bạn không có quyền truy cập\", \"details\":[]}",
+      "pass": true
+    },
+    {
+      "id": "ac9.13-deleteimage-authenticated",
+      "user": "qa-cusdeb-hx",
+      "method": "DELETE",
+      "path": "/api/v1/images/01QA00000000000000000003",
+      "expect": "not401",
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "cusdeb_hx"
+        ]
+      },
+      "status": 200,
+      "body": "{}",
+      "pass": true
+    },
+    {
+      "id": "ac9.14-saveuser-usr_cu-roleid",
+      "user": "qa-usr-cu",
+      "method": "POST",
+      "path": "/api/v1/users",
+      "expect": "rolePermissionRequired",
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "usr_cu"
+        ]
+      },
+      "status": 500,
+      "body": "{\"code\":13, \"message\":\"user.save.role_permission_required\", \"details\":[]}",
+      "pass": false
+    },
+    {
+      "id": "ac9.15-saveuser-usr_cu-role_cu",
+      "user": "qa-usr-cu-role-cu",
+      "method": "POST",
+      "path": "/api/v1/users",
+      "expect": "notRolePermissionRequired",
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "usr_cu",
+          "role_cu"
+        ]
+      },
+      "status": 200,
+      "body": "{}",
+      "pass": true
+    },
+    {
+      "id": "ac10.catalog",
+      "user": "qa-role-r",
+      "method": "GET",
+      "path": "/api/v1/roles/modules",
+      "expect": "catalog",
+      "permissionsAtCall": {
+        "isAdmin": false,
+        "permissions": [
+          "role_r"
+        ]
+      },
+      "status": 200,
+      "body": "{\"modules\":[{\"id\":10000, \"name\":\"Quản lý vận hành\", \"numberOfActions\":18, \"children\":[{\"id\":10100, \"name\":\"Sản phẩm\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10200, \"name\":\"Kho\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10300, \"name\":\"Đối tác\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10400, \"name\":\"Tài xế\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10500, \"name\":\"Phương tiện\", \"numberOfActions\":3, \"children\":[]}, {\"id\":10600, \"name\":\"Tuyến xe\", \"numberOfActions\":3, \"children\":[]}]}, {\"id\":20000, \"name\":\"Quản lý quỹ\", \"numberOfActions\":13, \"children\":[{\"id\":20100, \"name\":\"Phiếu thu\", \"numberOfActions\":4, \"children\":[]}, {\"id\":20200, \"name\":\"Phiếu chi\", \"numberOfActions\":3, \"children\":[]}, {\"id\":20300, \"name\":\"Công nợ\", \"numberOfActions\":3, \"children\":[]}, {\"id\":20400, \"name\":\"Công nợ NCC\", \"numberOfActions\":3, \"children\":[]}]}, {\"id\":30000, \"name\":\"Quản lý đơn hàng\", \"numberOfActions\":14, \"children\":[{\"id\":30100, \"name\":\"Đơn vận chuyển\", \"numberOfActions\":6, \"children\":[]}, {\"id\":30200, \"name\":\"Nhật ký điều xe\", \"numberOfActions\":4, \"children\":[]}, {\"id\":30300, \"name\":\"Thuê vận chuyển\", \"numberOfActions\":4, \"children\":[]}]}, {\"id\":40000, \"name\":\"Quản lý nhiên liệu\", \"numberOfActions\":12, \"children\":[{\"id\":40100, \"name\":\"Bồn nhiên liệu\", \"numberOfActions\":3, \"children\":[]}, {\"id\":40200, \"name\":\"Nhập nhiên liệu\", \"numberOfActions\":3, \"children\":[]}, {\"id\":40300, \"name\":\"Xuất nhiên liệu\", \"numberOfActions\":3, \"children\":[]}, {\"id\":40400, \"name\":\"Kiểm kê\", \"numberOfActions\":3, \"children\":[]}]}, {\"id\":50000, \"name\":\"Quản lý tài chính\", \"numberOfActions\":3, \"children\":[{\"id\":50100, \"name\":\"Chi phí\", \"numberOfActions\":3, \"children\":[]}]}, {\"id\":60000, \"name\":\"Lịch sử thao tác\", \"numberOfActions\":1, \"children\":[{\"id\":60000, \"name\":\"Lịch sử thao tác\", \"numberOfActions\":1, \"children\":[]}]}, {\"id\":70000, \"name\":\"Cài đặt\", \"numberOfActions\":11, \"children\":[{\"id\":70100, \"name\":\"Người dùng\", \"numberOfActions\":5, \"children\":[]}, {\"id\":70200, \"name\":\"Phân quyền\", \"numberOfActions\":3, \"children\":[]}, {\"id\":70300, \"name\":\"Phương thức thanh toán\", \"numberOfActions\":3, \"children\":[]}]}], \"actions\":[{\"actionId\":10101, \"key\":\"prd_r\", \"name\":\"Xem\", \"module\":10100, \"check\":[], \"uncheck\":[10102, 10103], \"description\":\"\"}, {\"actionId\":10102, \"key\":\"prd_cu\", \"name\":\"Thêm/Sửa\", \"module\":10100, \"check\":[10101], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10103, \"key\":\"prd_d\", \"name\":\"Xóa\", \"module\":10100, \"check\":[10101], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10201, \"key\":\"wh_r\", \"name\":\"Xem\", \"module\":10200, \"check\":[], \"uncheck\":[10202, 10203], \"description\":\"\"}, {\"actionId\":10202, \"key\":\"wh_cu\", \"name\":\"Thêm/Sửa\", \"module\":10200, \"check\":[10201], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10203, \"key\":\"wh_d\", \"name\":\"Xóa\", \"module\":10200, \"check\":[10201], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10301, \"key\":\"cus_r\", \"name\":\"Xem\", \"module\":10300, \"check\":[], \"uncheck\":[10302, 10303], \"description\":\"\"}, {\"actionId\":10302, \"key\":\"cus_cu\", \"name\":\"Thêm/Sửa\", \"module\":10300, \"check\":[10301, 10601], \"uncheck\":[], \"description\":\"Yêu cầu quyền xem Tuyến xe (select trong form)\"}, {\"actionId\":10303, \"key\":\"cus_d\", \"name\":\"Xóa\", \"module\":10300, \"check\":[10301], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10401, \"key\":\"drv_r\", \"name\":\"Xem\", \"module\":10400, \"check\":[], \"uncheck\":[10402, 10403], \"description\":\"\"}, {\"actionId\":10402, \"key\":\"drv_cu\", \"name\":\"Thêm/Sửa\", \"module\":10400, \"check\":[10401], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10403, \"key\":\"drv_d\", \"name\":\"Xóa\", \"module\":10400, \"check\":[10401], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10501, \"key\":\"veh_r\", \"name\":\"Xem\", \"module\":10500, \"check\":[], \"uncheck\":[10502, 10503], \"description\":\"\"}, {\"actionId\":10502, \"key\":\"veh_cu\", \"name\":\"Thêm/Sửa\", \"module\":10500, \"check\":[10501], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10503, \"key\":\"veh_d\", \"name\":\"Xóa\", \"module\":10500, \"check\":[10501], \"uncheck\":[], \"description\":\"\"}, {\"actionId\":10601, \"key\":\"vehr_r\", \"name\":\"Xem\", \"m",
+      "pass": false
+    }
+  ]
+}

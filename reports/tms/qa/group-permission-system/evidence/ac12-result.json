@@ -1,0 +1,12 @@
+{
+  "dbsize_before": 24,
+  "session_keys_before": 20,
+  "flush_exit": 0,
+  "dbsize_after": 4,
+  "session_keys_after": 0,
+  "non_session_keys_alive_after": 3,
+  "old_token_status_user1": 401,
+  "old_token_status_user2": 401,
+  "relogin_status": 200,
+  "PASS": true
+}

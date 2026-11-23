@@ -1,0 +1,21 @@
+{
+  "mode": "ac3",
+  "appUrl": "http://tuanvudev.localhost:4700/tms/",
+  "generatedAt": "2026-11-22T18:31:23.969Z",
+  "steps": {
+    "before": {
+      "cus_r": false,
+      "cus_cu": false
+    },
+    "afterCusCu": {
+      "cus_r": true,
+      "cus_cu": true
+    },
+    "screenshotDoiTac": "ac3-tick-cus_cu.png",
+    "tuyenXe": {
+      "vehr_r": true
+    },
+    "screenshotTuyenXe": "ac3-cross-module-vehr_r.png"
+  },
+  "pass": true
+}
