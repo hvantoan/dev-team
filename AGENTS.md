@@ -1,6 +1,6 @@
 # Repository Guidelines
 
-`dev-team` là **workspace điều phối** của team MausBot (department `tms`): chứa quy ước, template, định nghĩa bot và artifact các bot sinh ra. **Không chứa code dự án** — code nằm ở repo riêng, trỏ từ `projects/<proj>.json`.
+`dev-team` là **workspace điều phối** của team bot Orca (`SM`, `BA`, `Dev`, `QA`): chứa quy ước, template, skill nguồn và artifact các bot sinh ra. **Không chứa code dự án** — code nằm ở repo riêng, trỏ từ `projects/<proj>.json`.
 
 Mọi bot/agent đọc file này trước, rồi `projects/<proj>.json` của project đang xử lý, và `FLOW.md` cho contract giao tiếp giữa các bot.
 
@@ -17,7 +17,7 @@ Khi thêm project mới, cần đủ 6 mục (không gửi token/secret):
 - Repos: mỗi repo một object trong `repos[]` (`role`, `path`, `base`; thêm `remote` nếu có).
 - Stack local: lệnh run/test/build từng repo, service phụ thuộc, env file.
 - Evidence: nơi lưu file nặng (mặc định `evidence/` trong folder QA).
-- Department: cần department MausBot riêng hay dùng agent hiện có.
+- Department: nhãn team logic trong registry (`department`) — hiện mọi project dùng chung `tms`.
 
 Sau đó chạy:
 
@@ -89,13 +89,12 @@ dev-team/
 ├── FLOW.md              # contract giao tiếp giữa các bot
 ├── SCRUM.md             # mô hình Scrum: vai, sprint, event, DoD, PO ↔ team
 ├── templates/           # mẫu điền-sẵn: qa-report, dev-handoff, ba-spec, orchestrator-run
-├── team-config/         # MausBot department: team.md + skills/
+├── skills/              # skill nguồn của team (copy vào home bot khi sửa)
 ├── scripts/             # init-project.sh: tạo registry + cây thư mục project
 ├── projects/            # <proj>.json: jira, department, repos, stack
 ├── reports/<proj>/<bot>/<KEY|RUN>/   # artifacts của từng lần chạy
 ├── reports/<proj>/scrum/sprint-<YYYY-Www>/  # goal, board, review, retro + impediments.md (SCRUM.md)
 ├── docs/<proj>/srs|adr|research/     # tài liệu chính thức
-├── tools/mausbot-orca/  # vendored watcher-first bridge → Orca (src+tests+dist)
 └── tests/<proj>/        # test code (vd playwright)
 ```
 
@@ -104,16 +103,15 @@ dev-team/
 | `reports/<proj>/<bot>/<KEY\|RUN>/` | artifact đúng bot sở hữu | file của bot khác |
 | `docs/<proj>/srs\|adr\|research/` | tài liệu chính thức sau QA PASS | spec draft (nằm ở `reports/.../ba/`) |
 | `tests/<proj>/` | test code của project | artifact điều phối |
-| `team-config/` | `team.md` + `skills/` của department | code, docs dự án |
+| `skills/` | `SKILL.md` nguồn của team; copy vào `~/.orca/bots/<bot>/skills/` | code, docs dự án |
 | `templates/` | mẫu gốc, copy-điền | file đã điền |
 | `projects/` | con trỏ project (repo, env, prefix) | repo checkout |
-| `tools/mausbot-orca/` | CLI `mausbot-orca` vendored (intec-kit@29a60c9), systemd watcher | task code, spec |
 
 Trạng thái hiện tại (2026-11-23): TMS có artifact ở `reports/tms/{orchestrator,ba,dev,qa}/`; `chatbotx` đã có registry + cây `reports|docs|tests/chatbotx` nhưng chưa có run (chờ PO triage CB). SRS TMS đang nằm ở đường dẫn lặp `docs/tms/srs/srs/*.md` (đã commit) — sửa tại chỗ, không tạo bản thứ hai; đường dẫn chuẩn trong tài liệu là `docs/<proj>/srs/`. Scrum layer: `SCRUM.md` là chuẩn; `reports/<proj>/scrum/` chưa có file thật — `SM` mở sprint đầu tiên khi PO chốt nhịp và ngày bắt đầu.
 
-`team-config/` là **source of truth** của department. Sửa souls/skills/flow ở đây thì bots đang chạy trong MausBot chỉ nhận bản mới sau khi **re-import** department. Mọi đường dẫn hardcode trong `team.md`/`skills/` phải trỏ `/home/vif/tuanvu/dev-team/` và layout theo project; tên skill trong `agents[].skills` phải khớp tên folder trong `skills/`.
+`skills/` là **source of truth** của skill team. Sửa ở đây rồi copy sang `~/.orca/bots/<bot>/skills/<name>/` cho từng bot dùng skill đó (mỗi home bot giữ bản riêng). Mọi đường dẫn hardcode trong skill phải trỏ `/home/vif/tuanvu/dev-team/` và layout theo project.
 
-Team chạy **native trên Orca** (4 bot: `SM`, `BA`, `Dev`, `QA`; key department MausBot tương ứng `ieu-phoi-tms`, `ba-tms`, `dev-tms`, `qa-tms`). `Dev`/`QA` giao việc code/test cho Orca worker bằng `orca orchestration worker-start` qua skill `orca-dispatch` — repo Orca `name:tms-web` / `name:tms_application` (code) và `name:dev-team` (test + việc workspace). `tools/mausbot-orca/` là bridge legacy chỉ còn phục vụ bot trong MausBot; bot Orca **không gọi `mausbot-orca`**. Rebuild bridge (chỉ khi còn dùng MausBot): `cd tools/mausbot-orca && npm run build`; test: `npm test`.
+Team chạy **native trên Orca** (4 bot: `SM`, `BA`, `Dev`, `QA`). `Dev`/`QA` giao việc code/test cho Orca worker bằng `orca orchestration worker-start` qua skill `orca-dispatch` — repo Orca `name:tms-web` / `name:tms_application` (code) và `name:dev-team` (test + việc workspace).
 
 ## 4. Development Commands
 
@@ -168,8 +166,7 @@ Repo không có runtime code: async patterns, dependency injection, state manage
 | `templates/dev-handoff.md` | Mẫu `handoff.md` — branch/commit, API diff, cách verify |
 | `templates/ba-spec.md` | Mẫu `spec.md` — AC, scope, rule nghiệp vụ |
 | `templates/orchestrator-run.md` | Mẫu `plan.md` + `status.md` — task briefs, trạng thái |
-| `team-config/team.md` | Department `tms`: room, 4 bot, soul, skills |
-| `team-config/skills/*/SKILL.md` | 6 skill: `tms-delivery-coordination`, `ba-ticket-to-srs-br`, `ba-srs-docx-env-check`, `qa-verify-export-local`, `tms-excel-export-verify`, `orca-dispatch` |
+| `skills/*/SKILL.md` | 6 skill nguồn: `tms-delivery-coordination`, `ba-ticket-to-srs-br`, `ba-srs-docx-env-check`, `qa-verify-export-local`, `tms-excel-export-verify`, `orca-dispatch` |
 | `projects/{tms,fms,ca-nhan,chatbotx}.json` | Registry project: Jira, department, repos, stack; `null` = chưa biết |
 | `scripts/init-project.sh` | Tạo registry + cây `reports/docs/tests` cho project mới |
 | `scripts/stack.sh` | Quản lý stack local duy nhất (`up`/`down`/`status`/`reset-db`) với lock ở `~/.local/state/tms-stack/lock.json` |

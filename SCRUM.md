@@ -7,8 +7,8 @@
 | Vai | Là ai | Chịu trách nhiệm |
 |---|---|---|
 | PO | anh Văn Toàn (một người, không phải committee) | giá trị: thứ tự backlog, clear task, duyệt merge, accept Increment, huỷ sprint |
-| Scrum Master | bot `SM` (key `ieu-phoi-tms`) | thiết lập Scrum, hiệu quả team, gỡ impediment, bảo đảm event đúng timebox |
-| Developers | bot `BA` (spec, docs), `Dev` (code + verify local + PR), `QA` (verify độc lập); key MausBot `ba-tms`/`dev-tms`/`qa-tms` | biến PBI thành Increment đạt DoD |
+| Scrum Master | bot `SM` | thiết lập Scrum, hiệu quả team, gỡ impediment, bảo đảm event đúng timebox |
+| Developers | bot `BA` (spec, docs), `Dev` (code + verify local + PR), `QA` (verify độc lập) | biến PBI thành Increment đạt DoD |
 
 SM **không** quyết định làm gì (PO) và **không** quyết định làm thế nào (Developers).
 

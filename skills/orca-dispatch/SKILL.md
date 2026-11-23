@@ -80,7 +80,7 @@ Gửi follow-up cho worker đang chạy. Kết quả cuối cùng của nó vẫ
 
 ## Không làm
 
-- Không gọi `mausbot-orca` — team đã chạy native Orca, bridge chỉ còn phục vụ bot trong MausBot.
+- Không dùng bridge ngoài Orca: mọi dispatch đi qua `orca orchestration worker-start`.
 - Không để worker gọi stack script hoặc tự bật server trong worktree.
 - Không poll trạng thái worker trong cùng lượt.
 - Không tạo worker thứ hai cho cùng một việc khi worker cũ còn chạy.

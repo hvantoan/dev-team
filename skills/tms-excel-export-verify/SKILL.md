@@ -20,7 +20,7 @@ Quy trình đã dùng thành công cho ITMS-381 (export danh sách đơn vận c
 
 1. **Đọc ticket kỹ**: `reports/tms/ba/<KEY>/spec.md`, text BR + tải file mẫu xlsx đính kèm. Mở file mẫu (python `openpyxl` hoặc unzip đọc `xl/worksheets/sheet*.xml`) để xem: thứ tự cột, dòng tiêu đề, **vùng merge cells** (`mergedCells`), format số/ngày, ví dụ dữ liệu. Đây là bước dễ bỏ sót nhất — đừng chỉ đọc text.
 2. **Tìm code export hiện tại**: repo `tms_application`, thường `internal/application/service/*.export.go`. Kiểm tra query `Filter`/load dữ liệu có đủ bảng con không (ITMS-381: thiếu `delivery_order_item` + `delivery_order_price_range` nên không có dữ liệu sản phẩm/giá cước).
-3. **Nhánh** `fix/ITMS-<id>-<slug>` từ `origin/main` mới nhất. Implement gọn (hoặc qua Orca worker `mausbot-orca submit` — worker chỉ build/test trong worktree, không gọi `stack.sh`): sửa service + thêm test `*_export_test.go` cover đủ từng BR + header/format.
+3. **Nhánh** `fix/ITMS-<id>-<slug>` từ `origin/main` mới nhất. Implement gọn (hoặc qua Orca worker `orca orchestration worker-start` — worker chỉ build/test trong worktree, không gọi `stack.sh`): sửa service + thêm test `*_export_test.go` cover đủ từng BR + header/format.
 4. **Build + test**: `go build ./...` clean; `go test ./internal/application/service` ok.
 5. **Verify thật trên stack local qua `scripts/stack.sh`** (bắt buộc, không chỉ unit test):
    ```bash
