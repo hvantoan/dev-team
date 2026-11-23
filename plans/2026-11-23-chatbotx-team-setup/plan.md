@@ -49,9 +49,10 @@
 ### Phase 2 — Runtime gates
 
 - [ ] `scripts/stack-chatbotx.sh` bọc `dev-up.sh`: `up <bot> <KEY>` / `down` / `status`; lock `~/.local/state/chatbotx-stack/lock.json`; từ chối khi lock sống hoặc port bận; **không đổi port**.
+- [ ] `status` phân biệt 2 chế độ đang có trên máy: (a) host dev `dev-up.sh` (pid `/tmp/chatbotx-dev.pid`), (b) docker stack (`docker compose ps`: builder/caddy/worker/realtime). Hiện tại docker stack đã chạy sẵn 14–19h, caddy giữ `:3123`, PG `:25432` — wrapper không được kill container của anh Toàn; `up` từ chối nếu container stack đang chạy, `down` chỉ dừng phần nó khởi động.
 - [ ] QA harness `tests/chatbotx`: Playwright Chromium + probe API; `.env.example` (`APP_URL=http://localhost:3123`, `DEMO_EMAIL`, `DEMO_PASSWORD`); smoke: sign-in, tạo flow, gửi tin webchat.
 - [ ] `stack-chatbotx.sh down` dọn process tree + nhả lock; kiểm không còn orphan `next dev`/`turbo dev`.
-- **Done:** `up` → builder 200 + login OK → `status` ghi đúng bot giữ lock → `down` sạch; chạy lại lần 2 không kẹt port.
+- **Done:** `up` → builder 200 + login OK → `status` ghi đúng bot giữ lock → `down` sạch; chạy lại lần 2 không kẹt port; không đụng container đang chạy.
 
 ### Phase 3 — Bot adaptation ✅ (D1: dùng chung 4 bot)
 
@@ -80,7 +81,7 @@
 | # | Rủi ro | Xử lý |
 |---|---|---|
 | R1 | `dev-up.sh` tự chạy `db:migrate` lên DB **local** | Chấp nhận cho local; migration shared/staging/prod phải có PO duyệt SQL. Không trỏ `DATABASE_URL` ra ngoài local. |
-| R2 | Chỉ một builder `:3123` — hai bot cùng bật sẽ giẫm stack | Phase 2 bắt buộc xong trước pilot; QA/Dev nhả lock trước bàn giao. |
+| R2 | Chỉ một builder `:3123` — docker stack đang chạy sẵn (caddy giữ `:3123`, PG `:25432`) nên `dev-up.sh` sẽ đụng port | Phase 2 bắt buộc xong trước pilot; wrapper phải nhận diện container stack, không kill; QA/Dev nhả lock trước bàn giao. |
 | R3 | `tsc` cold ~6 GB RAM | Không chạy `check-types` song song với stack QA; dùng `check-types:cold` khi máy yếu. |
 | R4 | SOUL còn hardcode `reports/tms` → bot ghi sai thư mục | Phase 3 trước pilot. |
 | R5 | CB-3→CB-9 chưa assignee/sprint → không thỏa gate READY TO DEVELOP | Phase 0 do PO triage. |

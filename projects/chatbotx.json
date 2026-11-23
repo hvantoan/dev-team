@@ -57,6 +57,7 @@
       "builder tsc cold ~6 GB RAM — dùng check-types:cold khi máy yếu.",
       "db:migrate chỉ áp lên DB local qua dev-up; migration lên DB dùng chung/staging/prod phải có PO duyệt SQL.",
       "Port cố định, chỉ một stack local cho mỗi project — Dev/QA phải nhả stack trước khi bàn giao.",
+      "Stack có 2 chế độ: host dev (`dev-up.sh`, pid /tmp/chatbotx-dev.pid) và docker stack (`docker compose ps`: builder/caddy/worker/realtime). Kiểm `docker compose ps` trước khi `up`; không kill container đang chạy của anh Toàn.",
       "Invariant 23: feature mới phải có public API trước UI."
     ]
   }
