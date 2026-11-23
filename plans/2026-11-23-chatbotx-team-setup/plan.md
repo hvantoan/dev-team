@@ -1,6 +1,6 @@
 # ChatbotX — onboarding vào pipeline team
 
-**Trạng thái:** ⏳ chờ PO triage CB (D1/D2 đã chốt) · **Ngày:** 2026-11-23 · **Project:** `chatbotx` · **Jira:** CB
+**Trạng thái:** ⏳ chờ PO triage CB (Phase 2 ✅, D1/D2 đã chốt) · **Ngày:** 2026-11-23 · **Project:** `chatbotx` · **Jira:** CB
 
 ## Mục tiêu
 
@@ -46,13 +46,13 @@
 - [x] Cây `reports/chatbotx/{orchestrator,ba,dev,qa}`, `docs/chatbotx/{srs,adr,research}`, `tests/chatbotx`.
 - **Done:** `jq` validate pass; registry đủ 6 mục theo `AGENTS.md` §1.
 
-### Phase 2 — Runtime gates
+### Phase 2 — Runtime gates ✅
 
-- [ ] `scripts/stack-chatbotx.sh` bọc `dev-up.sh`: `up <bot> <KEY>` / `down` / `status`; lock `~/.local/state/chatbotx-stack/lock.json`; từ chối khi lock sống hoặc port bận; **không đổi port**.
-- [ ] `status` phân biệt 2 chế độ đang có trên máy: (a) host dev `dev-up.sh` (pid `/tmp/chatbotx-dev.pid`), (b) docker stack (`docker compose ps`: builder/caddy/worker/realtime). Hiện tại docker stack đã chạy sẵn 14–19h, caddy giữ `:3123`, PG `:25432` — wrapper không được kill container của anh Toàn; `up` từ chối nếu container stack đang chạy, `down` chỉ dừng phần nó khởi động.
-- [ ] QA harness `tests/chatbotx`: Playwright Chromium + probe API; `.env.example` (`APP_URL=http://localhost:3123`, `DEMO_EMAIL`, `DEMO_PASSWORD`); smoke: sign-in, tạo flow, gửi tin webchat.
-- [ ] `stack-chatbotx.sh down` dọn process tree + nhả lock; kiểm không còn orphan `next dev`/`turbo dev`.
-- **Done:** `up` → builder 200 + login OK → `status` ghi đúng bot giữ lock → `down` sạch; chạy lại lần 2 không kẹt port; không đụng container đang chạy.
+- [x] `scripts/stack-chatbotx.sh` bọc `dev-up.sh`: `up <bot> <KEY>` / `down` / `status`; lock `~/.local/state/chatbotx-stack/lock.json`; từ chối khi lock sống hoặc port bận; **không đổi port**.
+- [x] `status` phân biệt 2 chế độ đang có trên máy: (a) host dev `dev-up.sh` (pid `/tmp/chatbotx-dev.pid`), (b) docker stack (`docker compose ps`: builder/caddy/worker/realtime). Docker stack đang chạy sẵn 14–19h, caddy giữ `:3123`, PG `:25432` — wrapper không kill container của anh Toàn; `up` từ chối nếu container stack đang chạy, `down` chỉ dừng phần nó khởi động.
+- [x] QA harness `tests/chatbotx`: Playwright Chromium + probe API; `.env.example` (`APP_URL=http://localhost:3123`, `DEMO_EMAIL`, `DEMO_PASSWORD`); smoke: sign-in → workspace → dashboard/inbox, API sign-in trả token.
+- [x] `stack-chatbotx.sh down` dọn process tree + nhả lock; stale lock chỉ xoá lock, không `dev-up --stop`, không pkill.
+- **Done (verify 2026-11-23):** `status` exit 0 liệt kê 12 container + port; `down` khi chỉ có docker stack không đổi `docker ps`; `up` từ chối exit 1; Playwright 2/2 pass (UI 4.0s, API 427ms); commit `961e1d9` + `9e8a189`.
 
 ### Phase 3 — Bot adaptation ✅ (D1: dùng chung 4 bot)
 
