@@ -170,6 +170,7 @@ Repo không có runtime code: async patterns, dependency injection, state manage
 | `projects/{tms,fms,ca-nhan,chatbotx}.json` | Registry project: Jira, department, repos, stack; `null` = chưa biết |
 | `scripts/init-project.sh` | Tạo registry + cây `reports/docs/tests` cho project mới |
 | `scripts/stack.sh` | Quản lý stack local duy nhất (`up`/`down`/`status`/`reset-db`) với lock ở `~/.local/state/tms-stack/lock.json` |
+| `scripts/stack-chatbotx.sh` | Wrapper host dev ChatbotX (`up <bot> <KEY>`/`down`/`status`) quanh `dev-up.sh`; lock `~/.local/state/chatbotx-stack/lock.json`; không start/stop/kill docker container của owner |
 | `tests/tms/seed/001-tenant-and-users.sql` | Seed cố định tenant `tuanvudev` + tài khoản QA (lấy credential từ `tests/tms/.env`) |
 | `.gitignore` | Chặn evidence nặng, `node_modules/`, `__pycache__/`, `*.log` |
 | `reports/tms/qa/ITMS-378/ITMS-378-qa-report.md` | Ví dụ QA đã chạy: PASS AC-01→07, AC-08 known limitation |
@@ -191,4 +192,4 @@ Repo không có runtime code: async patterns, dependency injection, state manage
 - **Phạm vi mỗi ticket:** map đủ AC → evidence; kiểm cả ca âm và ca dương (không quyền / có quyền), regression 401/403 và endpoint liền kề; với export, đối chiếu output ↔ mẫu ticket ↔ DB, kiểm merge cell.
 - **Evidence:** theo policy ở §2 — file nhẹ commit, file nặng để ngoài git và ghi đường dẫn tuyệt đối trong `verdict.md`.
 - **Đặt tên:** `qa-verify-<key>.cjs` cho luồng đầy đủ, `qa-probe-<topic>.cjs` cho probe, output `*-result.json` + ảnh/video trong `evidence/`.
-- **Không có coverage số** cho repo docs; tiêu chuẩn là 100% done-condition có evidence tái tạo được. Gap hiện tại: `tests/tms/.env` chưa tạo (copy từ `.env.example`); `tests/chatbotx` chưa có harness Playwright; ChatbotX chưa có stack lock dùng chung cho Dev/QA.
+- **Không có coverage số** cho repo docs; tiêu chuẩn là 100% done-condition có evidence tái tạo được. Gap hiện tại: `tests/tms/.env` chưa tạo (copy từ `.env.example`); `tests/chatbotx` đã có harness Playwright (smoke sign-in + API probe, `cd tests/chatbotx && pnpm install && pnpm test`) nhưng `stack-chatbotx.sh up` sẽ từ chối chừng nào docker stack của owner còn giữ `:3123`.
