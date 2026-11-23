@@ -5,7 +5,7 @@ Cập nhật: 2026-11-23 (sprint start)
 | KEY | Stage | Owner | Artifact | Ghi chú |
 |---|---|---|---|---|
 | CB-2 | refined — PO duyệt | BA | `reports/chatbotx/ba/CB-2/refinement.md` | PO duyệt cắt story + thứ tự Đợt 1 (2026-11-23, item 4). Đợt 1 CB-3 → CB-5 → CB-4 → CB-8, CB-1 song song |
-| CB-1 | qa — PR1 + PR8 PASS; PR2 CI green; chờ PO merge #8→#7→#6 | QA / Dev | `reports/chatbotx/qa/CB-1/verdict.md` + PR #6, #7, #8 | PR1 #6 PASS; **PR8 PASS @`ecd9f9127`** (head đổi sau `340868793`; rò marker `data.reason` đã đóng); PR2 #7 @`56b5f7b8f` CI green — rebase sau #8. Migration applied DB dev, dry-run 0 row + probe. **PO chốt merge order #8 → #7 → #6**. Ngoài phạm vi: legacy `(code …)` vẫn lộ trong public message → cần issue riêng |
+| CB-1 | qa — PR1 + PR8 PASS; PR2 CI green; chờ PO merge #8→#7→#6 | QA / Dev | `reports/chatbotx/qa/CB-1/verdict.md` + PR #6, #7, #8 | PR1 #6 PASS; PR8 PASS @`ecd9f9127`; PR2 #7 @`56b5f7b8f` CI green — rebase sau #8. Migration applied DB dev, dry-run 0 row; **PO chốt không làm reverse-script** (rủi ro chỉ khi --apply prod — cần phương án rollback trước lúc đó). Merge order #8 → #7 → #6. Ngoài phạm vi: legacy `(code …)` vẫn lộ → issue riêng |
 | CB-3 | clear — chờ input vận hành | — | `reports/chatbotx/ba/CB-3/spec.md` | PO clear 2026-11-23; cần stack test, nick/QR, nhóm test; Dev nhận sau PR 2 |
 | CB-4 → CB-17 | backlog | — | — | `To Do` + `idea`, chưa qua gate |
 
@@ -14,7 +14,7 @@ Stage: backlog → refining → spec → clear → dev → qa → pr → staging
 ## Daily
 
 - **Đang làm:** CB-1 QA PASS cả PR1 lẫn PR8; PR2 CI green; chờ PO merge theo order #8 → #7 → #6 (PR7 rebase sau #8).
-- **Chờ:** PO merge 3 PR (QA đã PASS #8); PO quyết PR reverse-script trước --apply (item 4); CB-3 chờ stack/nick/nhóm test.
+- **Chờ:** PO merge 3 PR theo #8→#7→#6 (QA đã PASS #8; #7 rebase sau #8); CB-3 chờ stack/nick/nhóm test.
 - **Chặn:** MCP `jira-vtx` lỗi certifi ở phiên SM (đã workaround qua Chef). Server vif chưa sign-in Orca Cloud → không watch được GitHub PR #8 merge; SM check thủ công bằng `gh` mỗi daily, đã offer connect card.
 
 ## Log
