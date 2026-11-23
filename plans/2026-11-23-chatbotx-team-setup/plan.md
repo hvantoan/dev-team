@@ -31,11 +31,19 @@
 | D3 | Jira | MCP `jira-vtx`; không chặn vì `orca jira` thiếu site | đã chốt |
 | D4 | Nơi lưu | Code ở repo ChatbotX; artifact ở `dev-team/reports/chatbotx/...` | đã chốt |
 
+## Scrum (vai trò Scrum Master từ 2026-11-23)
+
+- Sprint 1 tuần (Mon–Fri); artifact `reports/chatbotx/scrum/sprint-<YYYY-Www>/{goal,board,review,retro}.md`, cấu hình `reports/chatbotx/scrum/config.md`, chặn `reports/chatbotx/scrum/impediments.md`.
+- Backlog = ticket CB READY TO DEVELOP / IN DEVELOP assign Văn Toàn + item `orca bot item` chưa đóng. Triage xong → planning chốt goal + KEY cam kết vào `goal.md`, trình PO clear.
+- WIP = 1 task/bot; task chờ quá 1 ngày → item `needs-you` cho PO.
+- Review/retro cuối sprint ghi metric: cycle time, throughput, carry-over %, số lần FAIL/BLOCKED.
+
 ## Phases
 
 ### Phase 0 — Access & triage (PO + Orchestrator)
 
 - [ ] PO gán assignee, sprint/due date, bỏ label `idea` cho ticket được clear; chốt thứ tự CB-3 → CB-5 → CB-8 (theo phân tích) và CB-1 song song.
+- [ ] Chốt sprint goal + KEY cam kết vào `reports/chatbotx/scrum/sprint-<YYYY-Www>/goal.md` và tạo `board.md` trước khi giao Dev.
 - [ ] Với ≥2 ticket READY TO DEVELOP: gom nhóm theo phạm vi, link trên Jira, comment nhóm + lý do (quy tắc PO 2026-11-20).
 - [ ] Chốt câu hỏi mâu thuẫn trong phân tích CB: cách đếm clip, `groupReplyConfig`, gateway trong repo, provider AI.
 - **Done:** mỗi ticket có assignee + trạng thái READY TO DEVELOP / IN DEVELOP; board 3 phản ánh đúng.
