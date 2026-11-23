@@ -5,7 +5,7 @@ Cập nhật: 2026-11-23 (sprint start)
 | KEY | Stage | Owner | Artifact | Ghi chú |
 |---|---|---|---|---|
 | CB-2 | refined — PO duyệt | BA | `reports/chatbotx/ba/CB-2/refinement.md` | PO duyệt cắt story + thứ tự Đợt 1 (2026-11-23, item 4). Đợt 1 CB-3 → CB-5 → CB-4 → CB-8, CB-1 song song |
-| CB-1 | qa — PR1 PASS; PR2 + contract-fix CI green; dry-run xong; chờ QA verify PR8 → merge #8→#7→#6 | QA / Dev | `reports/chatbotx/qa/CB-1/verdict.md` + PR #6, #7, #8 | PR1 #6 PASS; PR8 #8 @340868793 CI green — QA verify; PR2 #7 @56b5f7b8f CI green — rebase sau #8. Migration applied DB dev `localhost:25432`, dry-run 0 row (probe chứng minh script đúng). **PO chốt merge order #8 → #7 → #6**; rollback auth={} ngoài scope (PO đã xem) |
+| CB-1 | qa — PR1 + PR8 PASS; PR2 CI green; chờ PO merge #8→#7→#6 | QA / Dev | `reports/chatbotx/qa/CB-1/verdict.md` + PR #6, #7, #8 | PR1 #6 PASS; **PR8 PASS @`ecd9f9127`** (head đổi sau `340868793`; rò marker `data.reason` đã đóng); PR2 #7 @`56b5f7b8f` CI green — rebase sau #8. Migration applied DB dev, dry-run 0 row + probe. **PO chốt merge order #8 → #7 → #6**. Ngoài phạm vi: legacy `(code …)` vẫn lộ trong public message → cần issue riêng |
 | CB-3 | clear — chờ input vận hành | — | `reports/chatbotx/ba/CB-3/spec.md` | PO clear 2026-11-23; cần stack test, nick/QR, nhóm test; Dev nhận sau PR 2 |
 | CB-4 → CB-17 | backlog | — | — | `To Do` + `idea`, chưa qua gate |
 
@@ -13,8 +13,8 @@ Stage: backlog → refining → spec → clear → dev → qa → pr → staging
 
 ## Daily
 
-- **Đang làm:** CB-1 PR2 xong (PR #7) + contract-fix xong (PR #8), cả hai CI green; chờ merge thứ tự #8 → #7 → #6.
-- **Chờ:** PO quyết PR reverse-script trước --apply (item 4 needs-you); PO merge theo thứ tự #8→#7→#6 sau khi QA verify PR8; CB-3 chờ stack/nick/nhóm test.
+- **Đang làm:** CB-1 QA PASS cả PR1 lẫn PR8; PR2 CI green; chờ PO merge theo order #8 → #7 → #6 (PR7 rebase sau #8).
+- **Chờ:** PO merge 3 PR (QA đã PASS #8); PO quyết PR reverse-script trước --apply (item 4); CB-3 chờ stack/nick/nhóm test.
 - **Chặn:** MCP `jira-vtx` lỗi certifi ở phiên SM (đã workaround qua Chef). Server vif chưa sign-in Orca Cloud → không watch được GitHub PR #8 merge; SM check thủ công bằng `gh` mỗi daily, đã offer connect card.
 
 ## Log
@@ -34,3 +34,4 @@ Stage: backlog → refining → spec → clear → dev → qa → pr → staging
 - 19:0x Dev ack: giữ chờ reverse-script (PO) + sẵn sàng dispatch rebase PR #7 khi #8 vào base (Dev không có GitHub event). SM không tạo được watch vì server chưa sign-in Orca Cloud → đã offer GitHub connect card; check `gh` thủ công.
 - 19:3x PR #8 head mới `ecd9f9127` (adopt gate: lint+check-types local, suite CI) — CI all green (run 45158885996); worker đổi marker `data.reason` → `OpenaiCompatibleProviderUnreachableError`. Vẫn OPEN chờ QA verify + PO merge.
 - 20:0x Dev đồng bộ body PR #7 theo gate mới (lint+check-types local, AC evidence, CI run link); recheck `gh pr checks` #7+#8 all pass. Còn lại: QA verify #8 → merge #8 → rebase #7 → merge #7 → #6.
+- 20:4x QA verdict **PR #8 PASS** tại head mới `ecd9f9127` (head đổi trong lúc verify; lỗi rò `(reason=unreachable)` ở `340868793` đã đóng). Evidence: `qa/CB-1/evidence/07-pr8-e2e-transcript.md` + `08-pr8-tests-lint-ci.txt`. Còn tồn ngoài scope: legacy provider vẫn lộ `(code connectionProviderRejected)` → ghi item 4 cần issue riêng; nhánh UI `providerUnreachable` chỉ unit test.
