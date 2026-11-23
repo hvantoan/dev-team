@@ -51,6 +51,7 @@
     ],
     "notes": [
       "Không commit thẳng main; nhánh feat|fix/<issue-or-description>, PR bắt buộc, conventional commits (lefthook).",
+      "Worker code ChatbotX (quy tắc 2026-11-23): lefthook chặn branch sai định dạng — phải là <type>/<description> (feat|fix|bugfix|refactor|docs|style|test|chore|ci|perf|build|revert). worker-start --worktree new-child tự đặt hvantoan/<tên> nên fail; dùng 2 bước: orca worktree create --repo ChatbotX --name <tên> --branch feat/<mô-tả> --base-branch <base>, rồi worker-start --worktree branch:feat/<mô-tả>.",
       "Local checks (PO 2026-11-23): hạn chế chạy pnpm check-types/check-types:cold — CI Types jobs là cổng type; local chỉ lint + test targeted (check-types chỉ khi debug type cụ thể).",
       "db:migrate chỉ áp lên DB local qua dev-up; migration lên DB dùng chung/staging/prod phải có PO duyệt SQL.",
       "Port cố định, chỉ một stack local cho mỗi project — Dev/QA phải nhả stack trước khi bàn giao.",
