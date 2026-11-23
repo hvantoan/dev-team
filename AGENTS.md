@@ -6,7 +6,7 @@ Mọi bot/agent đọc file này trước, rồi `projects/<proj>.json` của pr
 
 ## 1. Project Overview
 
-Mục đích: biến ticket thành thay đổi đã kiểm chứng qua một pipeline file-based gồm 4 vai, với bằng chứng tái tạo được. Actors: `ieu-phoi-tms` (Điều phối), `ba-tms`, `dev-tms`, `qa-tms`; PO là anh Văn Toàn — **người duy nhất clear task** trước khi Dev nhận.
+Mục đích: biến ticket thành thay đổi đã kiểm chứng qua một pipeline file-based gồm 4 vai, với bằng chứng tái tạo được. Actors: `ieu-phoi-tms` (Scrum Master, bot `Orchestrator`), `ba-tms`, `dev-tms`, `qa-tms`; PO là anh Văn Toàn — **người duy nhất clear task** trước khi Dev nhận. Sprint, event, DoD và cách PO giao tiếp với team: `SCRUM.md`.
 
 Danh sách project là các file `projects/*.json` — không có bảng trùng trong tài liệu.
 
@@ -46,7 +46,7 @@ Ràng buộc:
 
 ```mermaid
 flowchart LR
-    U[PO / Chat] --> C[Điều phối]
+    U[PO / Chat] --> C[Scrum Master]
     C -->|plan.md + brief| B[BA]
     B -->|spec.md| C
     C -->|clear + giao| D[Dev]
@@ -87,11 +87,13 @@ Evidence:
 dev-team/
 ├── AGENTS.md            # file này
 ├── FLOW.md              # contract giao tiếp giữa các bot
+├── SCRUM.md             # mô hình Scrum: vai, sprint, event, DoD, PO ↔ team
 ├── templates/           # mẫu điền-sẵn: qa-report, dev-handoff, ba-spec, orchestrator-run
 ├── team-config/         # MausBot department: team.md + skills/
 ├── scripts/             # init-project.sh: tạo registry + cây thư mục project
 ├── projects/            # <proj>.json: jira, department, repos, stack
 ├── reports/<proj>/<bot>/<KEY|RUN>/   # artifacts của từng lần chạy
+├── reports/<proj>/scrum/sprint-<YYYY-Www>/  # goal, board, review, retro + impediments.md (SCRUM.md)
 ├── docs/<proj>/srs|adr|research/     # tài liệu chính thức
 ├── tools/mausbot-orca/  # vendored watcher-first bridge → Orca (src+tests+dist)
 └── tests/<proj>/        # test code (vd playwright)
@@ -107,7 +109,7 @@ dev-team/
 | `projects/` | con trỏ project (repo, env, prefix) | repo checkout |
 | `tools/mausbot-orca/` | CLI `mausbot-orca` vendored (intec-kit@29a60c9), systemd watcher | task code, spec |
 
-Trạng thái hiện tại (2026-11-23): TMS có artifact ở `reports/tms/{orchestrator,ba,dev,qa}/`; `chatbotx` đã có registry + cây `reports|docs|tests/chatbotx` nhưng chưa có run (chờ PO triage CB). SRS TMS đang nằm ở đường dẫn lặp `docs/tms/srs/srs/*.md` (đã commit) — sửa tại chỗ, không tạo bản thứ hai; đường dẫn chuẩn trong tài liệu là `docs/<proj>/srs/`.
+Trạng thái hiện tại (2026-11-23): TMS có artifact ở `reports/tms/{orchestrator,ba,dev,qa}/`; `chatbotx` đã có registry + cây `reports|docs|tests/chatbotx` nhưng chưa có run (chờ PO triage CB). SRS TMS đang nằm ở đường dẫn lặp `docs/tms/srs/srs/*.md` (đã commit) — sửa tại chỗ, không tạo bản thứ hai; đường dẫn chuẩn trong tài liệu là `docs/<proj>/srs/`. Scrum layer: `SCRUM.md` là chuẩn; `reports/<proj>/scrum/` chưa có file thật — Orchestrator mở sprint đầu tiên khi PO chốt nhịp và ngày bắt đầu.
 
 `team-config/` là **source of truth** của department. Sửa souls/skills/flow ở đây thì bots đang chạy trong MausBot chỉ nhận bản mới sau khi **re-import** department. Mọi đường dẫn hardcode trong `team.md`/`skills/` phải trỏ `/home/vif/tuanvu/dev-team/` và layout theo project; tên skill trong `agents[].skills` phải khớp tên folder trong `skills/`.
 
@@ -161,6 +163,7 @@ Repo không có runtime code: async patterns, dependency injection, state manage
 |---|---|
 | `AGENTS.md` | Quy ước workspace (file này) — đọc trước mọi việc |
 | `FLOW.md` | Contract bàn giao giữa các bot; nguồn của §2 |
+| `SCRUM.md` | Mô hình Scrum: vai, sprint, event, DoD, 5 điểm chạm PO ↔ team, impediment/metric |
 | `templates/qa-report.md` | Mẫu `verdict.md` — PASS/FAIL/BLOCKED, done-conditions, đối chiếu |
 | `templates/dev-handoff.md` | Mẫu `handoff.md` — branch/commit, API diff, cách verify |
 | `templates/ba-spec.md` | Mẫu `spec.md` — AC, scope, rule nghiệp vụ |

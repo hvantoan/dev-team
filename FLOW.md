@@ -1,12 +1,12 @@
 # FLOW — contract giao tiếp giữa các bot
 
-Nguyên tắc: **bot sau đọc file của bot trước, không tin lời kể trong chat.** Mỗi mũi bàn giao là một file trong `reports/<proj>/`, ghi đúng folder của bot sở hữu nó (xem `AGENTS.md` mục 2).
+Nguyên tắc: **bot sau đọc file của bot trước, không tin lời kể trong chat.** Mỗi mũi bàn giao là một file trong `reports/<proj>/`, ghi đúng folder của bot sở hữu nó (xem `AGENTS.md` mục 2). Sprint, event và cách PO giao tiếp với team: `SCRUM.md`.
 
 ## Luồng một task
 
 ```mermaid
 flowchart LR
-    U[Anh Toàn / Chat] --> C[Điều phối]
+    U[Anh Toàn / Chat] --> C[Scrum Master]
     C -->|plan.md + brief| B[BA]
     B -->|spec.md| C
     C -->|clear + giao| D[Dev]
@@ -34,6 +34,20 @@ flowchart LR
 - QA trả BLOCKED: ghi rõ điều kiện môi trường thiếu trong `verdict.md`; Điều phối quyết định retry hay trả PO.
 - Dev sửa sau FAIL: commit mới → update `handoff.md` (ghi lần retry) → QA chạy lại trên cùng folder KEY.
 - Mọi task phải được anh Toàn clear trước khi Dev nhận — Điều phối không thay PO phê duyệt.
+
+## PO ↔ team
+
+Chi tiết ở `SCRUM.md` §5. Tóm tắt:
+
+| Khi nào | Kênh | PO cho |
+|---|---|---|
+| Giao/đổi ưu tiên | chat Scrum Master (`Orchestrator`) + comment Jira | thứ tự, mục tiêu, ràng buộc |
+| Planning | chat Scrum Master | duyệt Sprint Goal + KEY cam kết |
+| Clear task | **comment Jira trên ticket** | "clear" + scope allow/deny |
+| Giữa sprint | item `needs-you` | trả lời quyết định |
+| Review | chat Scrum Master + `review.md` | accept / trả lại / ưu tiên sprint sau |
+
+Quyết định chỉ có hiệu lực khi nằm trong artifact — comment Jira, `goal.md`, hoặc câu trả lời trên item. Bot đọc file, không đọc chat.
 
 ## Evidence
 
