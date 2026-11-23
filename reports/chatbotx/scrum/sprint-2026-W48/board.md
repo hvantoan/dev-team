@@ -42,3 +42,4 @@ Stage: backlog → refining → spec → clear → dev → qa → pr → staging
 - 21:5x **Dev runtime chết** (không còn process `pi`; 4 session sống đều là `omp`) → 2 lần nhắn vào Home Chat cũ không có agent đọc. SM mở chat mới cho Dev (`--chat new`) → session sống lại, **PR #8 MERGED** vào `feat/cb-1-openai-compatible-api-ssrf` (base mới `a28adfda4`). Tiếp: rebase #7.
 - 22:0x Dev: #8 merged `a28adfda4`; #7 rebase sạch → head mới `6f0e00f55` (MERGEABLE, CI đang chạy). SM đã giao QA verify #7 tại đúng head này; merge #7/#6 chờ verdict PASS.
 - 22:1x CI #7 XANH tại `6f0e00f55` (14/14 check SUCCESS, MERGEABLE) — Dev giữ watch, không merge; chờ verdict QA đúng head này.
+- 22:1x QA đọc handoff nhưng kết thúc turn im lặng, không sinh evidence mới (mtime cuối 18:04) — cùng kiểu lỗi phiên: tin vào chat cũ `5ea26f58`, Home Chat hiện tại `c6ffdcf3`. SM gửi lại qua `--chat new` + yêu cầu ACK bắt đầu/verdict.
