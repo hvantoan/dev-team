@@ -61,6 +61,8 @@
       "db:migrate chỉ áp lên DB local qua dev-up; migration lên DB dùng chung/staging/prod phải có PO duyệt SQL.",
       "Port cố định, chỉ một stack local cho mỗi project — Dev/QA phải nhả stack trước khi bàn giao.",
       "Stack có 2 chế độ: host dev (`dev-up.sh`, pid /tmp/chatbotx-dev.pid) và docker stack (`docker compose ps`: builder/caddy/worker/realtime). Kiểm `docker compose ps` trước khi `up`; không kill container đang chạy của anh Toàn.",
+      "Host dev trong worktree (kiểm 2026-11-23): `dev-up.sh` chỉ ghi env cho builder, còn worker/realtime đọc root `.env` — root `.env` của worktree phải trỏ infra local (DATABASE_URL …:25432, REDIS_URL …:26379, S3_ENDPOINT …:29000) nếu không worker fail 28P01. Worktree mới cũng phải copy `docker-compose.override.yml` (untracked ở repo chính) trước khi `dev-up.sh`, nếu không filesystem bind 9000 và compose recreate sai cổng.",
+      "Chuyển từ docker stack sang host dev: `docker stop chatbotx-caddy-1 chatbotx-builder-1 chatbotx-worker-1 chatbotx-realtime-1 chatbotx-javascript-executor-1 chatbotx-zalo-personal-gateway-1` (giữ infra postgres/redis/filesystem/mailhog) rồi `dev-up.sh`; quay lại docker: `docker compose start <các service đó>`.",
       "Invariant 23: feature mới phải có public API trước UI."
     ]
   }

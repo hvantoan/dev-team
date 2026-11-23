@@ -5,7 +5,7 @@ Cập nhật: 2026-11-23 (sprint start)
 | KEY | Stage | Owner | Artifact | Ghi chú |
 |---|---|---|---|---|
 | CB-2 | refined — PO duyệt | BA | `reports/chatbotx/ba/CB-2/refinement.md` | PO duyệt cắt story + thứ tự Đợt 1 (2026-11-23, item 4). Đợt 1 CB-3 → CB-5 → CB-4 → CB-8, CB-1 song song |
-| CB-1 | merge — PR1 + PR8 PASS; #8 MERGED; #7 đang rebase → QA verify → merge #7 → #6 | Dev / QA | `reports/chatbotx/qa/CB-1/verdict.md` + PR #6, #7 | PR1 #6 PASS; **PR #8 MERGED** vào `feat/cb-1-openai-compatible-api-ssrf` @`a28adfda4` (dev runtime treo đã gỡ bằng chat mới); PR #7 đang rebase lên base mới — QA verify head mới trước khi merge. Migration applied DB dev, dry-run 0 row; PO chốt không reverse-script. Ngoài phạm vi: legacy `(code …)` → issue riêng |
+| CB-1 | merge — PR1 + PR8 PASS; #8 MERGED; #7 đang rebase → QA verify → merge #7 → #6 | Dev / QA | `reports/chatbotx/qa/CB-1/verdict.md` + PR #6, #7 | PR1 #6 PASS + demo 9router local (CI 14/14 @`ab182d743`, merge-ready chờ PO duyệt); **PR #8 MERGED** @`a28adfda4`; PR #7 đang rebase → QA verify head mới. **Phát hiện mới:** `ALLOW_PRIVATE_URLS=true` tắt hẳn SSRF guard → `169.254.169.254` không bị chặn — PO quyết (item 4). Migration applied DB dev, dry-run 0 row; PO chốt không reverse-script |
 | CB-3 | clear — chờ input vận hành | — | `reports/chatbotx/ba/CB-3/spec.md` | PO clear 2026-11-23; cần stack test, nick/QR, nhóm test; Dev nhận sau PR 2 |
 | CB-4 → CB-17 | backlog | — | — | `To Do` + `idea`, chưa qua gate |
 
@@ -14,7 +14,7 @@ Stage: backlog → refining → spec → clear → dev → qa → pr → staging
 ## Daily
 
 - **Đang làm:** #8 đã merge; Dev rebase #7 lên base mới → QA verify head mới → merge #7 → #6 (PO đã uỷ quyền Dev merge cả 3).
-- **Chờ:** Dev báo sha rebase #7 → QA verify → merge #7, #6; CB-3 chờ stack/nick/nhóm test.
+- **Chờ:** Dev báo sha rebase #7 → QA verify → merge #7, #6; PO quyết chặn link-local khi ALLOW_PRIVATE_URLS=true (item 4); CB-3 chờ stack/nick/nhóm test.
 - **Chặn:** MCP `jira-vtx` lỗi certifi ở phiên SM (đã workaround qua Chef). Server vif chưa sign-in Orca Cloud → không watch được GitHub PR #8 merge; SM check thủ công bằng `gh` mỗi daily, đã offer connect card.
 
 ## Log
