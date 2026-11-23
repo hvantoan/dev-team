@@ -1,0 +1,16 @@
+# gh pr checks 6 -R hvantoan/ChatbotX   (2026-11-23T14:35:11+07:00)
+# PR head verified: 2782fe41815cebbe13544c68e59465fe4789252e mergeable=MERGEABLE state=OPEN
+Devin Review	pass	0	https://app.devin.ai/review/hvantoan/chatbotx/pull/6	Completed analysis in 2m 8s
+Lint	pass	1m14s	https://github.com/hvantoan/ChatbotX/actions/runs/45126421011/job/137531678336	
+Tests	pass	3s	https://github.com/hvantoan/ChatbotX/actions/runs/45126421011/job/137533514170	
+Tests (1/8)	pass	4m51s	https://github.com/hvantoan/ChatbotX/actions/runs/45126421011/job/137531678831	
+Tests (2/8)	pass	4m26s	https://github.com/hvantoan/ChatbotX/actions/runs/45126421011/job/137531678773	
+Tests (3/8)	pass	4m23s	https://github.com/hvantoan/ChatbotX/actions/runs/45126421011/job/137531678704	
+Tests (4/8)	pass	4m23s	https://github.com/hvantoan/ChatbotX/actions/runs/45126421011/job/137531678660	
+Tests (5/8)	pass	4m10s	https://github.com/hvantoan/ChatbotX/actions/runs/45126421011/job/137531678633	
+Tests (6/8)	pass	2m35s	https://github.com/hvantoan/ChatbotX/actions/runs/45126421011/job/137531678807	
+Tests (7/8)	pass	2m59s	https://github.com/hvantoan/ChatbotX/actions/runs/45126421011/job/137531678780	
+Tests (8/8)	pass	3m47s	https://github.com/hvantoan/ChatbotX/actions/runs/45126421011/job/137531678698	
+Types	pass	4s	https://github.com/hvantoan/ChatbotX/actions/runs/45126421011/job/137532886247	
+Types (apps)	pass	3m11s	https://github.com/hvantoan/ChatbotX/actions/runs/45126421011/job/137531678590	
+Types (packages)	pass	1m38s	https://github.com/hvantoan/ChatbotX/actions/runs/45126421011/job/137531678486	

@@ -1,0 +1,74 @@
+# AC6/AC4 static evidence at 2026-11-23T14:35:29+07:00 head 2782fe418
+
+$ grep -c '"private:.*integration-openai-compatible' apps/builder/__tests__/api-parity-manifest.json
+0
+
+$ grep -n 'integration-openai-compatible/' apps/builder/__tests__/api-parity-manifest.json
+261:    "integration-openai-compatible/connect.action:connectOpenaiCompatibleAction": "covered:connections",
+262:    "integration-openai-compatible/disconnect.action:disconnectOpenaiCompatibleAction": "covered:connections",
+263:    "integration-openai-compatible/update.action:updateOpenaiCompatibleEnabledAction": "covered:integrations",
+264:    "integration-openai-compatible/update.action:updateOpenaiCompatibleAction": "covered:integrations",
+
+# AC4: encryptedAuth occurrences in AI provider schema files (expect 0 = PR 2 absent)
+integration-openai.ts 0
+integration-claude.ts 0
+integration-gemini.ts 0
+integration-deepseek.ts 0
+integration-muse.ts 0
+integration-openrouter.ts 0
+integration-openai-compatible.ts 0
+
+# AC4: backfill scripts for AI auth (expect none)
+NONE
+
+# AC4: store-bindings authColumn config (only meta-catalog uses encryptedAuth)
+NONE (defaults to auth)
+
+# AC2: read-only token method allow-list
+38:const READ_ONLY_TOKEN_ALLOWED_METHODS = new Set<HTTPMethod>(["GET", "HEAD"])
+39-
+
+# AC5: default-on SSRF guard, opt-out only when !isCloud()
+1-import { ChatbotXException } from "../errors"
+2:import { allowPrivateOpenaiCompatibleUrls, isCloud } from "../keys"
+3-import { assertPublicUrl } from "../net"
+4-
+5-const MAX_BASE_URL_LENGTH = 2048
+6-const INVALID_BASE_URL_ERROR = "OpenAI-compatible base URL is invalid."
+--
+36-  const normalizedBaseUrl = normalizeOpenaiCompatibleBaseUrl(baseURL)
+37-
+38:  if (!isCloud() && allowPrivateOpenaiCompatibleUrls()) {
+39-    return normalizedBaseUrl
+40-  }
+41-
+42-  try {
+
+# AC1: worker resolves openaiCompatible by satellite id, no cache
+43:      await integrationOpenaiCompatibleService.findByWorkspaceIdAndId({
+48:    if (!(integration?.enabled && integration.autoReply)) {
+
+# AC1: ai_agents_create integrationId description
+129:              'Satellite `id` of the connected OpenAI-compatible integration (NOT the parent `connection.integrationId`). Get it from `integrations.getAiProvider` with `provider: "openaiCompatible"` (`data[].id`).',
+130-            ),
+
+# AC2: public responses never select auth — mapped field lists
+59-}
+60-
+61-const toResource = (row: AiProviderRow) => ({
+62-  id: row.id,
+63-  model: row.model,
+64-  temperature: row.temperature,
+65-  maxOutputTokens: row.maxOutputTokens,
+66-  autoReply: row.autoReply,
+67:  hasApiKey: Boolean(row.auth),
+--
+71-  id: row.id,
+72-  integrationId: row.integrationId,
+73-  name: row.name,
+74-  preset: row.preset,
+75-  baseURL: row.baseURL,
+76-  defaultModel: row.defaultModel,
+77-  enabled: row.enabled,
+78-  autoReply: row.autoReply,
+79:  hasApiKey: Boolean(row.auth),
