@@ -8,6 +8,31 @@
 */video/
 videos/
 
+# Dump DB / archive nặng — giữ ngoài git
+*.sql
+*.dmp
+*.tar
+*.tar.*
+*.tgz
+*.gz
+*.7z
+*.rar
+*.db
+*.sqlite
+*.sqlite3
+!tests/**/seed/**
+
+# Trace / video / doc nhị phân / export thô
+*.har
+*.mov
+*.avi
+*.mkv
+*.doc
+*.docx
+*.ppt
+*.pptx
+*.csv
+
 # OS / editor
 .DS_Store
 Thumbs.db
@@ -19,8 +44,18 @@ node_modules/
 __pycache__/
 *.log
 
+# Editor / tooling cache
+.idea/
+.vscode/
+.mypy_cache/
+.ruff_cache/
+coverage/
+*.tsbuildinfo
+
 # Test harness (tests/<proj>)
 .env
+.env.*
+!.env.example
 test-results/
 playwright-report/
 blob-report/

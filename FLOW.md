@@ -38,4 +38,4 @@ flowchart LR
 ## Evidence
 
 - Kết quả nhẹ (`.md`, `.json`, `.txt`, `.png` nhỏ): commit trong `evidence/`.
-- Nhị phân nặng (`.webm`, `.mp4`, `.xlsx`, `.pdf`, thư mục `video/`): git-ignored — lưu tại `evidence/` trên đĩa, `verdict.md` ghi **đường dẫn tuyệt đối** hoặc link ngoài.
+- Nhị phân nặng (`.webm`, `.mp4`, `.xlsx`, `.pdf`, dump SQL `.sql`, archive `.tar*`/`.7z`/`.rar`, DB `.db`/`.sqlite*`, `.har`, `.mov`/`.avi`/`.mkv`, `.doc*`/`.ppt*`, `.csv`, thư mục `video/`): git-ignored — lưu tại `evidence/` trên đĩa, `verdict.md` ghi **đường dẫn tuyệt đối** hoặc link ngoài. Ngoại lệ: `tests/**/seed/**` commit seed SQL nhỏ.

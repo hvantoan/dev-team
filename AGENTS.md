@@ -78,7 +78,7 @@ Ranh giới:
 Evidence:
 
 - Nhẹ (`.md`, `.json`, `.txt`, `.png` nhỏ): commit trong `evidence/`.
-- Nặng (`*.webm`, `*.mp4`, `*.xlsx`, `*.xls`, `*.zip`, `*.pdf`, `*/video/`, `videos/`): **git-ignored** — giữ trên filesystem, `verdict.md` ghi **đường dẫn tuyệt đối** hoặc link ngoài.
+- Nặng (`*.webm`, `*.mp4`, `*.xlsx`, `*.xls`, `*.zip`, `*.pdf`, dump SQL `*.sql`, archive `*.tar*`/`*.7z`/`*.rar`, DB file `*.db`/`*.sqlite*`, `*.har`, video `*.mov`/`*.avi`/`*.mkv`, doc nhị phân `*.doc*`/`*.ppt*`, export thô `*.csv`, `*/video/`, `videos/`): **git-ignored** — giữ trên filesystem, `verdict.md` ghi **đường dẫn tuyệt đối** hoặc link ngoài. Ngoại lệ: `tests/**/seed/**` vẫn commit seed SQL nhỏ.
 - Bằng chứng phải tự tái tạo được (ảnh/video/script + `*-result.json`), không chỉ mô tả bằng lời.
 
 ## 3. Key Directories
@@ -172,7 +172,7 @@ Repo không có runtime code: async patterns, dependency injection, state manage
 | `scripts/stack.sh` | Quản lý stack local duy nhất (`up`/`down`/`status`/`reset-db`) với lock ở `~/.local/state/tms-stack/lock.json` |
 | `scripts/stack-chatbotx.sh` | Wrapper host dev ChatbotX (`up <bot> <KEY>`/`down`/`status`) quanh `dev-up.sh`; lock `~/.local/state/chatbotx-stack/lock.json`; không start/stop/kill docker container của owner |
 | `tests/tms/seed/001-tenant-and-users.sql` | Seed cố định tenant `tuanvudev` + tài khoản QA (lấy credential từ `tests/tms/.env`) |
-| `.gitignore` | Chặn evidence nặng, `node_modules/`, `__pycache__/`, `*.log` |
+| `.gitignore` | Chặn evidence nặng (video, `*.xlsx`, dump SQL, archive, doc nhị phân), `node_modules/`, `.env*`, `__pycache__/`, `*.log` |
 | `reports/tms/qa/ITMS-378/ITMS-378-qa-report.md` | Ví dụ QA đã chạy: PASS AC-01→07, AC-08 known limitation |
 
 ## 7. Runtime/Tooling Preferences
