@@ -33,7 +33,7 @@
 
 ## Scrum (vai trò Scrum Master từ 2026-11-23)
 
-- Sprint 1 tuần (Mon–Fri); artifact `reports/chatbotx/scrum/sprint-<YYYY-Www>/{goal,board,review,retro}.md`, cấu hình `reports/chatbotx/scrum/config.md`, chặn `reports/chatbotx/scrum/impediments.md`.
+- Nhịp mặc định 1 tuần — **chờ PO chốt ngày bắt đầu** (ghi `reports/chatbotx/scrum/config.md`); artifact `reports/chatbotx/scrum/sprint-<YYYY-Www>/{goal,board,review,retro}.md`, chặn `reports/chatbotx/scrum/impediments.md`.
 - Backlog = ticket CB READY TO DEVELOP / IN DEVELOP assign Văn Toàn + item `orca bot item` chưa đóng. Triage xong → planning chốt goal + KEY cam kết vào `goal.md`, trình PO clear.
 - WIP = 1 task/bot; task chờ quá 1 ngày → item `needs-you` cho PO.
 - Review/retro cuối sprint ghi metric: cycle time, throughput, carry-over %, số lần FAIL/BLOCKED.
