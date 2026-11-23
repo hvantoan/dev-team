@@ -1,0 +1,63 @@
+{
+  "project": "chatbotx",
+  "description": "ChatbotX — nền tảng chatbot omnichannel self-hosted (pnpm workspaces + Turborepo; Next.js builder, worker, realtime, integrations). Jira project CB.",
+  "jira": {
+    "prefix": "CB-",
+    "base_url": "https://vtxsolution.atlassian.net",
+    "project_key": "CB",
+    "board": "https://vtxsolution.atlassian.net/jira/software/projects/CB/boards/3",
+    "access": "MCP jira-vtx (mcp__jira_vtx_jira_*); orca jira CLI chưa lưu site vtxsolution"
+  },
+  "department": "tms",
+  "department_note": "Dùng chung dàn bot TMS (Orchestrator/ba-tms/dev-tms/qa-tms); artifact theo reports/chatbotx/...",
+  "repos": [
+    {
+      "role": "monorepo",
+      "path": "/home/vif/workspace/ChatbotX",
+      "base": "main",
+      "remote": "https://github.com/hvantoan/ChatbotX.git"
+    },
+    {
+      "role": "test",
+      "path": "tests/chatbotx"
+    }
+  ],
+  "stack": {
+    "ports": {
+      "builder": 3123,
+      "postgres": 25432,
+      "redis": 26379,
+      "mailhog": 8025,
+      "filesystem": 29000
+    },
+    "run": [
+      "cd /home/vif/workspace/ChatbotX && ./scripts/dev-up.sh --install   # lần đầu sau khi pull",
+      "cd /home/vif/workspace/ChatbotX && ./scripts/dev-up.sh             # infra + migrate local DB + turbo dev + smoke login",
+      "cd /home/vif/workspace/ChatbotX && ./scripts/dev-up.sh --stop      # dừng turbo dev (infra docker vẫn chạy)",
+      "cd /home/vif/workspace/ChatbotX && docker compose stop            # dừng infra",
+      "tail -f /tmp/chatbotx-dev.log"
+    ],
+    "test": [
+      "cd /home/vif/workspace/ChatbotX && pnpm lint",
+      "cd /home/vif/workspace/ChatbotX && pnpm check-types",
+      "cd /home/vif/workspace/ChatbotX && pnpm check-types:cold   # máy ít RAM / không có tsbuildinfo",
+      "cd /home/vif/workspace/ChatbotX && pnpm test",
+      "cd /home/vif/workspace/ChatbotX && pnpm --filter <workspace> test",
+      "cd /home/vif/workspace/ChatbotX && pnpm --filter @chatbotx.io/database test:db   # opt-in, cần DB local"
+    ],
+    "env": [
+      "/home/vif/workspace/ChatbotX/.env (git-ignored) — base env; apps/builder/.env (git-ignored) — override local do dev-up tự thêm",
+      "Demo login: demo@example.com / Demo@1234 → http://localhost:3123",
+      "Local DB: postgresql://chatbotx:secretkey@localhost:25432/chatbotx",
+      "Node 24 + pnpm 10 (packageManager trong package.json); chạy pnpm install sau khi pull"
+    ],
+    "notes": [
+      "Không commit thẳng main; nhánh feat|fix/<issue-or-description>, PR bắt buộc, conventional commits (lefthook).",
+      "next build bỏ qua lỗi TS — pnpm check-types là cổng type duy nhất.",
+      "builder tsc cold ~6 GB RAM — dùng check-types:cold khi máy yếu.",
+      "db:migrate chỉ áp lên DB local qua dev-up; migration lên DB dùng chung/staging/prod phải có PO duyệt SQL.",
+      "Port cố định, chỉ một stack local cho mỗi project — Dev/QA phải nhả stack trước khi bàn giao.",
+      "Invariant 23: feature mới phải có public API trước UI."
+    ]
+  }
+}
