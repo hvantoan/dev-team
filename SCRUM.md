@@ -7,7 +7,7 @@
 | Vai | Là ai | Chịu trách nhiệm |
 |---|---|---|
 | PO | anh Văn Toàn (một người, không phải committee) | giá trị: thứ tự backlog, clear task, duyệt merge, accept Increment, huỷ sprint |
-| Scrum Master | bot `Orchestrator` (key `ieu-phoi-tms`) | thiết lập Scrum, hiệu quả team, gỡ impediment, bảo đảm event đúng timebox |
+| Scrum Master | bot `SM` (key `ieu-phoi-tms`) | thiết lập Scrum, hiệu quả team, gỡ impediment, bảo đảm event đúng timebox |
 | Developers | `ba-tms` (spec, docs), `dev-tms` (code + verify local + PR), `qa-tms` (verify độc lập) | biến PBI thành Increment đạt DoD |
 
 SM **không** quyết định làm gì (PO) và **không** quyết định làm thế nào (Developers).
@@ -43,14 +43,14 @@ SM **không** quyết định làm gì (PO) và **không** quyết định làm 
 | Khi nào | Kênh | PO cho | PO nhận |
 |---|---|---|---|
 | Refine backlog (liên tục) | Jira ticket + comment | ưu tiên, mục tiêu, ràng buộc | PBI đủ rõ để cam kết |
-| Sprint Planning | chat Orchestrator | duyệt Sprint Goal + danh sách KEY | đề xuất cam kết từ dữ liệu sprint trước |
+| Sprint Planning | chat `SM` | duyệt Sprint Goal + danh sách KEY | đề xuất cam kết từ dữ liệu sprint trước |
 | Clear task | **comment Jira trên ticket** | "clear" + scope allow/deny | `spec.md` do BA viết |
 | Giữa sprint | item `needs-you` + daily 3 dòng | trả lời quyết định (nút `--option` hoặc tự viết) | đang làm / chờ ai / đang chặn |
-| Sprint Review | chat Orchestrator + `review.md` | accept, trả lại, đổi ưu tiên | Increment đạt DoD + metric flow |
+| Sprint Review | chat `SM` + `review.md` | accept, trả lại, đổi ưu tiên | Increment đạt DoD + metric flow |
 
 **Quy tắc bắt buộc:** một quyết định chỉ có hiệu lực khi nó nằm trong artifact — comment Jira, dòng trong `goal.md`, hoặc câu trả lời trên item. Bot đọc file, không đọc chat; nói miệng mà không ghi = không tính.
 
-Nói riêng với `ba-tms`/`dev-tms`/`qa-tms` thì việc vẫn chưa tính là giao cho tới khi Orchestrator biết và artifact có trên đĩa.
+Nói riêng với `ba-tms`/`dev-tms`/`qa-tms` thì việc vẫn chưa tính là giao cho tới khi `SM` biết và artifact có trên đĩa.
 
 ## 6. Đo lường và cải tiến
 

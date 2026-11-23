@@ -41,7 +41,7 @@ Chi tiết ở `SCRUM.md` §5. Tóm tắt:
 
 | Khi nào | Kênh | PO cho |
 |---|---|---|
-| Giao/đổi ưu tiên | chat Scrum Master (`Orchestrator`) + comment Jira | thứ tự, mục tiêu, ràng buộc |
+| Giao/đổi ưu tiên | chat Scrum Master (`SM`) + comment Jira | thứ tự, mục tiêu, ràng buộc |
 | Planning | chat Scrum Master | duyệt Sprint Goal + KEY cam kết |
 | Clear task | **comment Jira trên ticket** | "clear" + scope allow/deny |
 | Giữa sprint | item `needs-you` | trả lời quyết định |

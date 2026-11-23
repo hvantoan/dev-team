@@ -6,7 +6,7 @@ Mọi bot/agent đọc file này trước, rồi `projects/<proj>.json` của pr
 
 ## 1. Project Overview
 
-Mục đích: biến ticket thành thay đổi đã kiểm chứng qua một pipeline file-based gồm 4 vai, với bằng chứng tái tạo được. Actors: `ieu-phoi-tms` (Scrum Master, bot `Orchestrator`), `ba-tms`, `dev-tms`, `qa-tms`; PO là anh Văn Toàn — **người duy nhất clear task** trước khi Dev nhận. Sprint, event, DoD và cách PO giao tiếp với team: `SCRUM.md`.
+Mục đích: biến ticket thành thay đổi đã kiểm chứng qua một pipeline file-based gồm 4 vai, với bằng chứng tái tạo được. Actors: `ieu-phoi-tms` (Scrum Master, bot `SM`), `ba-tms`, `dev-tms`, `qa-tms`; PO là anh Văn Toàn — **người duy nhất clear task** trước khi Dev nhận. Sprint, event, DoD và cách PO giao tiếp với team: `SCRUM.md`.
 
 Danh sách project là các file `projects/*.json` — không có bảng trùng trong tài liệu.
 
@@ -109,11 +109,11 @@ dev-team/
 | `projects/` | con trỏ project (repo, env, prefix) | repo checkout |
 | `tools/mausbot-orca/` | CLI `mausbot-orca` vendored (intec-kit@29a60c9), systemd watcher | task code, spec |
 
-Trạng thái hiện tại (2026-11-23): TMS có artifact ở `reports/tms/{orchestrator,ba,dev,qa}/`; `chatbotx` đã có registry + cây `reports|docs|tests/chatbotx` nhưng chưa có run (chờ PO triage CB). SRS TMS đang nằm ở đường dẫn lặp `docs/tms/srs/srs/*.md` (đã commit) — sửa tại chỗ, không tạo bản thứ hai; đường dẫn chuẩn trong tài liệu là `docs/<proj>/srs/`. Scrum layer: `SCRUM.md` là chuẩn; `reports/<proj>/scrum/` chưa có file thật — Orchestrator mở sprint đầu tiên khi PO chốt nhịp và ngày bắt đầu.
+Trạng thái hiện tại (2026-11-23): TMS có artifact ở `reports/tms/{orchestrator,ba,dev,qa}/`; `chatbotx` đã có registry + cây `reports|docs|tests/chatbotx` nhưng chưa có run (chờ PO triage CB). SRS TMS đang nằm ở đường dẫn lặp `docs/tms/srs/srs/*.md` (đã commit) — sửa tại chỗ, không tạo bản thứ hai; đường dẫn chuẩn trong tài liệu là `docs/<proj>/srs/`. Scrum layer: `SCRUM.md` là chuẩn; `reports/<proj>/scrum/` chưa có file thật — `SM` mở sprint đầu tiên khi PO chốt nhịp và ngày bắt đầu.
 
 `team-config/` là **source of truth** của department. Sửa souls/skills/flow ở đây thì bots đang chạy trong MausBot chỉ nhận bản mới sau khi **re-import** department. Mọi đường dẫn hardcode trong `team.md`/`skills/` phải trỏ `/home/vif/tuanvu/dev-team/` và layout theo project; tên skill trong `agents[].skills` phải khớp tên folder trong `skills/`.
 
-Team chạy **native trên Orca** (4 bot: Orchestrator, ba-tms, dev-tms, qa-tms). `dev-tms`/`qa-tms` giao việc code/test cho Orca worker bằng `orca orchestration worker-start` qua skill `orca-dispatch` — repo Orca `name:tms-web` / `name:tms_application` (code) và `name:dev-team` (test + việc workspace). `tools/mausbot-orca/` là bridge legacy chỉ còn phục vụ bot trong MausBot; bot Orca **không gọi `mausbot-orca`**. Rebuild bridge (chỉ khi còn dùng MausBot): `cd tools/mausbot-orca && npm run build`; test: `npm test`.
+Team chạy **native trên Orca** (4 bot: `SM`, `BA`, `Dev`, `QA`; key department MausBot tương ứng `ieu-phoi-tms`, `ba-tms`, `dev-tms`, `qa-tms`). `Dev`/`QA` giao việc code/test cho Orca worker bằng `orca orchestration worker-start` qua skill `orca-dispatch` — repo Orca `name:tms-web` / `name:tms_application` (code) và `name:dev-team` (test + việc workspace). `tools/mausbot-orca/` là bridge legacy chỉ còn phục vụ bot trong MausBot; bot Orca **không gọi `mausbot-orca`**. Rebuild bridge (chỉ khi còn dùng MausBot): `cd tools/mausbot-orca && npm run build`; test: `npm test`.
 
 ## 4. Development Commands
 
