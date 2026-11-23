@@ -38,3 +38,4 @@ Stage: backlog → refining → spec → clear → dev → qa → pr → staging
 - 21:0x PO chốt (item 4, e129): **không làm PR reverse-script** — DB dev rỗng, rủi ro chỉ phát sinh khi --apply prod; chấp nhận, ghi impediments. Cả 3 PR vẫn OPEN, chờ PO merge #8 trước.
 - 21:2x SM kiểm tra Dev không treo: session active, PR2 worktree sạch @`56b5f7b8f`, không worker chạy; #6/#7/#8 đều checks pass, cả 3 OPEN. Dev đỗ ở cổng merge của PO (đã hỏi Dev 1 dòng xác nhận).
 - 21:3x Dev kết thúc turn KHÔNG trả lời câu hỏi check sống (idle 0m, không lỗi) → xác nhận Dev sống nhưng thụ động, chỉ chờ tín hiệu merge #8; SM tự kiểm bằng `gh`/worktree. Coaching: câu hỏi trực tiếp phải trả lời 1 dòng, kể cả "đang chờ PO merge".
+- 21:4x **PO uỷ quyền merge** (phương án 2): Dev tự merge #8 → rebase #7 (QA PASS head mới) → merge #7 → merge #6 vào main. Không chạy backfill `--apply` thật. SM đã handoff Dev + báo QA chuẩn bị verify #7 sau rebase.
