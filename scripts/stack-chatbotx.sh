@@ -156,11 +156,15 @@ cmd_down() {
   pid="$(lock_pid)"
   echo "releasing lock: $(format_lock_holder)"
 
-  # dev-up.sh --stop dừng turbo dev + stragglers scoped vào checkout ChatbotX.
-  if [[ -x "$REPO/scripts/dev-up.sh" ]]; then
-    ( cd "$REPO" && ./scripts/dev-up.sh --stop ) || echo "dev-up.sh --stop trả mã lỗi; tiếp tục dọn pid trong lock" >&2
+  if pid_alive "$pid"; then
+    # Chỉ dọn thứ wrapper đã khởi động: pid trong lock còn sống.
+    if [[ -x "$REPO/scripts/dev-up.sh" ]]; then
+      ( cd "$REPO" && ./scripts/dev-up.sh --stop ) || echo "dev-up.sh --stop trả mã lỗi; tiếp tục dọn pid trong lock" >&2
+    fi
+    stop_pid_gracefully "$pid" "dev-up pid"
+  else
+    echo "lock stale (pid ${pid:-none} không còn sống) — không gọi dev-up.sh --stop, không kill/pkill process nào; chỉ xoá lock."
   fi
-  stop_pid_gracefully "$pid" "dev-up pid"
   rm -f "$LOCK_FILE"
   echo "wrapper down (lock removed). Docker container KHÔNG bị dừng."
 }
