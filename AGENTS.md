@@ -36,9 +36,9 @@ Ràng buộc:
 - FMS chưa có department — tạo department riêng khi FMS vận hành; không gộp vào team TMS.
 - ChatbotX (Jira `CB`, vtxsolution) dùng chung dàn bot TMS qua `projects/chatbotx.json`; project suy từ ticket key (`ITMS-` → `tms`, `CB-` → `chatbotx`). Jira CB đọc/ghi qua MCP `jira-vtx` (`mcp__jira_vtx_jira_*`) vì `orca jira` chưa lưu site vtxsolution.
 - Không checkout repo dự án vào `projects/` hay bất kỳ đâu trong `dev-team/`.
-- Repo thật đang dùng cho TMS (theo evidence `ITMS-378`, đã ghi vào `projects/tms.json`): FE `/home/vif/tuan-vu/tms-web`, test harness `tests/tms`.
+- Repo thật đang dùng cho TMS (đã ghi vào `projects/tms.json`): FE `/home/vif/tuan-vu/tms-web` (base `dev`), BE `/home/vif/tuan-vu/tms_application` (base `main`), test harness `tests/tms`.
 - Test code luôn nằm trong `tests/<proj>/` (path relative trong registry) — không trỏ ra ngoài workspace.
-- Các repo khác dưới `/home/vif/tuan-vu/` (`FMS.*`, `tms_application`, …) chưa được đăng ký trong `projects/*.json` — chỉ dùng sau khi điền con trỏ.
+- Các repo khác dưới `/home/vif/tuan-vu/` (`FMS.*`, …) chưa được đăng ký trong `projects/*.json` — chỉ dùng sau khi điền con trỏ.
 
 ## 2. Architecture & Data Flow
 
@@ -88,6 +88,7 @@ dev-team/
 ├── AGENTS.md            # file này
 ├── FLOW.md              # contract giao tiếp giữa các bot
 ├── SCRUM.md             # mô hình Scrum: vai, sprint, event, DoD, PO ↔ team
+├── rules/               # rule vận hành theo vai: README, common, sm/ba/dev/qa
 ├── templates/           # mẫu điền-sẵn: qa-report, dev-handoff, ba-spec, orchestrator-run
 ├── skills/              # skill nguồn của team (copy vào home bot khi sửa)
 ├── scripts/             # init-project.sh: tạo registry + cây thư mục project
@@ -105,9 +106,10 @@ dev-team/
 | `tests/<proj>/` | test code của project | artifact điều phối |
 | `skills/` | `SKILL.md` nguồn của team; copy vào `~/.orca/bots/<bot>/skills/` | code, docs dự án |
 | `templates/` | mẫu gốc, copy-điền | file đã điền |
+| `rules/` | rule vận hành theo vai (index + chung + từng vai); soul bot là bản rút gọn, lệch thì file ở đây là chuẩn | spec/handoff/verdict (nằm ở `reports/`) |
 | `projects/` | con trỏ project (repo, env, prefix) | repo checkout |
 
-Trạng thái hiện tại (2026-11-23): TMS có artifact ở `reports/tms/{orchestrator,ba,dev,qa}/`; `chatbotx` đã có registry + cây `reports|docs|tests/chatbotx` nhưng chưa có run (chờ PO triage CB). SRS TMS đang nằm ở đường dẫn lặp `docs/tms/srs/srs/*.md` (đã commit) — sửa tại chỗ, không tạo bản thứ hai; đường dẫn chuẩn trong tài liệu là `docs/<proj>/srs/`. Scrum layer: `SCRUM.md` là chuẩn; `reports/<proj>/scrum/` chưa có file thật — `SM` mở sprint đầu tiên khi PO chốt nhịp và ngày bắt đầu.
+Trạng thái hiện tại (2026-11-23): TMS có artifact ở `reports/tms/{orchestrator,ba,dev,qa}/`; `chatbotx` đã có registry + cây `reports|docs|tests/chatbotx` nhưng chưa có run (chờ PO triage CB). SRS TMS đang nằm ở đường dẫn lặp `docs/tms/srs/srs/*.md` (đã commit) — sửa tại chỗ, không tạo bản thứ hai; đường dẫn chuẩn trong tài liệu là `docs/<proj>/srs/`. Scrum layer: `SCRUM.md` là chuẩn; sprint đầu tiên đã mở ở `reports/chatbotx/scrum/` (`config.md`, `impediments.md`, `sprint-2026-W48/{goal,board,review,retro}.md`); `tms` chưa có sprint folder.
 
 `skills/` là **source of truth** của skill team. Sửa ở đây rồi copy sang `~/.orca/bots/<bot>/skills/<name>/` cho từng bot dùng skill đó (mỗi home bot giữ bản riêng). Mọi đường dẫn hardcode trong skill phải trỏ `/home/vif/tuanvu/dev-team/` và layout theo project.
 
@@ -162,11 +164,14 @@ Repo không có runtime code: async patterns, dependency injection, state manage
 | `AGENTS.md` | Quy ước workspace (file này) — đọc trước mọi việc |
 | `FLOW.md` | Contract bàn giao giữa các bot; nguồn của §2 |
 | `SCRUM.md` | Mô hình Scrum: vai, sprint, event, DoD, 5 điểm chạm PO ↔ team, impediment/metric |
+| `rules/README.md` | Index `rules/`: chủ sở hữu từng file, thứ tự đọc, khung 8 heading; `rules/` là source of truth của rule vai |
+| `rules/common.md` | Rule áp mọi bot: sự thật trên đĩa, thứ tự đọc, suy project từ ticket key, WIP=1, artifact/trạng thái, stack lock, secrets, evidence, đổi convention |
+| `rules/{sm,ba,dev,qa}.md` | Rule riêng từng vai (cùng khung 8 heading); trỏ `AGENTS.md`/`FLOW.md`/`SCRUM.md` thay vì copy lại |
 | `templates/qa-report.md` | Mẫu `verdict.md` — PASS/FAIL/BLOCKED, done-conditions, đối chiếu |
 | `templates/dev-handoff.md` | Mẫu `handoff.md` — branch/commit, API diff, cách verify |
 | `templates/ba-spec.md` | Mẫu `spec.md` — AC, scope, rule nghiệp vụ |
 | `templates/orchestrator-run.md` | Mẫu `plan.md` + `status.md` — task briefs, trạng thái |
-| `skills/*/SKILL.md` | 6 skill nguồn: `tms-delivery-coordination`, `ba-ticket-to-srs-br`, `ba-srs-docx-env-check`, `qa-verify-export-local`, `tms-excel-export-verify`, `orca-dispatch` |
+| `skills/*/SKILL.md` | 7 skill nguồn: `tms-delivery-coordination`, `ba-ticket-to-srs-br`, `ba-srs-docx-env-check`, `qa-browser-user-test`, `qa-verify-export-local`, `tms-excel-export-verify`, `orca-dispatch` |
 | `projects/{tms,fms,ca-nhan,chatbotx}.json` | Registry project: Jira, department, repos, stack; `null` = chưa biết |
 | `scripts/init-project.sh` | Tạo registry + cây `reports/docs/tests` cho project mới |
 | `scripts/stack.sh` | Quản lý stack local duy nhất (`up`/`down`/`status`/`reset-db`) với lock ở `~/.local/state/tms-stack/lock.json` |
@@ -179,7 +184,7 @@ Repo không có runtime code: async patterns, dependency injection, state manage
 
 - Workspace: không cần runtime/package manager; git + Markdown/JSON là đủ.
 - TMS FE: Node + pnpm/`npx`; Next.js server port `4700` (luôn khởi động qua `scripts/stack.sh`, không chạy `next`/`go`/`nohup` trực tiếp).
-- ChatbotX: Node 24 + pnpm 10 + Turborepo; stack local `cd /home/vif/workspace/ChatbotX && ./scripts/dev-up.sh` (builder `:3123`, postgres `:25432`, redis `:26379`, demo `demo@example.com / Demo@1234`); gate **local** = `pnpm lint` + `pnpm check-types`; **test suite (`pnpm test`) chỉ chạy ở CI** (`.github/workflows/ci.yml`, mọi PR) — không chạy local; **test case chức năng vẫn bắt buộc** (Dev chạy theo AC trước handoff, QA chạy độc lập theo spec); không commit thẳng `main`, không chạy `db:migrate` lên DB dùng chung khi chưa có PO duyệt SQL.
+- ChatbotX: Node 24 + pnpm 10 + Turborepo; stack local `cd /home/vif/workspace/ChatbotX && ./scripts/dev-up.sh` (builder `:3123`, postgres `:25432`, redis `:26379`, demo `demo@example.com / Demo@1234`); gate **local** = `pnpm lint` (+ `pnpm check-types` **chỉ khi debug type cụ thể** — PO 2026-11-23; CI Types job là cổng type); **test suite (`pnpm test`) chỉ chạy ở CI** (`.github/workflows/ci.yml`, mọi PR) — không chạy local; **test case chức năng vẫn bắt buộc** (Dev chạy theo AC trước handoff, QA chạy độc lập theo spec); không commit thẳng `main`, không chạy `db:migrate` lên DB dùng chung khi chưa có PO duyệt SQL.
 - Test harness `tests/tms`: Node 22 + pnpm, Playwright Chromium. Python poller/dashboard không thuộc test path — còn ở `/home/vif/tuan-vu/tms-test` nếu cần.
 - QA probe: plain Node CommonJS, mượn `@playwright/test` từ `tests/tms/node_modules`; không tạo dependency riêng trong `reports/`.
 - Secrets: `.env` (trong `tests/tms` hoặc `/home/vif/tuan-vu/tms-test`) chứa credential — đã git-ignore, không commit/copy giá trị; dùng `.env.example`.
