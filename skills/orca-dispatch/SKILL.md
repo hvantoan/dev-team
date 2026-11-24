@@ -31,6 +31,8 @@ H=$(orca terminal create --worktree path:/home/vif/tuanvu/dev-team --title coord
 - Mọi lệnh đọc mail dùng `--terminal $H`; xem lại mail đã đọc thì `inbox --terminal run:<runId>`. KHÔNG dùng `--from` (`check`/`inbox` không nhận `--from`).
 - Xong việc: `orca terminal close --terminal $H`. Terminal sót lại thành rác trong danh sách tab của anh Toàn.
 
+Handle **không sống qua session**: handle của phiên trước trả `terminal_handle_stale`. Mỗi lượt làm việc mint lại `$H`, đừng lưu vào file/ghi chú rồi dùng lại.
+
 ## Không dùng heredoc
 
 `orca skills get orchestration` cấm heredoc (`<<`) — shell treo. Ghi spec ra file bằng công cụ file rồi `--spec-file /tmp/<key>-spec.md`. Block `<<'EOF'` trong ví dụ dưới là **nội dung file**, không phải lệnh shell.
@@ -115,7 +117,7 @@ orca orchestration worker-read --dispatch ctx_<id>         # transcript chi ti�
 
 Đường đọc tiêu thụ thật là `--terminal $H`: mail của run chuyển vào hộp coordinator, `check` đánh dấu handled luôn. `check --terminal run:<runId>` (không `--peek`) fail `stable_pane_required: no live pane` — run mailbox không có pane. Đã đọc rồi thì `--peek` trả `No messages`; muốn xem lại dùng `inbox --terminal run:<runId>` (chạy được cả sau khi đóng `$H`).
 
-`worker_done` mang `payload: taskId=… dispatchId=… outcome=succeeded|failed`. Outcome là nguồn sự thật, không phải tiêu đề.
+`worker_done` mang `payload: taskId=… dispatchId=… outcome=succeeded|failed`. Outcome do **worker tự khai**, không phải Orca suy ra: spec chứa chữ kiểu "QA FAIL" làm worker tự report `failed` dù việc xong. Đã kiểm: cùng một worker, spec trung tính → `succeeded`, spec có "QA FAIL giả lập" → `failed`. Nghĩa là `failed` **không** đồng nghĩa code hỏng — phải đọc subject/body (`worker-read`, hoặc `inbox --full`) rồi mới kết luận. Viết spec rework bằng ngôn ngữ trung tính; đừng để sót chữ "FAIL" trong spec.
 
 **Worker hỏi (question)** — trả lời bằng `reply --from $H --id <msg_id> --body "..."`. Không trả lời = worker treo tới hết turn.
 
@@ -168,8 +170,10 @@ Không có `--site`: trả `Issue does not exist or you do not have permission t
 | `check --terminal run:<id>` → `stable_pane_required` | run mailbox không có pane sống | đọc tiêu thụ bằng `--terminal $H`; xem lại bằng `inbox --terminal run:<id>` |
 | Jira báo không có quyền | thiếu `--site` (mặc định dtc-vif) | `--site uzBpLCpVbNAUuJOzz1vwivWT` |
 | `worktree create --reference ITMS-411` fail `not-found` | cần site cho bare key | thêm `--reference-site $SITE`, hoặc bỏ reference (vô hại) |
-| `worker-read` trả "No terminal output returned" | terminal đã release nhưng có transcript chưa index | `worker-show` trước; nội dung thật nằm trong mail `worker_done` |
+| `worker-read` trả "No terminal output returned" | terminal đã release | `worker-show` trước; nội dung thật nằm trong mail `worker_done` |
 | Receipt `warning=...could not make it discoverable` | chỉ là không focus được tab | bỏ qua, không retry |
+| `worker_done` `outcome=failed` nhưng nội dung bảo xong | worker tự khai outcome, spec có chữ "FAIL" | đọc body; viết spec trung tính, không để chữ "FAIL" |
+| `worker-read` → `archive_unavailable: provider_unsupported` | agent `pi` không lưu transcript | đọc `worker-show` + `inbox --terminal run:<id> --full` |
 
 ## Không làm
 
