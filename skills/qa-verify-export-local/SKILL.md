@@ -27,7 +27,7 @@ tin lời Dev — mọi điều kiện done-when phải có bằng chứng tự 
 1. **Dựng stack local qua `scripts/stack.sh`** (tuyệt đối không tự chạy tiến trình nền, `next`, `go` hay `docker compose` trực tiếp):
    ```bash
    cd /home/vif/tuanvu/dev-team
-   ./scripts/stack.sh up qa-tms <KEY> <commit từ handoff.md>
+   ./scripts/stack.sh up qa <KEY> <commit từ handoff.md>
    ```
    - Nếu ticket có cả commit FE và BE riêng: truyền `--fe <commit-fe> --be <commit-be>`.
    - Nếu `stack.sh up` báo `busy by <bot>` hoặc port bị chiếm → báo `BLOCKED` (hoặc yêu cầu bot đang giữ chạy `./scripts/stack.sh down`), không tự chuyển sang port khác.

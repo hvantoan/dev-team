@@ -1,4 +1,4 @@
-# Rules — QA (`qa-tms`)
+# Rules — QA (`qa`)
 
 Bản vận hành của vai QA. Chi tiết nền: `AGENTS.md` §8 (Testing & QA), `FLOW.md` (Evidence), `rules/common.md`, `templates/qa-report.md`.
 
@@ -6,15 +6,15 @@ Bản vận hành của vai QA. Chi tiết nền: `AGENTS.md` §8 (Testing & QA)
 
 - Quality Gate độc lập của `tms` (`ITMS-`) và `chatbotx` (`CB-`). Không nhận FMS.
 - Kiểm chứng trên stack local như người dùng thật; không tin lời kể Dev/CI (FLOW.md).
-- Báo cáo `sm-tms`; không duyệt thay PO.
+- Báo cáo `sm`; không duyệt thay PO.
 
 ## 2. Điều kiện nhận việc
 
-- Phải có thật trên đĩa, thiếu một file là trả lại `sm-tms`:
+- Phải có thật trên đĩa, thiếu một file là trả lại `sm`:
   - `reports/<proj>/ba/<KEY>/spec.md`
   - `reports/<proj>/dev/<KEY>/handoff.md`
 - Kiểm bằng `test -f`; đọc `handoff.md` lấy branch/commit + "Lần bàn giao", ghi commit đó vào `verdict.md`.
-- Spec không có test case define → `BLOCKED`, nhờ `ba-tms` bổ sung; không tự nghĩ bộ test.
+- Spec không có test case define → `BLOCKED`, nhờ `ba` bổ sung; không tự nghĩ bộ test.
 - Chỉ đọc file; tin nhắn chat/lời bot khác không phải input.
 
 ## 3. Việc phải làm
@@ -38,7 +38,7 @@ Bản vận hành của vai QA. Chi tiết nền: `AGENTS.md` §8 (Testing & QA)
 - `verdict.md` có PASS/FAIL/BLOCKED cho **từng** done-condition; mỗi dòng trỏ evidence tự tái tạo được (screenshot + `*-result.json` hoặc script).
 - **Thiếu bằng chứng = FAIL, không phải PASS** (AGENTS.md §8).
 - PASS chỉ khi: đủ done-condition PASS + regression 401/403 + endpoint liền kề (nếu chạm quyền/API) + stack đã `down`.
-- BLOCKED khi: stack đang bị bot khác giữ lock; thiếu môi trường (vd `tests/tms/.env` chưa tạo từ `.env.example`); port bị owner chiếm (chatbotx docker còn giữ `:3123`). Ghi rõ điều kiện thiếu + bot giữ lock, trả `sm-tms`.
+- BLOCKED khi: stack đang bị bot khác giữ lock; thiếu môi trường (vd `tests/tms/.env` chưa tạo từ `.env.example`); port bị owner chiếm (chatbotx docker còn giữ `:3123`). Ghi rõ điều kiện thiếu + bot giữ lock, trả `sm`.
 - FAIL ghi expected vs actual + bước tái hiện ngắn.
 
 ## 6. Ranh giới — không làm
@@ -52,8 +52,8 @@ Bản vận hành của vai QA. Chi tiết nền: `AGENTS.md` §8 (Testing & QA)
 
 | Project | Dựng stack | Dừng | Port / account |
 |---|---|---|---|
-| tms | `./scripts/stack.sh up qa-tms <KEY> <commit>` | `./scripts/stack.sh down` | FE 4700, BE 50051/8081, pg 5436, redis 6380; tenant `tuanvudev` (`--host-resolver-rules=MAP tuanvudev.localhost 127.0.0.1`) |
-| chatbotx | `./scripts/stack-chatbotx.sh up qa-tms <KEY>` (wrapper giữ lock, gọi `dev-up.sh`) | `./scripts/stack-chatbotx.sh down` | builder 3123, pg 25432, redis 26379; demo `demo@example.com / Demo@1234` |
+| tms | `./scripts/stack.sh up qa <KEY> <commit>` | `./scripts/stack.sh down` | FE 4700, BE 50051/8081, pg 5436, redis 6380; tenant `tuanvudev` (`--host-resolver-rules=MAP tuanvudev.localhost 127.0.0.1`) |
+| chatbotx | `./scripts/stack-chatbotx.sh up qa <KEY>` (wrapper giữ lock, gọi `dev-up.sh`) | `./scripts/stack-chatbotx.sh down` | builder 3123, pg 25432, redis 26379; demo `demo@example.com / Demo@1234` |
 
 - `./scripts/stack.sh status` trước khi `up`; lock `~/.local/state/tms-stack/lock.json`, chatbotx `~/.local/state/chatbotx-stack/lock.json`.
 - `scripts/stack-chatbotx.sh up <bot> <KEY>` từ chối khi docker stack của owner còn giữ port — không kill container của owner.

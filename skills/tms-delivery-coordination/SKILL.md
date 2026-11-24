@@ -38,7 +38,7 @@ Thiếu file bước trước = **chặn tại cổng**, yêu cầu bot sở h�
 ## 3. Gate QA (chỉ sau khi có `handoff.md` & stack đã nhả lock)
 
 - Kiểm tra `test -f /home/vif/tuanvu/dev-team/reports/<proj>/dev/<KEY>/handoff.md` và stack không còn bận.
-- Giao QA verify **độc lập** bằng `stack.run` của project (TMS: `scripts/stack.sh up qa-tms <KEY> <commit>`; ChatbotX: `./scripts/dev-up.sh`) — tự đăng nhập, tự xuất/chạy, không dùng file hay lời Dev. Brief QA nêu rõ từng điều kiện kiểm và done = PASS/FAIL từng điều kiện kèm bằng chứng trong `reports/<proj>/qa/<KEY>/verdict.md` + `evidence/`, xong phải dừng stack.
+- Giao QA verify **độc lập** bằng `stack.run` của project (TMS: `scripts/stack.sh up qa <KEY> <commit>`; ChatbotX: `./scripts/dev-up.sh`) — tự đăng nhập, tự xuất/chạy, không dùng file hay lời Dev. Brief QA nêu rõ từng điều kiện kiểm và done = PASS/FAIL từng điều kiện kèm bằng chứng trong `reports/<proj>/qa/<KEY>/verdict.md` + `evidence/`, xong phải dừng stack.
 - QA FAIL/blocked → giao lại Dev fix theo lỗi QA báo (Dev commit mới, tăng "Lần bàn giao" trong `handoff.md`). Chỉ qua task tiếp khi task hiện tại code xong và `verdict.md` PASS.
 
 ## 4. PR (chỉ sau `verdict.md` PASS & BA cập nhật SRS/ADR)

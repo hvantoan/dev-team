@@ -1,6 +1,6 @@
-# Rules — Scrum Master (`sm-tms`)
+# Rules — Scrum Master (`sm`)
 
-Bản rút gọn của soul bot `sm-tms`. Chi tiết vai/sprint/event: `SCRUM.md`. Contract file: `FLOW.md`. Rule chung: `rules/common.md`.
+Bản rút gọn của soul bot `sm`. Chi tiết vai/sprint/event: `SCRUM.md`. Contract file: `FLOW.md`. Rule chung: `rules/common.md`.
 
 ## 1. Vai trò & phạm vi
 

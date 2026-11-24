@@ -1,4 +1,4 @@
-# Rules Dev — `dev-tms`
+# Rules Dev — `dev`
 
 Vận hành riêng của vai Dev trong pipeline 4 vai. Không nhắc lại nội dung đã có: quy ước workspace ở `AGENTS.md`, contract bàn giao ở `FLOW.md` (mục Contract từng bước), Scrum/DoD ở `SCRUM.md` §4, rule chung ở `rules/common.md`.
 
@@ -15,10 +15,10 @@ Vận hành riêng của vai Dev trong pipeline 4 vai. Không nhắc lại nội
 Nhận khi đủ cả ba:
 
 1. `reports/<proj>/ba/<KEY>/spec.md` đã tồn tại và đã được PO clear (comment Jira "clear" + scope allow/deny).
-2. Ticket ở **IN DEVELOP** trên Jira. Còn READY TO DEVELOP → báo `sm-tms` kéo status, không tự kéo thay PO.
-3. Brief của `sm-tms` có scope allow/deny **theo từng repo** (dự án nhiều repo) và `done_when`.
+2. Ticket ở **IN DEVELOP** trên Jira. Còn READY TO DEVELOP → báo `sm` kéo status, không tự kéo thay PO.
+3. Brief của `sm` có scope allow/deny **theo từng repo** (dự án nhiều repo) và `done_when`.
 
-Thiếu một điều kiện: không code, trả lại `sm-tms` kèm điều kiện thiếu. Brief mâu thuẫn spec: hỏi `sm-tms`, không tự chọn.
+Thiếu một điều kiện: không code, trả lại `sm` kèm điều kiện thiếu. Brief mâu thuẫn spec: hỏi `sm`, không tự chọn.
 
 ## 3. Việc phải làm
 
@@ -30,7 +30,7 @@ Thiếu một điều kiện: không code, trả lại `sm-tms` kèm điều ki�
    - ChatbotX worktree 2 bước (lefthook chặn nhánh tự sinh): `orca worktree create --repo ChatbotX --name <tên> --branch feat/<mô-tả> --base-branch main` rồi `worker-start --worktree branch:feat/<mô-tả>`.
 4. Verify tại chỗ trên stack local duy nhất của project (§7) + gate local của project.
 5. Nhả stack (`down`) trước khi ghi handoff.
-6. Ghi `handoff.md` (§4) rồi báo `sm-tms`/QA.
+6. Ghi `handoff.md` (§4) rồi báo `sm`/QA.
 
 Không chờ worker trong cùng lượt — kết quả về qua mail.
 
@@ -54,7 +54,7 @@ Ghi thêm khi có: `dispatch:<id>` để truy vết worker, đường dẫn tuy�
 
 - Done của Dev = code + gate local pass + test case chức năng theo AC pass + `handoff.md` trên đĩa. PASS cuối cùng là của QA, không phải của Dev.
 - QA FAIL → commit mới trên **cùng nhánh**, cập nhật `handoff.md` trong **cùng** folder KEY và tăng "Lần bàn giao". Không mở folder KEY mới, không xoá lịch sử.
-- QA BLOCKED → chờ `sm-tms` quyết retry hay trả PO; không tự dựng môi trường khác.
+- QA BLOCKED → chờ `sm` quyết retry hay trả PO; không tự dựng môi trường khác.
 - PR **chỉ sau** khi `reports/<proj>/qa/<KEY>/verdict.md` có PASS. Title và mọi heading trong description **tiếng Anh**.
 - Squash merge + xoá nhánh; **chỉ merge khi anh Văn Toàn duyệt**.
 - Nhóm task: kết quả là một PR tổng cho cả nhóm, ghi đủ ticket trong description.
@@ -72,12 +72,12 @@ Ghi thêm khi có: `dispatch:<id>` để truy vết worker, đường dẫn tuy�
 ## 7. Lệnh & môi trường theo project
 
 **tms** — `projects/tms.json`
-- Stack: `./scripts/stack.sh up dev-tms <KEY> <commit|worktree> [--dev]`, `status`, `down`, `reset-db`. Port: FE 4700, BE 50051 (gRPC) / 8081 (HTTP), postgres 5436, redis 6380.
+- Stack: `./scripts/stack.sh up dev <KEY> <commit|worktree> [--dev]`, `status`, `down`, `reset-db`. Port: FE 4700, BE 50051 (gRPC) / 8081 (HTTP), postgres 5436, redis 6380.
 - Gate: build + test từng repo đã đổi (`go build ./...`, `go test` cho BE; build FE) rồi harness `cd tests/tms && pnpm test` hoặc spec cụ thể của feature.
 - Export Excel: theo `skills/tms-excel-export-verify/SKILL.md` — đọc `mergedCells`/format của file mẫu trước khi code, verify API thật trên stack, `down` khi xong.
 
 **chatbotx** — `projects/chatbotx.json`
-- Stack: `./scripts/stack-chatbotx.sh up dev-tms <KEY>` / `status` / `down` — wrapper giữ lock rồi gọi `dev-up.sh` (builder :3123, postgres :25432, redis :26379). Gọi `dev-up.sh` trực tiếp là bỏ lock: chỉ làm khi PO yêu cầu.
+- Stack: `./scripts/stack-chatbotx.sh up dev <KEY>` / `status` / `down` — wrapper giữ lock rồi gọi `dev-up.sh` (builder :3123, postgres :25432, redis :26379). Gọi `dev-up.sh` trực tiếp là bỏ lock: chỉ làm khi PO yêu cầu.
 - Gate local: `pnpm lint`; `pnpm check-types` **chỉ khi debug type cụ thể**.
 - `pnpm test` do CI chạy, **không** chạy local — nhưng test case chức năng theo AC vẫn **bắt buộc** trước handoff, kèm evidence.
 
@@ -89,4 +89,4 @@ Ghi thêm khi có: `dispatch:<id>` để truy vết worker, đường dẫn tuy�
 - Lefthook chặn nhánh sai định dạng → dùng đúng 2 bước worktree ở §3; không dùng `--worktree new-child` cho ChatbotX.
 - `next build` bỏ qua lỗi TS → `check-types` ở CI là cổng type duy nhất.
 - Evidence nặng (video, `*.xlsx`, dump `.sql`, archive): để ngoài git, `handoff.md`/`verdict.md` ghi **đường dẫn tuyệt đối**.
-- Stack còn lock của bot khác: chờ hoặc báo `sm-tms`; không đổi port, không start/stop/kill container của anh Toàn.
+- Stack còn lock của bot khác: chờ hoặc báo `sm`; không đổi port, không start/stop/kill container của anh Toàn.

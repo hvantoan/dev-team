@@ -50,7 +50,7 @@ SM **không** quyết định làm gì (PO) và **không** quyết định làm 
 
 **Quy tắc bắt buộc:** một quyết định chỉ có hiệu lực khi nó nằm trong artifact — comment Jira, dòng trong `goal.md`, hoặc câu trả lời trên item. Bot đọc file, không đọc chat; nói miệng mà không ghi = không tính.
 
-Nói riêng với `ba-tms`/`dev-tms`/`qa-tms` thì việc vẫn chưa tính là giao cho tới khi `SM` biết và artifact có trên đĩa.
+Nói riêng với `ba`/`dev`/`qa` thì việc vẫn chưa tính là giao cho tới khi `sm` biết và artifact có trên đĩa.
 
 ## 6. Đo lường và cải tiến
 

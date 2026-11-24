@@ -25,7 +25,7 @@ Quy trình đã dùng thành công cho ITMS-381 (export danh sách đơn vận c
 5. **Verify thật trên stack local qua `scripts/stack.sh`** (bắt buộc, không chỉ unit test):
    ```bash
    cd /home/vif/tuanvu/dev-team
-   ./scripts/stack.sh up dev-tms <KEY> <commit|worktree> --dev
+   ./scripts/stack.sh up dev <KEY> <commit|worktree> --dev
    ```
    - Gọi thật endpoint export trên gateway `:8081` (VD `POST http://localhost:8081/api/v1/delivery-orders/export`), kỳ vọng HTTP 200 và file xlsx hợp lệ.
    - Mở file xuất được bằng `openpyxl`, đối chiếu từng BR: số dòng mỗi đơn (= sản phẩm × khoảng giá), thứ tự, **từng vùng merge** (`ws.merged_cells.ranges`), format (`#,##0`, `dd/mm/yyyy`).

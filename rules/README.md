@@ -20,12 +20,12 @@
 
 | File | Chủ sở hữu | Đọc khi nào |
 |---|---|---|
-| `rules/README.md` | `sm-tms` | Lần đầu vào workspace, hoặc khi cần biết rule nào nằm ở đâu |
-| `rules/common.md` | `sm-tms` | Mọi việc, trước `rules/<vai>.md` |
-| `rules/sm.md` | `sm-tms` | Mở run, giao task, chuyển cổng, chạy event sprint, báo PO |
-| `rules/ba.md` | `ba-tms` | Nhận ticket, viết `spec.md`, cập nhật SRS/ADR sau QA PASS |
-| `rules/dev.md` | `dev-tms` | Nhận brief, implement, verify local, ghi `handoff.md`, tạo PR |
-| `rules/qa.md` | `qa-tms` | Nhận `handoff.md`, verify độc lập, ghi `verdict.md` |
+| `rules/README.md` | `sm` | Lần đầu vào workspace, hoặc khi cần biết rule nào nằm ở đâu |
+| `rules/common.md` | `sm` | Mọi việc, trước `rules/<vai>.md` |
+| `rules/sm.md` | `sm` | Mở run, giao task, chuyển cổng, chạy event sprint, báo PO |
+| `rules/ba.md` | `ba` | Nhận ticket, viết `spec.md`, cập nhật SRS/ADR sau QA PASS |
+| `rules/dev.md` | `dev` | Nhận brief, implement, verify local, ghi `handoff.md`, tạo PR |
+| `rules/qa.md` | `qa` | Nhận `handoff.md`, verify độc lập, ghi `verdict.md` |
 
 ## Nội dung mỗi file vai
 
