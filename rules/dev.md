@@ -15,10 +15,10 @@ Vận hành riêng của vai Dev trong pipeline 4 vai. Không nhắc lại nội
 Nhận khi đủ cả ba:
 
 1. `reports/<proj>/ba/<KEY>/spec.md` đã tồn tại và đã được PO clear (comment Jira "clear" + scope allow/deny).
-2. Ticket ở **IN DEVELOP** trên Jira. Còn READY TO DEVELOP → báo `SM` kéo status, không tự kéo thay PO.
-3. Brief của `SM` có scope allow/deny **theo từng repo** (dự án nhiều repo) và `done_when`.
+2. Ticket ở **IN DEVELOP** trên Jira. Còn READY TO DEVELOP → báo `sm-tms` kéo status, không tự kéo thay PO.
+3. Brief của `sm-tms` có scope allow/deny **theo từng repo** (dự án nhiều repo) và `done_when`.
 
-Thiếu một điều kiện: không code, trả lại `SM` kèm điều kiện thiếu. Brief mâu thuẫn spec: hỏi `SM`, không tự chọn.
+Thiếu một điều kiện: không code, trả lại `sm-tms` kèm điều kiện thiếu. Brief mâu thuẫn spec: hỏi `sm-tms`, không tự chọn.
 
 ## 3. Việc phải làm
 
@@ -30,7 +30,7 @@ Thiếu một điều kiện: không code, trả lại `SM` kèm điều kiện 
    - ChatbotX worktree 2 bước (lefthook chặn nhánh tự sinh): `orca worktree create --repo ChatbotX --name <tên> --branch feat/<mô-tả> --base-branch main` rồi `worker-start --worktree branch:feat/<mô-tả>`.
 4. Verify tại chỗ trên stack local duy nhất của project (§7) + gate local của project.
 5. Nhả stack (`down`) trước khi ghi handoff.
-6. Ghi `handoff.md` (§4) rồi báo `SM`/QA.
+6. Ghi `handoff.md` (§4) rồi báo `sm-tms`/QA.
 
 Không chờ worker trong cùng lượt — kết quả về qua mail.
 
@@ -54,7 +54,7 @@ Ghi thêm khi có: `dispatch:<id>` để truy vết worker, đường dẫn tuy�
 
 - Done của Dev = code + gate local pass + test case chức năng theo AC pass + `handoff.md` trên đĩa. PASS cuối cùng là của QA, không phải của Dev.
 - QA FAIL → commit mới trên **cùng nhánh**, cập nhật `handoff.md` trong **cùng** folder KEY và tăng "Lần bàn giao". Không mở folder KEY mới, không xoá lịch sử.
-- QA BLOCKED → chờ `SM` quyết retry hay trả PO; không tự dựng môi trường khác.
+- QA BLOCKED → chờ `sm-tms` quyết retry hay trả PO; không tự dựng môi trường khác.
 - PR **chỉ sau** khi `reports/<proj>/qa/<KEY>/verdict.md` có PASS. Title và mọi heading trong description **tiếng Anh**.
 - Squash merge + xoá nhánh; **chỉ merge khi anh Văn Toàn duyệt**.
 - Nhóm task: kết quả là một PR tổng cho cả nhóm, ghi đủ ticket trong description.
@@ -89,4 +89,4 @@ Ghi thêm khi có: `dispatch:<id>` để truy vết worker, đường dẫn tuy�
 - Lefthook chặn nhánh sai định dạng → dùng đúng 2 bước worktree ở §3; không dùng `--worktree new-child` cho ChatbotX.
 - `next build` bỏ qua lỗi TS → `check-types` ở CI là cổng type duy nhất.
 - Evidence nặng (video, `*.xlsx`, dump `.sql`, archive): để ngoài git, `handoff.md`/`verdict.md` ghi **đường dẫn tuyệt đối**.
-- Stack còn lock của bot khác: chờ hoặc báo `SM`; không đổi port, không start/stop/kill container của anh Toàn.
+- Stack còn lock của bot khác: chờ hoặc báo `sm-tms`; không đổi port, không start/stop/kill container của anh Toàn.

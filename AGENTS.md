@@ -1,12 +1,12 @@
 # Repository Guidelines
 
-`dev-team` là **workspace điều phối** của team bot Orca (`SM`, `BA`, `Dev`, `QA`): chứa quy ước, template, skill nguồn và artifact các bot sinh ra. **Không chứa code dự án** — code nằm ở repo riêng, trỏ từ `projects/<proj>.json`.
+`dev-team` là **workspace điều phối** của team bot Orca (`sm-tms`, `ba-tms`, `dev-tms`, `qa-tms`): chứa quy ước, template, skill nguồn và artifact các bot sinh ra. **Không chứa code dự án** — code nằm ở repo riêng, trỏ từ `projects/<proj>.json`.
 
 Mọi bot/agent đọc file này trước, rồi `projects/<proj>.json` của project đang xử lý, và `FLOW.md` cho contract giao tiếp giữa các bot.
 
 ## 1. Project Overview
 
-Mục đích: biến ticket thành thay đổi đã kiểm chứng qua một pipeline file-based gồm 4 vai, với bằng chứng tái tạo được. Actors: `ieu-phoi-tms` (Scrum Master, bot `SM`), `ba-tms`, `dev-tms`, `qa-tms`; PO là anh Văn Toàn — **người duy nhất clear task** trước khi Dev nhận. Sprint, event, DoD và cách PO giao tiếp với team: `SCRUM.md`.
+Mục đích: biến ticket thành thay đổi đã kiểm chứng qua một pipeline file-based gồm 4 vai, với bằng chứng tái tạo được. Actors: `sm-tms` (Scrum Master), `ba-tms`, `dev-tms`, `qa-tms`; PO là anh Văn Toàn — **người duy nhất clear task** trước khi Dev nhận. Sprint, event, DoD và cách PO giao tiếp với team: `SCRUM.md`.
 
 Danh sách project là các file `projects/*.json` — không có bảng trùng trong tài liệu.
 
@@ -113,7 +113,7 @@ Trạng thái hiện tại (2026-11-23): TMS có artifact ở `reports/tms/{orch
 
 `skills/` là **source of truth** của skill team. Sửa ở đây rồi copy sang `~/.orca/bots/<bot>/skills/<name>/` cho từng bot dùng skill đó (mỗi home bot giữ bản riêng). Mọi đường dẫn hardcode trong skill phải trỏ `/home/vif/tuanvu/dev-team/` và layout theo project.
 
-Team chạy **native trên Orca** (4 bot: `SM`, `BA`, `Dev`, `QA`). `Dev`/`QA` giao việc code/test cho Orca worker bằng `orca orchestration worker-start` qua skill `orca-dispatch` — repo Orca `name:tms-web` / `name:tms_application` (code) và `name:dev-team` (test + việc workspace).
+Team chạy **native trên Orca** (4 bot: `sm-tms`, `ba-tms`, `dev-tms`, `qa-tms`). `dev-tms`/`qa-tms` giao việc code/test cho Orca worker bằng `orca orchestration worker-start` qua skill `orca-dispatch` — repo Orca `name:tms-web` / `name:tms_application` (code) và `name:dev-team` (test + việc workspace).
 
 ## 4. Development Commands
 
@@ -192,7 +192,7 @@ Repo không có runtime code: async patterns, dependency injection, state manage
 
 ## 8. Testing & QA
 
-- **Gate:** QA TMS kiểm chứng độc lập, không dựa vào lời Dev. Kết quả ghi `verdict.md` với PASS/FAIL/BLOCKED cho **từng** done-condition; thiếu bằng chứng = FAIL, không phải PASS.
+- **Gate:** `qa-tms` kiểm chứng độc lập, không dựa vào lời Dev. Kết quả ghi `verdict.md` với PASS/FAIL/BLOCKED cho **từng** done-condition; thiếu bằng chứng = FAIL, không phải PASS.
 - **Harness:** `tests/tms/` (Playwright), tự discover project từ `tests/<company>/<app>/` có `e2e/` (hiện `tuanvu/tms`). Lệnh chạy: `projects/tms.json` → `stack`.
 - **Phạm vi mỗi ticket:** map đủ AC → evidence; kiểm cả ca âm và ca dương (không quyền / có quyền), regression 401/403 và endpoint liền kề; với export, đối chiếu output ↔ mẫu ticket ↔ DB, kiểm merge cell.
 - **Evidence:** theo policy ở §2 — file nhẹ commit, file nặng để ngoài git và ghi đường dẫn tuyệt đối trong `verdict.md`.

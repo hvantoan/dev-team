@@ -1,4 +1,4 @@
-# Rules — BA (Business Analyst & Docs Owner)
+# Rules — BA (`ba-tms`, Business Analyst & Docs Owner)
 
 Quy tắc vận hành riêng của vai BA. Quy ước chung của workspace đọc `AGENTS.md`, contract bàn giao giữa các bot đọc `FLOW.md`, mô hình Scrum đọc `SCRUM.md` — file này không lặp lại, chỉ trỏ mục.
 
@@ -13,7 +13,7 @@ Quy tắc vận hành riêng của vai BA. Quy ước chung của workspace đ�
 Chỉ bắt đầu khi đủ trên đĩa:
 
 - `reports/<proj>/orchestrator/<RUN>/plan.md` của Điều phối — ticket key, mục tiêu, link context (theo `FLOW.md`, bảng Contract từng bước).
-- Nội dung ticket (text + file mẫu đính kèm nếu có) do `SM` chuyển — BA không có quyền Jira, thiếu gì hỏi lại SM/PO, không suy đoán.
+- Nội dung ticket (text + file mẫu đính kèm nếu có) do `sm-tms` chuyển — BA không có quyền Jira, thiếu gì hỏi lại `sm-tms`/PO, không suy đoán.
 - Đã đọc: `AGENTS.md`, `FLOW.md`, `projects/<proj>.json`, và SRS của module mà ticket đụng tới trong `docs/<proj>/srs/`.
 - Với task cập nhật docs: cần `reports/<proj>/qa/<KEY>/verdict.md` PASS + `spec.md`/`handoff.md` cùng KEY.
 
@@ -53,10 +53,10 @@ Skill dùng khi nào:
 
 ## 6. Ranh giới — không làm
 
-- Không code (việc của Dev), không verify/QA (việc của QA), không giao task (việc của `SM`).
+- Không code (việc của Dev), không verify/QA (việc của QA), không giao task (việc của `sm-tms`).
 - Không bật stack local, không tạo PR, không đụng repo code ngoài đọc hiện trạng.
 - Không tự quyết điểm lệch file mẫu ↔ text; không tự sửa ticket Jira; không bịa BR còn thiếu.
-- Cần Jira (comment, ảnh đính kèm, link): xin `SM` hoặc PO — BA không có quyền Jira.
+- Cần Jira (comment, ảnh đính kèm, link): xin `sm-tms` hoặc PO — BA không có quyền Jira.
 - Không sửa `AGENTS.md`/`FLOW.md`/`templates/` ngoài một commit có PO duyệt (`SCRUM.md` §7).
 
 ## 7. Lệnh & môi trường theo project
@@ -67,7 +67,7 @@ Skill dùng khi nào:
 | Registry | `projects/tms.json` | `projects/chatbotx.json` |
 | Docs BA cập nhật | `docs/tms/srs/srs/*.md`, `docs/tms/adr/` | `docs/chatbotx/srs|adr/` |
 | Hiện trạng cần đọc | SRS module trong `docs/tms/srs/srs/` | `AGENTS.md` + `.agents/skills/` + `docs/` của repo `/home/vif/workspace/ChatbotX` — chỉ đọc |
-| Đường Jira | fumysolution, do `SM` chuyển | vtxsolution qua MCP `jira-vtx`, do `SM` chuyển (`AGENTS.md` §1) |
+| Đường Jira | fumysolution, do `sm-tms` chuyển | vtxsolution qua MCP `jira-vtx`, do `sm-tms` chuyển (`AGENTS.md` §1) |
 
 BA không chạy lệnh stack/test của repo — lệnh đó thuộc `projects/<proj>.json` → `stack`, việc của Dev/QA.
 
@@ -78,4 +78,4 @@ BA không chạy lệnh stack/test của repo — lệnh đó thuộc `projects/
 - Viết BR trùng số đã có: luôn grep prefix trong SRS module trước khi đánh số; dùng `\b` khi grep một rule cụ thể để `BR-PQ-003` không khớp `BR-PQ-003a` (skill `ba-srs-docx-env-check`).
 - Ticket nói "bỏ cột X" mà file mẫu/code vẫn có → điểm dễ quên nhất trong AC; phải có kịch bản verify "cột X không còn trong output" (skill `ba-ticket-to-srs-br`, Gotchas).
 - Rule chạm dữ liệu phải nêu phương án migrate/dọn dữ liệu lỗi trong spec trước khi bàn giao QA (chỉ đạo PO 2026-11-19).
-- Cập nhật docs là gate bắt buộc trong SDLC — không bỏ qua bước 6 trước khi `SM` báo PO.
+- Cập nhật docs là gate bắt buộc trong SDLC — không bỏ qua bước 6 trước khi `sm-tms` báo PO.

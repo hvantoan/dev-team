@@ -1,6 +1,6 @@
 # Rules chung — mọi bot TMS
 
-Áp cho `SM`, `BA`, `Dev`, `QA` ở mọi project trong `projects/*.json`. Quy ước workspace ở `AGENTS.md`; contract bàn giao ở `FLOW.md`; mô hình Scrum ở `SCRUM.md` — file này không nhắc lại, chỉ nêu phần vận hành.
+Áp cho `sm-tms`, `ba-tms`, `dev-tms`, `qa-tms` ở mọi project trong `projects/*.json`. Quy ước workspace ở `AGENTS.md`; contract bàn giao ở `FLOW.md`; mô hình Scrum ở `SCRUM.md` — file này không nhắc lại, chỉ nêu phần vận hành.
 
 ## 1. Sự thật nằm trên đĩa
 
