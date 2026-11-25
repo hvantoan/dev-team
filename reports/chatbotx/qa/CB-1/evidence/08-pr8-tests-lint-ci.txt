@@ -1,0 +1,30 @@
+# PR #8 — test/lint/CI (QA chạy lại độc lập, worktree /tmp/qa-cb1-pr8)
+
+## Tại 340868793 (head SM báo)
+pnpm --filter @chatbotx.io/connections exec vitest run __tests__/service.test.ts   -> 1 file, 97 passed, exit 0
+pnpm --filter @chatbotx.io/connections test (env sạch)                          -> 9 passed | 2 skipped, 136 passed | 27 skipped, exit 0
+pnpm --filter @chatbotx.io/business test integration-openai-compatible credential-providers.test.ts -> 4 files, 49 passed, exit 0
+pnpm --filter builder exec vitest run openai-compatible-actions integrations-public-api api-parity-manifest public-spec-operations public-spec-mcp -> 5 files, 123 passed, exit 0
+pnpm --filter builder exec vitest run ai-agent-action-schema openai-compatible-provider-verify -> 2 files, 8 passed, exit 0
+
+## Tại ecd9f9127 (head hiện tại — đã checkout lại)
+pnpm --filter builder exec vitest run openai-compatible-actions integrations-public-api public-spec-operations   -> 3 files, 84 passed, exit 0
+pnpm --filter builder exec vitest run api-parity-manifest public-spec-mcp                                        -> 2 files, 39 passed, exit 0
+pnpm --filter @chatbotx.io/business test integration-openai-compatible credential-providers.test.ts               -> 4 files, 49 passed, exit 0
+pnpm lint                                                                                                       -> exit 0 (turbo 2/2 cache hit — hash nội dung trùng lần lint trước)
+pnpm exec ultracite check                                                                                        -> exit 0 "Checked 11445 files in 58s. No fixes applied."
+pnpm --filter @chatbotx.io/database ... (không chạy) — pnpm lint đã gồm check-invariants 8107 file + schema drift
+
+## Test mới do PR #8 thêm (đã cài và chạy cùng suite trên)
+apps/builder/__tests__/openai-compatible-actions.test.ts        +3 test: unreachable -> providerUnreachable; unsafe_base_url & invalidBaseUrl -> invalidBaseUrl; message ESC 1 lần
+packages/connections/__tests__/service.test.ts                  +1 test: openaiCompatible + ssrfBlocked -> connectionCredentialsRejected (không phải ssrfBlocked)
+apps/builder/__tests__/public-spec-operations.test.ts           +1 test: describe khai báo possibleErrorsOnCreatingConnection (gồm ssrfBlocked)
+packages/business/src/integration-openai-compatible/__tests__/integration-openai-compatible-service.test.ts  +1 test: update verify unreachable -> OpenaiCompatibleProviderUnreachableError (code invalidBaseUrl, không data)
+
+## CI
+run 45158885996 head ecd9f9127d08cb286add2470a38fea357a5113b1 -> completed/success
+  Types, Types (apps), Types (packages), Lint, Tests, Tests (1/8)...(8/8)  = success
+Devin Review (app) pass.
+
+## Env note (không phải lỗi PR)
+Lần chạy đầu `pnpm --filter @chatbotx.io/connections test` fail 11 test timeout vì shell QA còn export DATABASE_URL trỏ Postgres test -> 2 suite integration (vốn `describe.skipIf(!databaseUrl)`) chạy thật. Chạy lại với env sạch: 136 passed / 27 skipped, exit 0.

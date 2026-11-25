@@ -5,8 +5,8 @@ Cập nhật: 2026-11-23 (sprint start)
 | KEY | Stage | Owner | Artifact | Ghi chú |
 |---|---|---|---|---|
 | CB-2 | refined — PO duyệt | BA | `reports/chatbotx/ba/CB-2/refinement.md` | PO duyệt cắt story + thứ tự Đợt 1 (2026-11-23, item 4). Đợt 1 CB-3 → CB-5 → CB-4 → CB-8, CB-1 song song |
-| CB-1 | **merged** — #6 `0f88afe86` vào main; staging chưa bắt đầu (chờ PO yêu cầu) | Dev / QA | `reports/chatbotx/qa/CB-1/verdict.md` + PR #6, #7, #8 | **PR #6 MERGED** `0f88afe86` (merge commit trên main; head `ab182d743`, CI 14/14, CLEAN) sau khi SM chạy local + demo 9router local PASS. #7 `6f0e00f55`, #8 `a28adfda4` đã merged vào nhánh base. **Còn mở:** PO quyết chặn link-local khi `ALLOW_PRIVATE_URLS=true` (item 4) |
-| CB-3 | clear — chờ input vận hành | — | `reports/chatbotx/ba/CB-3/spec.md` | PO clear 2026-11-23; cần stack test, nick/QR, nhóm test; Dev nhận sau PR 2 |
+| CB-1 | **merged** — #6 `0f88afe86` vào main; staging chưa bắt đầu (chờ PO yêu cầu) | Dev / QA | `reports/chatbotx/qa/CB-1/verdict.md` + PR #6, #7, #8 | **PR #6 MERGED** `0f88afe86` (merge commit trên main; head `ab182d743`, CI 14/14, CLEAN) sau khi SM chạy local + demo 9router local PASS. #7 `6f0e00f55`, #8 `a28adfda4` đã merged vào nhánh base. **PO chốt 23:20:** giữ nguyên opt-out tắt hẳn guard kể cả link-local (commit `a33b6c9`), không thêm chặn |
+| CB-3 | spec — chờ input vận hành | — | `reports/chatbotx/ba/CB-3/spec.md` | PO clear + chốt mở Đợt 1 (2026-11-25); stack test có sẵn (main @0f88afe86, :3123); chờ nick Zalo/nhóm test/người quét QR (item 4) |
 | CB-4 → CB-17 | backlog | — | — | `To Do` + `idea`, chưa qua gate |
 
 Stage: backlog → refining → spec → clear → dev → qa → pr → staging.
@@ -20,12 +20,13 @@ Stage: backlog → refining → spec → clear → dev → qa → pr → staging
 - **Chặn:** CB-3 chờ input 2 ngày (đã lên item 4 needs-you). Không có gì chặn CB-1.
 - **Kiểm chứng:** `gh pr view` 2026-11-25 — #6 MERGED `0f88afe86`, #7 MERGED `6f0e00f55`, #8 MERGED `ecd9f9127`; không PR nào còn mở trên ChatbotX. Verdict PASS trong `qa/CB-1/verdict.md` chỉ có cho **#6 và #8**; **#7 không có verdict.md riêng** — merge trên uỷ quyền PO + CI 14/14 xanh sau khi QA ACK verify.
 - **Follow-up đã giao:** SRS `docs/chatbotx/srs/integration-openai-compatible.md` + ADR `encryptedAuth` (checklist "Cập nhật docs sau khi DONE" của spec CB-1, FLOW bước 6) → BA, 2026-11-25.
+- **Chưa đạt đủ "Done when" của spec:** verdict PASS mới có cho #6/#8 (như trên) và backfill `--apply` **chưa chạy trên DB dùng chung** — mới dry-run 0 row trên DB dev rỗng. PO đã uỷ quyền merge; `review.md` cuối sprint phải ghi đúng hai điểm này, không coi là đã đóng hết.
 - **Tồn ngoài sprint:** legacy provider vẫn lộ `(code connectionProviderRejected)`; nhánh UI `providerUnreachable` chỉ có unit test — cần issue riêng nếu PO muốn đóng.
 
 ### 2026-11-23
 
 - **Đang làm:** CB-1 đã merge vào main (`0f88afe86`); staging chưa bắt đầu — chờ PO yêu cầu.
-- **Chờ:** PO quyết chặn link-local khi ALLOW_PRIVATE_URLS=true (item 4); CB-3 chờ stack/nick/nhóm test.
+- **Chờ:** CB-3 chờ stack/nick/nhóm test; CB-1 chờ PO yêu cầu staging.
 - **Chặn:** MCP `jira-vtx` lỗi certifi ở phiên SM (đã workaround qua Chef). Server vif chưa sign-in Orca Cloud → không watch được GitHub PR #8 merge; SM check thủ công bằng `gh` mỗi daily, đã offer connect card.
 
 ## Log

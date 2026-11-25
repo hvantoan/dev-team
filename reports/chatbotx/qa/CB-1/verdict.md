@@ -105,3 +105,44 @@ CI run 45126421011 tại đúng head: Lint, Types, Types (apps), Types (packages
 - Khác biệt môi trường test (không phải lỗi PR): redis test là `redis:7-alpine` không có module Bloom → worker log `ERR unknown command 'BF.RESERVE'` ở listener analytics (MacTrackingService dedup); không ảnh hưởng luồng AI/automated-response.
 - Chưa kiểm được tại chỗ: nhánh `isCloud()` bỏ qua env opt-out (cần build cloud) và DNS-rebinding qua DoH (cần internet) — đã có unit test tương ứng.
 - Evidence trong `reports/chatbotx/qa/CB-1/evidence/` (01 lint/types, 02 test, 03 CI, 04 static code, 05 E2E AC1 + AC2/AC3, 06 AC5); log thô `/tmp/qa-cb1-*` đã xoá cùng stack.
+- Policy PO 2026-11-23 (sau lượt này): ChatbotX **không chạy `check-types`/`check-types:cold` local** nữa — CI Types jobs là cổng type. Verdict này có chạy type check trước khi policy ban hành; các lần verify sau chỉ lint + targeted tests + E2E kèm dẫn chứng CI Types cùng head.
+
+---
+
+# QA Verdict — CB-1 / PR #8 (follow-up: review fixes cho PR #6)
+
+- **PR:** [#8](https://github.com/hvantoan/ChatbotX/pull/8) — `feat/cb-1-openai-compatible-review-fixes`, OPEN, `MERGEABLE`
+- **Head verified:** `ecd9f9127d08cb286add2470a38fea357a5113b1`
+  - SM báo head `340868793`. QA chạy phần lớn E2E ở `340868793`; **giữa lượt head chuyển sang `ecd9f9127`** (`refactor(openai-compatible): mark unreachable with a dedicated error class`, 4 file, +34/−24). Toàn bộ case bị ảnh hưởng (PATCH unreachable/SSRF/legacy) đã **chạy lại ở head mới**; phần connect-path không bị commit mới chạm tới (diff chỉ 4 file ở update-path).
+- **Stack:** compose project `qa-cb1` dựng lại lần 2 (postgres `25433`, redis `26380`, rustfs `29004/29005`), builder `next dev` `3124` chạy từ **worktree tạm của QA** `/tmp/qa-cb1-pr8` (checkout `refs/pull/8/head`) — không dùng/không sửa worktree PR của Dev, không đụng stack owner (12 container `chatbotx-*` vẫn `Up` uptime cũ). Mock provider `127.0.0.1:1235/v1`; token mint thẳng vào DB test.
+- **Ngày chạy:** 2026-11-23 (16:2x–18:0x +07:00). Stack đã teardown.
+
+| Repo | Branch/commit |
+|---|---|
+| ChatbotX | `feat/cb-1-openai-compatible-review-fixes` @ `ecd9f9127` (CI [45158885996](https://github.com/hvantoan/ChatbotX/actions/runs/45158885996)) — trước đó `340868793` (CI [45154490205](https://github.com/hvantoan/ChatbotX/actions/runs/45154490205)) |
+
+## Verdict: PASS (PR #8)
+
+| # | Yêu cầu review | Kết quả | Evidence |
+|---|---|---|---|
+| 1 | connect endpoint private/loopback → `ssrfBlocked` (không phải `connectionCredentialsRejected`), message không lộ `(code ...)` | **PASS** — `POST /v1/connections` `127.0.0.1` / `169.254.169.254` → `400 {"code":"ssrfBlocked","message":"OpenAI-compatible base URL is not allowed."}` — sạch, không suffix | 07 (B1/B2/D3) |
+| 2 | UI connect unreachable → `providerUnreachable`; unsafe/invalid → `invalidBaseUrl`; public PATCH giữ `invalidBaseUrl` | **PASS ở API**, **unit-only ở UI** — PATCH public host/port đóng → `400 invalidBaseUrl "OpenAI-compatible base URL could not be verified."`; PATCH `user:pass@` → `invalidBaseUrl "… is invalid."`; PATCH private → `ssrfBlocked`. Server action không gọi được qua HTTP → dựa vào 3 test mới trong `openai-compatible-actions.test.ts` + đọc code | 07 (D1c/D2/D6), 08 |
+| 3 | provider legacy vẫn `connectionCredentialsRejected` | **PASS** — `claude` key sai → `400 connectionCredentialsRejected`; `stripInternalErrorCode` chỉ áp nhánh `openaiCompatible`+`ssrfBlocked` (đúng phạm vi) | 07 (B4/D4) |
+| 4 | i18n 21 locale, không lẫn tiếng Anh (trừ zh) | **PASS** — `openaiCompatible.validation.providerUnreachable` có ở **21/21** locale, giá trị dịch thật (ja/ar/vi/de/zh-CN/zh-TW kiểm mẫu); key cũ `invalidBaseURL` giữ nguyên tên, không file nào còn key bị xoá | 08, `apps/builder/messages/*.json` |
+| 5 | test PR xanh, lint/check-types sạch, CI xanh | **PASS** — builder 84+39+8, business 49, connections 97 (file service) / 136 (package, env sạch); `pnpm lint` exit 0; `ultracite check` "11445 files, No fixes applied"; CI `ecd9f9127`: Types, Types (apps/packages), Lint, Tests 1–8 đều success | 08 |
+
+## Phát hiện
+
+1. **[ĐÃ SỬA ở `ecd9f9127`, đóng]** Tại `340868793`, PATCH unreachable trả `"… could not be verified. (reason=unreachable)"` — rò marker nội bộ ra message công khai qua `toDisplayMessage()` (`ChatbotXException.data` → `(k=v)`), đúng lớp lỗi PR này định dẹp. Commit `ecd9f9127` thay bằng `OpenaiCompatibleProviderUnreachableError` (không `data`) → message sạch, đã chạy lại xác nhận.
+2. **[Còn, ngoài phạm vi PR #8, đã ghi từ PR #1]** Legacy provider vẫn trả `"Invalid Claude API key (code connectionProviderRejected)"`: `stripInternalErrorCode` chỉ chạy trong nhánh `openaiCompatible`+`ssrfBlocked`, nên suffix nội bộ vẫn lộ ở mọi provider khác. Nếu success-metric "không lộ mã nội bộ" áp cho toàn bộ public API thì cần issue riêng.
+3. `isOpenaiCompatibleProviderUnreachableError` có fallback `error.name === "…"` cho trường hợp `instanceof` mất qua ranh giới module — hiện không cần (server action catch cùng process) nhưng vô hại. Ghi nhận, không phải lỗi.
+4. Nhánh UI (server action) **không kiểm được end-to-end** trên HTTP: test đơn vị phủ 3 nhánh message; muốn chắc phải drive form Next — ngoài khả năng curl, đã nêu rõ thay vì tính PASS tuyệt đối.
+
+## Ghi chú
+
+- **CB-1 tổng thể vẫn CHƯA DONE**: PR 2 (mã hoá `encryptedAuth` 7 bảng + backfill) chưa có. PR #6 PASS + PR #8 PASS chỉ có nghĩa phần public API/SSRF/contract đã đạt.
+- **Không chạy `check-types` local** theo policy PO 2026-11-23 → cổng type là CI Types (`ecd9f9127`: success).
+- Lần chạy `pnpm --filter @chatbotx.io/connections test` đầu tiên fail 11 test timeout **do shell QA còn export `DATABASE_URL`** trỏ Postgres test khiến 2 suite integration (vốn `describe.skipIf(!databaseUrl)`) chạy thật; chạy lại với env sạch → 136 passed / 27 skipped, exit 0. Không phải lỗi PR.
+- Turbo cache lint dùng chung giữa các worktree → `pnpm lint` chỉ replay; đã bù bằng `pnpm exec ultracite check` chạy tươi (exit 0, 11445 file) + `check-invariants` 8107 file.
+- Teardown: builder/mock đã stop, `docker compose -p qa-cb1 down -v`, port 3124/25433/26380/29004/29005/1235 nhả; worktree tạm `/tmp/qa-cb1-pr8` và ref tạm `qa-pr8-tmp*` trong repo owner đã xoá.
+- **Gate đổi sau lượt này** (Chef, dev-team `2f2db4e6c2`; `projects/chatbotx.json` → `stack.gate`): local chỉ `pnpm lint` + `pnpm check-types`; **không chạy `pnpm test` local**, kể cả trước PR — test suite do CI `.github/workflows/ci.yml`. Mục PR #8 ở trên chạy suite local **trước** khi policy ban hành; các lượt verify sau chỉ ghi link CI run + tự kiểm UI/API/DB.

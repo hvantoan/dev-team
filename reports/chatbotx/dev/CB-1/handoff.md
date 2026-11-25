@@ -93,3 +93,69 @@ pnpm --filter chatbotx test
 - Reference-guard chặn disconnect khi AI agent/flow còn tham chiếu (spec non-goal).
 - Cập nhật SRS `docs/chatbotx/srs/integration-openai-compatible.md` + ADR `encryptedAuth` — chỉ làm khi CB-1 DONE đủ 2 PR.
 - `apps/mcp-server/README.md` không đổi (không có thay đổi `visibility` MCP).
+
+---
+
+# PR 2 — mã hoá `auth` mọi AI provider + backfill (worker `ctx_6798cba05d22`)
+
+| Repo | Branch → PR | Commit |
+|---|---|---|
+| ChatbotX (`/home/vif/orca/workspaces/ChatbotX/chatbotx-cb-1-pr2-encrypted-auth`) | `feat/cb-1-pr2-encrypted-auth` → https://github.com/hvantoan/ChatbotX/pull/7 (stacked, base `feat/cb-1-openai-compatible-api-ssrf`) | `56b5f7b8fb913ae5611a0de6e9bd987862589a4f` (2 commit: `c477d3cbf` + `56b5f7b8f`) |
+
+CI run tại `56b5f7b8f`: Lint, Types (apps/packages), Tests 1–8/8, Devin — all SUCCESS. Không merge/đóng.
+
+## Thay đổi
+
+- **Schema + migration:** cột `encryptedAuth jsonb` nullable thêm vào 7 bảng AI provider (`IntegrationOpenai`, `Claude`, `Gemini`, `Deepseek`, `Muse`, `Openrouter`, `OpenaiCompatible`) theo type `CredentialEncrypted` của partial credential (giống woocommerce/shopify/meta-catalog). Migration `drizzle/20261123080744_add_encrypted_auth_to_ai_providers/` = 7 `ALTER TABLE ADD COLUMN`, đã commit SQL + snapshot. **Chưa apply lên bất kỳ DB — chờ PO duyệt.**
+- **Store binding (`store-bindings.ts`, `store-bindings-channels.ts`):** flag `encryptAuth: true` cho đúng 7 provider. `insertRow`/`saveAuthByForeignKey` ghi `auth: {}` + ciphertext vào `encryptedAuth` (AAD `ai-provider:<provider>:<workspaceId>`); `loadAuthByForeignKey` chọn cả 2 cột, dual-read qua `resolveAiProviderAuth` (ưu tiên `encryptedAuth`, fallback plaintext `auth`).
+- **Decrypt ở tầng business/repository:** `service.ts` openai-compatible (finder `withDecryptedAuth`; `connect`/`update` ghi `auth: {}` + `encryptedAuth`) và `packages/ai/src/server/factory.ts` (`withDecryptedAuth` trong `getAIIntegrationInDB`, `getOpenaiCompatible{AutoReply,}IntegrationInDB`; `embedding-model.ts` chuyển sang dùng `getAIIntegrationInDB`; `reply-model.ts`). Consumer cũ (`openai-compatible.ts`, `muse-transcribe.ts`, `segment-image.ts`, `update.action.ts`) không cần sửa vì nhận `auth` đã giải mã qua `aiIntegrationService.findBy`/`service.finders`.
+- **Backfill `packages/database/scripts/backfill-ai-provider-auth/`:** `--dry-run` mặc định, idempotent (skip row đã có `encryptedAuth` hoặc `auth` đã là ciphertext), log số row theo bảng, có unit test logic thuần. **Không chạy apply trong PR này.**
+
+## Điểm lệch spec / ngoài allow-list (đã chấp nhận có lý do)
+
+1. **`packages/business/package.json` + file mới `connection/ai-provider-auth.ts` + re-export tại `store-bindings.ts`:** CI đầu báo lỗi import barrel `ai -> business/connection` phá mock schema ở `apps/worker`; fix bằng leaf subpath export `@chatbotx.io/business/connection/ai-provider-auth`. Đây là file duy nhất ngoài allow-list — cần thiết để không kéo toàn bộ business vào `packages/ai`.
+2. **`store-bindings.ts` re-export `aiProviderAuthAad`/`encryptAiProviderAuth`/`resolveAiProviderAuth`** để `service.ts` dùng cùng helper (giữ AAD đồng nhất).
+3. **`auth` mới ghi là `{}` (không `null`)** với các bảng `auth` NOT NULL (`IntegrationOpenai`) — giữ invariant DB; response public vẫn chỉ `hasApiKey` (`Boolean({}) = true`).
+4. **Chưa chạy backfill `--dry-run` thật:** worktree không có `.env` DB và cột `encryptedAuth` chưa tồn tại trên DB local (migration chưa apply). Có unit test thuần (`__tests__/backfill-ai-provider-auth.test.ts`) cho logic idempotent; QA/PO cần chạy dry-run sau khi duyệt migration trên môi trường có DB.
+
+## Chờ PO duyệt / migration đã apply local
+
+- ~~SQL migration `packages/database/drizzle/20261123080744_add_encrypted_auth_to_ai_providers/migration.sql` (generate-only).~~ **ĐÃ APPLY lên DB dev local `localhost:25432/chatbotx` (docker `chatbotx-postgres-1`)** — PO duyệt trong item #4. Log: `Applied migration: 20261123080744_add_encrypted_auth_to_ai_providers`. Verify: `information_schema` có `encryptedAuth` trên đủ 7 bảng AI + `drizzle.__drizzle_migrations` đã ghi.
+- **Backfill `--dry-run` trên DB dev local: 0 row thật** (`scanned=0` cả 7 bảng — DB dev local không có AI provider nào). Đã seed probe row plaintext `IntegrationOpenaiCompatible` để kiểm chứng path encrypt: `scanned=1, would-encrypt=1, no writes` (`auth` vẫn plaintext, `encryptedAuth` NULL sau dry-run); probe đã DELETE sạch.
+- **Lưu ý env:** `.env` repo trỏ remote dev DB `db.hvantoan.io.vn:5432` — mọi lệnh trên chạy bằng `DATABASE_URL` override tường minh `postgresql://chatbotx:secretkey@localhost:25432/chatbotx?schema=public` (theo `apps/builder/.env` + `projects/chatbotx.json`). KHÔNG đụng DB remote/dùng chung.
+- Còn chờ: `--apply` backfill lên môi trường có dữ liệu thật + PO duyệt merge (PR chờ).
+- **Log dry-run:** `reports/chatbotx/dev/CB-1/backfill-dryrun-2026-11-23.log` — chạy 2 lần cùng output `scanned=0` cả 7 bảng (idempotent bề mặt; row `encryptedAuth` đã set sẽ bị `WHERE encryptedAuth IS NULL` loại khỏi batch nên apply-thật lặp lại cũng không ghi đè).
+- **Lưu ý idempotent với dữ liệu thật:** không apply được trên DB rỗng nên chưa chứng minh apply→re-run=0 trên data thật; kiểm chứng bằng probe row (`scanned=1, would-encrypt=1, no writes`). Khi chạy `--apply` trên môi trường có data, chạy lại cùng script → `scanned=0` mới là chứng minh idempotent đầy đủ.
+- **PO chốt (2026-11-23): KHÔNG làm PR reverse-script `encryptedAuth→auth` ở thời điểm này** (DB dev rỗng, rủi ro chỉ phát sinh khi `--apply` lên prod). Ghi nhận yêu cầu: **trước `--apply` trên môi trường có data phải chuẩn bị phương án rollback** (script reverse hoặc thủ công restore `auth` từ `encryptedAuth`).
+
+## Rủi ro / lưu ý cho PO
+
+- **Rollback sau khi backfill:** `auth = {}` + `encryptedAuth` ciphertext; rollback code cũ đọc plaintext `auth` sẽ fail. Cần script reverse-rollback (decrypt `encryptedAuth` → `auth`) nếu rollback sau backfill — chưa có (ngoài scope PR).
+- **Write path plaintext còn sót:** `connectAiProviderIntegration` / `integrationOpenrouterService.connect` vẫn ghi plaintext; reader dual-format nên không gãy, nhưng row mới qua path này sẽ ở plaintext tới khi backfill sau.
+- **Khoá mã hoá:** dùng `encryptUtils` (env `ENCRYPTION_KEY` đã có trong `.env.example`); AAD buộc decrypt đúng `provider` + `workspaceId` — copy ciphertext sang workspace khác sẽ fail.
+- **Overlap với contract-fix (`fix/cb-1-pr1-contract`):** cùng đụng `service.ts`/`update.action.ts` nhẹ — PR2 cần rebase sau khi contract-fix vào base (xem lane riêng).
+
+---
+
+# PR1 contract fix — connect `ssrfBlocked` + UI `providerUnreachable` (worker `ctx_61124dc4e813`)
+
+| Repo | Branch → PR | Commit |
+|---|---|---|
+| ChatbotX (`/home/vif/orca/workspaces/ChatbotX/chatbotx-cb-1-pr1-contract`) | `fix/cb-1-pr1-contract` → https://github.com/hvantoan/ChatbotX/pull/8 (base `feat/cb-1-openai-compatible-api-ssrf`) | `3408687934589e70e26ee9328dd2781d44a6b73d` (2 commit: `13fdca4d4` + `340868793`) |
+
+CI tại `340868793`: Lint, Types (apps/packages), Tests 1–8/8 — SUCCESS; Devin issue đã fix + replied. Không merge/đóng.
+
+## Thay đổi (PO đã chốt)
+
+- `packages/connections/src/credentials.ts`: unwrap `ChatbotXException code="ssrfBlocked"` **chỉ cho `openaiCompatible`** trong `fromCredentials` catch → `POST /v1/connections` trả `400 ssrfBlocked` thay `connectionCredentialsRejected`; `stripInternalErrorCode` bỏ hậu tố `(code …)` khỏi public message. Legacy providers giữ nguyên mapping.
+- UI `connect.action.ts`/`update.action.ts`: `unreachable` → i18n `openaiCompatible.validation.providerUnreachable` (21 locale), `unsafe_base_url`/`invalidBaseUrl` giữ `invalidBaseURL`. Public API PATCH vẫn `invalidBaseUrl` (theo spec AC5).
+- `orpc-error-helper.ts`: khai báo `ssrfBlocked` trong `possibleErrorsOnCreatingConnection` + contract assertion (từ review Devin).
+- Docs `docs/openai-compatible.md` cập nhật hành vi mã lỗi.
+
+## Test đã chạy (worker)
+
+- `pnpm lint`; `pnpm --filter @chatbotx.io/business test` (10,077); `pnpm --filter @chatbotx.io/connections test` (136); builder `openai-compatible-actions`, `integrations-public-api`, `openai-compatible-provider-verify`, `public-spec-operations`, `connections-public-api`, `connections-public-spec-flat` — pass. Không chạy `pnpm check-types` local theo PO.
+
+## Lưu ý
+- Connect private `127.0.0.1`/`169.254.169.254` → `400 ssrfBlocked` trên cả connect lẫn PATCH update — khớp chữ AC5.
+- **PR2 `feat/cb-1-pr2-encrypted-auth` (PR #7) cần rebase lên base mới sau khi PR #8 merge** vào `feat/cb-1-openai-compatible-api-ssrf` (cùng đụng `service.ts`/`update.action.ts`).
