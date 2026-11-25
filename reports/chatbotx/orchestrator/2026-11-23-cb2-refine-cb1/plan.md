@@ -4,7 +4,7 @@
 - **Project:** chatbotx
 - **Sprint:** `2026-W48` — goal tại `reports/chatbotx/scrum/sprint-2026-W48/goal.md`
 - **Ngày mở:** 2026-11-23
-- **Trạng thái:** Đang chạy
+- **Trạng thái:** Xong — đóng 2026-11-25
 
 ## Mục tiêu
 
@@ -14,8 +14,8 @@ Refinement Epic CB-2 thành story sẵn sàng + đưa CB-1 (OpenAI-compatible pu
 
 | # | KEY | Nội dung | Trạng thái | Spec | Handoff | Verdict |
 |---|---|---|---|---|---|---|
-| 1 | CB-2 | BA cắt Epic thành story; PO refine + chốt thứ tự | 📋 | `reports/chatbotx/ba/CB-2/refinement.md` | — | — |
-| 2 | CB-1 | Spec → PO clear → Dev → QA | 📋 | `reports/chatbotx/ba/CB-1/spec.md` | — | — |
+| 1 | CB-2 | BA cắt Epic thành story; PO refine + chốt thứ tự | ✅ | `reports/chatbotx/ba/CB-2/refinement.md` | — | PO duyệt 2026-11-23 |
+| 2 | CB-1 | Spec → PO clear → Dev → QA | ✅ | `reports/chatbotx/ba/CB-1/spec.md` | `reports/chatbotx/dev/CB-1/handoff.md` | PASS #6/#8; #7 merge uỷ quyền PO |
 
 Trạng thái: ⏳ chờ clear → 📋 BA spec → 💻 Dev → 🔍 QA → ✅ PASS / ❌ FAIL / 🚫 BLOCKED
 
@@ -35,4 +35,9 @@ Trạng thái: ⏳ chờ clear → 📋 BA spec → 💻 Dev → 🔍 QA → ✅
 
 ## Kết quả / báo cáo PO
 
-(cập nhật khi run đóng)
+Run đóng 2026-11-25.
+
+- **CB-2:** refinement xong, PO duyệt cắt story + thứ tự Đợt 1 (CB-3 → CB-5 → CB-4 → CB-8, CB-1 song song) — `reports/chatbotx/ba/CB-2/refinement.md`.
+- **CB-1:** 3 PR merged vào `main` — #8 `ecd9f9127`, #7 `6f0e00f55`, #6 `0f88afe86`. QA verdict PASS cho #6 (`qa/CB-1/verdict.md`, mục PR 1) và #8; **#7 không có verdict.md riêng** — merge trên uỷ quyền PO + CI 14/14 xanh, QA đã ACK verify #7 trước lệnh merge. Staging chưa bắt đầu (chờ PO yêu cầu).
+- **Còn lại ngoài run:** SRS + ADR của CB-1 (`docs/chatbotx/srs/integration-openai-compatible.md`, ADR `encryptedAuth`) đã giao BA 2026-11-25; legacy provider vẫn lộ `(code ...)` → issue riêng nếu PO muốn đóng; nhánh UI `providerUnreachable` chỉ có unit test.
+- Sprint board: `reports/chatbotx/scrum/sprint-2026-W48/board.md`.
