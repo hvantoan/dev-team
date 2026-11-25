@@ -13,6 +13,16 @@ Stage: backlog → refining → spec → clear → dev → qa → pr → staging
 
 ## Daily
 
+### 2026-11-25 (day 3/5)
+
+- **Đang làm:** không còn việc dev mở trên board. CB-1 xong 3 PR, CB-2 refinement xong → Sprint Goal W48 đã đạt từ 2026-11-23, hai ngày còn lại không có việc cam kết.
+- **Chờ:** PO cấp input vận hành CB-3 (stack test, nick/QR, nhóm test) để mở Đợt 1; PO yêu cầu staging CB-1 thì mới chạy.
+- **Chặn:** CB-3 chờ input 2 ngày (đã lên item 4 needs-you). Không có gì chặn CB-1.
+- **Kiểm chứng:** `gh pr view` 2026-11-25 — #6 MERGED `0f88afe86`, #7 MERGED `6f0e00f55`, #8 MERGED `ecd9f9127`; không PR nào còn mở trên ChatbotX.
+- **Tồn ngoài sprint:** legacy provider vẫn lộ `(code connectionProviderRejected)`; nhánh UI `providerUnreachable` chỉ có unit test — cần issue riêng nếu PO muốn đóng.
+
+### 2026-11-23
+
 - **Đang làm:** CB-1 đã merge vào main (`0f88afe86`); staging chưa bắt đầu — chờ PO yêu cầu.
 - **Chờ:** PO quyết chặn link-local khi ALLOW_PRIVATE_URLS=true (item 4); CB-3 chờ stack/nick/nhóm test.
 - **Chặn:** MCP `jira-vtx` lỗi certifi ở phiên SM (đã workaround qua Chef). Server vif chưa sign-in Orca Cloud → không watch được GitHub PR #8 merge; SM check thủ công bằng `gh` mỗi daily, đã offer connect card.
@@ -45,3 +55,4 @@ Stage: backlog → refining → spec → clear → dev → qa → pr → staging
 - 22:1x QA đọc handoff nhưng kết thúc turn im lặng, không sinh evidence mới (mtime cuối 18:04) — cùng kiểu lỗi phiên: tin vào chat cũ `5ea26f58`, Home Chat hiện tại `c6ffdcf3`. SM gửi lại qua `--chat new` + yêu cầu ACK bắt đầu/verdict.
 - 22:2x QA ACK: verify #7 @6f0e00f55 bằng worktree tạm `/tmp/qa-cb7-pr7` + compose project `qa-cb7` port riêng, 7 nhóm test case chức năng (schema, store-bindings+AAD, dual-read, consumer, backfill dry-run, public API, 401/403), gate local lint+check-types, ghi link CI + head sha; teardown sau.
 - 23:1x **PO yêu cầu merge PR #6** → SM merge bằng `gh pr merge 6 --merge`: **#6 MERGED** `0f88afe86` trên `main` (head `ab182d743`, CI 14/14 pass, `mergeStateStatus=CLEAN`). Trước đó SM chạy local từ worktree PR6 + demo 9router local PASS (reply thật từ `ocg/deepseek-v4.1-flash`); phát hiện 2 lỗi setup host-dev (thiếu `docker-compose.override.yml`, root `.env` sai cổng) đã ghi `projects/chatbotx.json`. Còn mở: quyết định chặn link-local khi opt-out (item 4).
+- 2026-11-25 daily: `gh` xác nhận #6/#7/#8 đều MERGED, không PR mở; board không có việc dev; CB-3 vẫn chờ input vận hành → đưa item 4 needs-you.
