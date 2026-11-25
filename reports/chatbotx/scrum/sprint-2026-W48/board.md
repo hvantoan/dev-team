@@ -19,7 +19,7 @@ Stage: backlog → refining → spec → clear → dev → qa → pr → staging
 - **Chờ:** PO cấp input vận hành CB-3 (stack test, nick/QR, nhóm test) để mở Đợt 1; PO yêu cầu staging CB-1 thì mới chạy.
 - **Chặn:** CB-3 chờ input 2 ngày (đã lên item 4 needs-you). Không có gì chặn CB-1.
 - **Kiểm chứng:** `gh pr view` 2026-11-25 — #6 MERGED `0f88afe86`, #7 MERGED `6f0e00f55`, #8 MERGED `ecd9f9127`; không PR nào còn mở trên ChatbotX. Verdict PASS trong `qa/CB-1/verdict.md` chỉ có cho **#6 và #8**; **#7 không có verdict.md riêng** — merge trên uỷ quyền PO + CI 14/14 xanh sau khi QA ACK verify.
-- **Follow-up đã giao:** SRS `docs/chatbotx/srs/integration-openai-compatible.md` + ADR `encryptedAuth` (checklist "Cập nhật docs sau khi DONE" của spec CB-1, FLOW bước 6) → BA, 2026-11-25.
+- **Follow-up đã có:** SRS `docs/chatbotx/srs/integration-openai-compatible.md` + ADR `docs/chatbotx/adr/0001-encrypted-auth-ai-providers.md` — BA viết xong 2026-11-25, chờ PO đọc.
 - **Chưa đạt đủ "Done when" của spec:** verdict PASS mới có cho #6/#8 (như trên) và backfill `--apply` **chưa chạy trên DB dùng chung** — mới dry-run 0 row trên DB dev rỗng. PO đã uỷ quyền merge; `review.md` cuối sprint phải ghi đúng hai điểm này, không coi là đã đóng hết.
 - **Tồn ngoài sprint:** legacy provider vẫn lộ `(code connectionProviderRejected)`; nhánh UI `providerUnreachable` chỉ có unit test — cần issue riêng nếu PO muốn đóng.
 
