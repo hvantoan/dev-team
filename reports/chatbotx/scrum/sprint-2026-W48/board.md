@@ -18,7 +18,8 @@ Stage: backlog → refining → spec → clear → dev → qa → pr → staging
 - **Đang làm:** không còn việc dev mở trên board. CB-1 xong 3 PR, CB-2 refinement xong → Sprint Goal W48 đã đạt từ 2026-11-23, hai ngày còn lại không có việc cam kết.
 - **Chờ:** PO cấp input vận hành CB-3 (stack test, nick/QR, nhóm test) để mở Đợt 1; PO yêu cầu staging CB-1 thì mới chạy.
 - **Chặn:** CB-3 chờ input 2 ngày (đã lên item 4 needs-you). Không có gì chặn CB-1.
-- **Kiểm chứng:** `gh pr view` 2026-11-25 — #6 MERGED `0f88afe86`, #7 MERGED `6f0e00f55`, #8 MERGED `ecd9f9127`; không PR nào còn mở trên ChatbotX.
+- **Kiểm chứng:** `gh pr view` 2026-11-25 — #6 MERGED `0f88afe86`, #7 MERGED `6f0e00f55`, #8 MERGED `ecd9f9127`; không PR nào còn mở trên ChatbotX. Verdict PASS trong `qa/CB-1/verdict.md` chỉ có cho **#6 và #8**; **#7 không có verdict.md riêng** — merge trên uỷ quyền PO + CI 14/14 xanh sau khi QA ACK verify.
+- **Follow-up đã giao:** SRS `docs/chatbotx/srs/integration-openai-compatible.md` + ADR `encryptedAuth` (checklist "Cập nhật docs sau khi DONE" của spec CB-1, FLOW bước 6) → BA, 2026-11-25.
 - **Tồn ngoài sprint:** legacy provider vẫn lộ `(code connectionProviderRejected)`; nhánh UI `providerUnreachable` chỉ có unit test — cần issue riêng nếu PO muốn đóng.
 
 ### 2026-11-23
