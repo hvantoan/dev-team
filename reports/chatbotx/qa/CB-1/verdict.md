@@ -146,3 +146,9 @@ CI run 45126421011 tại đúng head: Lint, Types, Types (apps), Types (packages
 - Turbo cache lint dùng chung giữa các worktree → `pnpm lint` chỉ replay; đã bù bằng `pnpm exec ultracite check` chạy tươi (exit 0, 11445 file) + `check-invariants` 8107 file.
 - Teardown: builder/mock đã stop, `docker compose -p qa-cb1 down -v`, port 3124/25433/26380/29004/29005/1235 nhả; worktree tạm `/tmp/qa-cb1-pr8` và ref tạm `qa-pr8-tmp*` trong repo owner đã xoá.
 - **Gate đổi sau lượt này** (Chef, dev-team `2f2db4e6c2`; `projects/chatbotx.json` → `stack.gate`): local chỉ `pnpm lint` + `pnpm check-types`; **không chạy `pnpm test` local**, kể cả trước PR — test suite do CI `.github/workflows/ci.yml`. Mục PR #8 ở trên chạy suite local **trước** khi policy ban hành; các lượt verify sau chỉ ghi link CI run + tự kiểm UI/API/DB.
+
+## Cập nhật trạng thái 2026-11-25 (SM — không đổi verdict)
+
+- Cả 3 PR đã merged vào `main` `0f88afe86`: #8 `ecd9f9127`, #7 `6f0e00f55`, #6 `0f88afe86`. PR #7 **không có verdict riêng** — merge trên uỷ quyền PO + CI 14/14 xanh sau khi QA ACK verify.
+- Backfill `--apply` **chưa chạy trên DB dùng chung**; chỉ dry-run 0 row trên DB dev rỗng.
+- Vì vậy câu "CB-1 tổng thể CHƯA DONE" ở trên chỉ còn đúng ở nghĩa: chưa có verdict cho #7 và chưa bật backfill trên DB thật — không phải PR 2 chưa có.
